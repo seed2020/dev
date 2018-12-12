@@ -1,0 +1,28 @@
+@ 파일 설명
+
+CodeGenerator
+- Db Script, Vo Class의 스트링 생성
+
+ExcelReader
+- 엑셀 파일의 시트 데이터를 로드
+
+- ExcelToData
+- 엑셀 데이터를 맵으로 변환
+
+FileCreater
+- 파일 생성
+
+StringUtil
+- 유틸
+
+VoGenerator
+- 생성 실행 클래스
+ 
+
+@ VOGen 사용법
+
+1.excel 경로에 로드할 엑셀 파일 추가
+
+2.VoGenerator 를 Run
+
+
