@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_PLT_SETUP_D [커뮤니티 기능 회원 권한 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtPltSetupDDao">
+
+	<resultMap id="ctPltSetupDMap" type="CtPltSetupDVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="ctFncId" column="CT_FNC_ID" /><!--커뮤니티 기능 UID-->
+	    <id property="userUid" column="USER_UID" /><!--유자 UID-->
+		<id property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+		<result property="perd" column="PERD" /><!--기간-->
+		<result property="ctFuncSubjRescId" column="CT_FUNC_SUBJ_RESC_ID" /><!--기능명 리소스 ID-->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtPltSetupDWhere">
+		<where>
+		    <if test="compId != null and compId != ''"> AND CFMAD_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctFncId != null and ctFncId != ''"> AND CFMAD_T.CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR}</if>
+		    <if test="userUid != null and userUid != ''"> AND CFMAD_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CFMAD_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtPltSetupD" resultMap="ctPltSetupDMap" parameterType="CtPltSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtPltSetupDDao.selectCtPltSetupD */
+		
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			CFMAD_T.COMP_ID,
+			CFMAD_T.CT_FNC_ID,
+			CFMAD_T.USER_UID,
+			CFMAD_T.CT_ID,
+			CFMAD_T.PERD,
+			
+		</trim>
+		FROM CT_PLT_SETUP_D CFMAD_T
+		<include refid="selectCtPltSetupDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CFMAD_T.CT_FNC_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtPltSetupD" resultType="Integer" parameterType="CtPltSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtPltSetupDDao.countCtPltSetupD */
+		SELECT COUNT(*) CNT
+		FROM CT_PLT_SETUP_D CFMAD_T
+		<include refid="selectCtPltSetupDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtPltSetupD" parameterType="CtPltSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtPltSetupDDao.insertCtPltSetupD */
+		INSERT INTO CT_PLT_SETUP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID, CT_FNC_ID,
+		    USER_UID, CT_ID, 
+		    PERD, CT_FUNC_SUBJ_RESC_ID
+		    
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR}, #{ctFncId, jdbcType=VARCHAR},
+			 #{userUid, jdbcType=VARCHAR}, #{ctId, jdbcType=VARCHAR},
+			  #{perd, jdbcType=VARCHAR}, #{ctFuncSubjRescId, jdbcType=VARCHAR},
+			
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtPltSetupD" parameterType="CtPltSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtPltSetupDDao.updateCtPltSetupD */
+		UPDATE CT_PLT_SETUP_D
+		<set>
+			<if test="ctId != null"> CT_ID = #{ctId, jdbcType=VARCHAR},</if>
+			<if test="perd != null"> PERD = #{perd, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctFncId != null and ctFncId != ''"> AND CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR}</if>
+		    <if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtPltSetupD" parameterType="CtPltSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtPltSetupDDao.deleteCtPltSetupD */
+		DELETE FROM CT_PLT_SETUP_D
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctFncId != null and ctFncId != ''"> AND CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR}</if>
+		    <if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WA_CAR_KND_L[차종목록] -->
+<mapper namespace="com.innobiz.orange.web.wa.dao.WaCarKndLDao">
+
+	<resultMap id="waCarKndLMap" type="WaCarKndLVo">
+		<id property="carKndNo" column="CAR_KND_NO" /><!-- 차종번호 -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="corpNo" column="CORP_NO" /><!-- 법인번호 -->
+		<result property="carKndNm" column="CAR_KND_NM" /><!-- 차종명 -->
+		<result property="carRegNo" column="CAR_REG_NO" /><!-- 자동차등록번호 -->
+		<result property="cont" column="CONT" /><!-- 내용 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWaCarKndLWhere">
+		<where>
+			<if test="carKndNo != null and carKndNo !=''"> AND T.CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="compId != null and compId !=''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="corpNo != null and corpNo !=''"> AND T.CORP_NO = #{corpNo, jdbcType=INTEGER}</if>
+			<if test='schCat != null and schWord != ""'>
+				<if test='"carKndNm".equals(schCat)'>AND T.CAR_KND_NM like '%' + #{schWord, jdbcType=VARCHAR} + '%'</if>
+				<if test='"carRegNo".equals(schCat)'>AND T.CAR_REG_NO like '%' + #{schWord, jdbcType=VARCHAR} + '%'</if>
+				<if test='"cont".equals(schCat)'>AND T.CONT like '%' + #{schWord, jdbcType=VARCHAR} + '%'</if>
+			</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWaCarKndL" resultMap="waCarKndLMap" parameterType="WaCarKndLVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarKndLDao.selectWaCarKndL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.SORT_ORDR ASC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.CAR_KND_NO,
+			T.COMP_ID,
+			T.CORP_NO,
+			T.CAR_KND_NM,
+			T.CAR_REG_NO,
+			T.CONT,
+			T.SORT_ORDR,
+		</trim>
+		FROM WA_CAR_KND_L T
+		<include refid="selectWaCarKndLWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.SORT_ORDR ASC</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWaCarKndL" resultType="Integer" parameterType="WaCarKndLVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarKndLDao.countWaCarKndL */
+		SELECT COUNT(*) CNT
+		FROM WA_CAR_KND_L T		
+		<include refid="selectWaCarKndLWhere"/>
+	</select>
+	
+	<!-- 차종 등록 저장 -->
+	<insert id="insertWaCarKndL" parameterType="WaCarKndLVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarKndLDao.insertWaCarKndL */
+		INSERT INTO WA_CAR_KND_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CAR_KND_NO,
+			COMP_ID,
+			CORP_NO,
+			CAR_KND_NM,
+			CAR_REG_NO,
+			CONT,
+			SORT_ORDR,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{carKndNo, jdbcType=INTEGER},
+			#{compId, jdbcType=VARCHAR},
+			#{corpNo, jdbcType=INTEGER},
+			#{carKndNm, jdbcType=NVARCHAR},
+			#{carRegNo, jdbcType=NVARCHAR},
+			#{cont, jdbcType=NVARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+		</trim>
+	</insert>
+	
+	<!-- 차종 수정 -->
+	<update id="updateWaCarKndL" parameterType="WaCarKndLVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarKndLDao.updateWaCarKndL */
+		UPDATE WA_CAR_KND_L
+		<set>
+			<if test="carKndNm != null"> CAR_KND_NM = #{carKndNm, jdbcType=NVARCHAR},</if>
+			<if test="carRegNo != null"> CAR_REG_NO = #{carRegNo, jdbcType=NVARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=NVARCHAR},</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="carKndNo != null and carKndNo !=''"> AND CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="corpNo != null and corpNo !=''"> AND CORP_NO = #{corpNo, jdbcType=INTEGER}</if>
+		</where>
+	</update>
+
+	<!-- 차종 삭제 -->
+	<delete id="deleteWaCarKndL" parameterType="WaCarKndLVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarKndLDao.deleteWaCarKndL */
+		DELETE FROM WA_CAR_KND_L
+		<where>
+			<if test="carKndNo != null and carKndNo !=''"> AND CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="corpNo != null and corpNo !=''"> AND CORP_NO = #{corpNo, jdbcType=INTEGER}</if>
+		</where>
+	</delete>
+	
+	
+	<!-- 순서 조회 -->
+	<select id="maxWaCarKndL" resultType="Integer" parameterType="WaCarKndLVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarKndLDao.maxWaCarKndL */
+		SELECT MAX(SORT_ORDR) AS SORT_ORDR
+		FROM WA_CAR_KND_L
+		<where>
+			<if test="corpNo != null and corpNo !=''"> AND CORP_NO = #{corpNo, jdbcType=INTEGER}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+	
+</mapper>

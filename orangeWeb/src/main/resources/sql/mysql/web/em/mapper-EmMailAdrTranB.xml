@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : EM_MAIL_ADR_TRAN_B[이관기본] -->
+<mapper namespace="com.innobiz.orange.web.em.dao.EmMailAdrTranBDao">
+
+	<resultMap id="emMailAdrTranBMap" type="EmMailAdrTranBVo">
+		<id property="tranId" column="TRAN_ID" /><!-- 이관ID -->
+		<result property="userCnt" column="USER_CNT" /><!-- 사용자수 -->
+		<result property="fldCnt" column="FLD_CNT" /><!-- 폴더건수 -->
+		<result property="adrCnt" column="ADR_CNT" /><!-- 주소록건수 -->
+		<result property="tranStrtDt" column="TRAN_STRT_DT" /><!-- 이관시작일시 -->
+		<result property="tranEndDt" column="TRAN_END_DT" /><!-- 이관종료일시 -->
+		<result property="tranProcStatCd" column="TRAN_PROC_STAT_CD" /><!-- 이관진행상태코드 -->
+		<result property="tranCont" column="TRAN_CONT" /><!-- 이관내용 -->
+		<result property="errCont" column="ERR_CONT" /><!-- 오류내용 -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectEmMailAdrTranBWhere">
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="tranProcStatCd != null and tranProcStatCd != ''"> AND T.TRAN_PROC_STAT_CD = #{tranProcStatCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<select id="selectEmMailAdrTranB" resultMap="emMailAdrTranBMap" parameterType="EmMailAdrTranBVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranBDao.selectEmMailAdrTranB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.TRAN_ID,
+			T.USER_CNT,
+			T.FLD_CNT,
+			T.ADR_CNT,
+			T.TRAN_STRT_DT,
+			T.TRAN_END_DT,
+			T.TRAN_PROC_STAT_CD,
+			T.TRAN_CONT,
+			T.ERR_CONT,
+			T.USER_UID,
+		</trim>
+		FROM EM_MAIL_ADR_TRAN_B T
+		<include refid="selectEmMailAdrTranBWhere" />
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TRAN_ID DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countEmMailAdrTranB" resultType="Integer" parameterType="EmMailAdrTranBVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranBDao.countEmMailAdrTranB */
+		SELECT COUNT(*) CNT
+		FROM EM_MAIL_ADR_TRAN_B T
+		<include refid="selectEmMailAdrTranBWhere" />
+	</select>
+
+	<insert id="insertEmMailAdrTranB" parameterType="EmMailAdrTranBVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranBDao.insertEmMailAdrTranB */
+		INSERT INTO EM_MAIL_ADR_TRAN_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			TRAN_ID,
+			USER_CNT,
+			FLD_CNT,
+			ADR_CNT,
+			TRAN_STRT_DT,
+			TRAN_END_DT,
+			TRAN_PROC_STAT_CD,
+			TRAN_CONT,
+			ERR_CONT,
+			USER_UID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{tranId, jdbcType=VARCHAR},
+			#{userCnt, jdbcType=INTEGER},
+			#{fldCnt, jdbcType=INTEGER},
+			#{adrCnt, jdbcType=INTEGER},
+			<if test="tranStrtDt == 'sysdate'">NOW(),</if><if test="tranStrtDt == null or tranStrtDt == ''">NULL,</if>
+			<if test="tranStrtDt != null and tranStrtDt != '' and tranStrtDt != 'sysdate'">STR_TO_DATE(#{tranStrtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="tranEndDt == 'sysdate'">NOW(),</if><if test="tranEndDt == null or tranEndDt == ''">NULL,</if>
+			<if test="tranEndDt != null and tranEndDt != '' and tranEndDt != 'sysdate'">STR_TO_DATE(#{tranEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{tranProcStatCd, jdbcType=VARCHAR},
+			#{tranCont, jdbcType=VARCHAR},
+			#{errCont, jdbcType=VARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateEmMailAdrTranB" parameterType="EmMailAdrTranBVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranBDao.updateEmMailAdrTranB */
+		UPDATE EM_MAIL_ADR_TRAN_B
+		<set>
+			<if test="userCnt != null">USER_CNT = #{userCnt, jdbcType=INTEGER},</if>
+			<if test="fldCnt != null">FLD_CNT = #{fldCnt, jdbcType=INTEGER},</if>
+			<if test="adrCnt != null">ADR_CNT = #{adrCnt, jdbcType=INTEGER},</if>
+			<if test="tranEndDt != null">
+				<if test="tranEndDt == 'sysdate'">TRAN_END_DT = NOW(),</if>
+				<if test="tranEndDt == ''">TRAN_END_DT = NULL,</if>
+				<if test="tranEndDt != '' and tranEndDt != 'sysdate'">TRAN_END_DT = STR_TO_DATE(#{tranEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="tranProcStatCd != null">TRAN_PROC_STAT_CD = #{tranProcStatCd, jdbcType=VARCHAR},</if>			
+			<if test="tranCont != null">TRAN_CONT = #{tranCont, jdbcType=VARCHAR},</if>
+			<if test="errCont != null">ERR_CONT = #{errCont, jdbcType=VARCHAR},</if>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteEmMailAdrTranB" parameterType="EmMailAdrTranBVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranBDao.deleteEmMailAdrTranB */
+		DELETE FROM EM_MAIL_ADR_TRAN_B
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGO_FORM_ITEM_L[진행양식항목내역] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngoFormItemLDao">
+
+	<resultMap id="apOngoFormItemLMap" type="ApOngoFormItemLVo">
+		<id property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<id property="formSeq" column="FORM_SEQ" /><!-- 양식일련번호 -->
+		<id property="formCombSeq" column="FORM_COMB_SEQ" /><!-- 양식구성일련번호 -->
+		<id property="rowNo" column="ROW_NO" /><!-- 줄번호 -->
+		<id property="colNo" column="COL_NO" /><!-- 열번호 -->
+		<result property="cspnVa" column="CSPN_VA" /><!-- 콜스판값 -->
+		<result property="itemId" column="ITEM_ID" /><!-- 항목ID -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngoFormItemL" resultMap="apOngoFormItemLMap" parameterType="ApOngoFormItemLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormItemLDao.selectApOngoFormItemL */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.FORM_ID,
+			T.FORM_SEQ,
+			T.FORM_COMB_SEQ,
+			T.ROW_NO,
+			T.COL_NO,
+			T.CSPN_VA,
+			T.ITEM_ID,
+		</trim>
+		FROM AP_ONGO_FORM_ITEM_L T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND T.FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formCombSeq != null">AND T.FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="rowNo != null">AND T.ROW_NO = #{rowNo, jdbcType=INTEGER}</if>
+			<if test="colNo != null">AND T.COL_NO = #{colNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.FORM_ID, T.FORM_SEQ, T.FORM_COMB_SEQ, T.ROW_NO, T.COL_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countApOngoFormItemL" resultType="Integer" parameterType="ApOngoFormItemLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormItemLDao.countApOngoFormItemL */
+		SELECT COUNT(*) CNT
+		FROM AP_ONGO_FORM_ITEM_L T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND T.FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formCombSeq != null">AND T.FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="rowNo != null">AND T.ROW_NO = #{rowNo, jdbcType=INTEGER}</if>
+			<if test="colNo != null">AND T.COL_NO = #{colNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngoFormItemL" parameterType="ApOngoFormItemLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormItemLDao.insertApOngoFormItemL */
+		INSERT INTO AP_ONGO_FORM_ITEM_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FORM_ID,
+			FORM_SEQ,
+			FORM_COMB_SEQ,
+			ROW_NO,
+			COL_NO,
+			CSPN_VA,
+			ITEM_ID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{formId, jdbcType=VARCHAR},
+			#{formSeq, jdbcType=INTEGER},
+			#{formCombSeq, jdbcType=INTEGER},
+			#{rowNo, jdbcType=INTEGER},
+			#{colNo, jdbcType=INTEGER},
+			#{cspnVa, jdbcType=INTEGER},
+			#{itemId, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApOngoFormItemL" parameterType="ApOngoFormItemLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormItemLDao.updateApOngoFormItemL */
+		UPDATE AP_ONGO_FORM_ITEM_L
+		<set>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+			<if test="formSeq != null">FORM_SEQ = #{formSeq, jdbcType=INTEGER},</if>
+			<if test="formCombSeq != null">FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER},</if>
+			<if test="rowNo != null">ROW_NO = #{rowNo, jdbcType=INTEGER},</if>
+			<if test="colNo != null">COL_NO = #{colNo, jdbcType=INTEGER},</if>
+			<if test="cspnVa != null">CSPN_VA = #{cspnVa, jdbcType=INTEGER},</if>
+			<if test="itemId != null">ITEM_ID = #{itemId, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formCombSeq != null">AND FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="rowNo != null">AND ROW_NO = #{rowNo, jdbcType=INTEGER}</if>
+			<if test="colNo != null">AND COL_NO = #{colNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngoFormItemL" parameterType="ApOngoFormItemLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormItemLDao.deleteApOngoFormItemL */
+		DELETE FROM AP_ONGO_FORM_ITEM_L
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formCombSeq != null">AND FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="rowNo != null">AND ROW_NO = #{rowNo, jdbcType=INTEGER}</if>
+			<if test="colNo != null">AND COL_NO = #{colNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

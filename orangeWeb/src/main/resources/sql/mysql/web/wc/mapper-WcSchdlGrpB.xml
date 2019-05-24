@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_SCHDL_GRP_B[일정 그룹 기본] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcSchdlGrpBDao">
+
+	<resultMap id="wcSchdlGrpBMap" type="WcSchdlGrpBVo">
+		<id property="schdlGrpId" column="SCHDL_GRP_ID" /><!-- 일정 그룹ID -->
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="grpNm" column="GRP_NM" /><!-- 그룹명 -->
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<id property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<id property="mastrUid" column="MASTR_UID" /><!-- 마스터UID -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일자 -->
+		
+		<id property="userUid" column="USER_UID" /><!-- 사용자 UID -->		
+		<id property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<id property="mbshTypCd" column="MBSH_TYP_CD" /><!-- 회원구분코드 -->
+		<id property="authGradCd" column="AUTH_GRAD_CD" /><!-- 권한등급코드 -->
+		<id property="emailSendYn" column="EMAIL_SEND_YN" /><!-- 이메일발송여부 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWcSchdlGrpBWhere">
+	    <if test="userUid != null">
+	        <if test="(fncMy eq 'N'.toString()) or (fncMy eq 'all'.toString())">
+	            LEFT OUTER JOIN  (   SELECT 
+	        							USER_UID,
+										SCHDL_GRP_ID,
+										COMP_ID,
+										USER_NM,
+										MBSH_TYP_CD,
+										AUTH_GRAD_CD,
+										EMAIL_SEND_YN
+									 FROM WC_SCHDL_GRP_MBSH_D B
+									 WHERE B.USER_UID=#{userUid, jdbcType=VARCHAR}
+								  ) T 
+				ON WSG_T.SCHDL_GRP_ID = T.SCHDL_GRP_ID AND WSG_T.COMP_ID = T.COMP_ID
+	        </if>
+	        <if test="fncMy == null or (fncMy eq 'Y'.toString()) or (fncMy eq 'my'.toString()) or (fncMy eq ''.toString())">
+	            INNER JOIN  (   SELECT 
+	        							USER_UID,
+										SCHDL_GRP_ID,
+										COMP_ID,
+										USER_NM,
+										MBSH_TYP_CD,
+										AUTH_GRAD_CD,
+										EMAIL_SEND_YN
+									 FROM WC_SCHDL_GRP_MBSH_D B
+									 WHERE B.USER_UID=#{userUid, jdbcType=VARCHAR}
+								  ) T 
+				ON WSG_T.SCHDL_GRP_ID = T.SCHDL_GRP_ID AND WSG_T.COMP_ID = T.COMP_ID
+	        </if>
+	        
+	       	<where>		    
+				 <if test="schdlGrpId != null and schdlGrpId !=''"> AND WSG_T.SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+				 <if test="compId != null and compId !=''"> AND WSG_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+				 <if test="schWord != null and schWord != ''">AND WSG_T.GRP_NM LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+				 <if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+			</where>
+	        
+	    </if>
+	     <if test="userUid == null">
+	        <where>		    
+			    <if test="schdlGrpId != null and schdlGrpId !=''"> AND WSG_T.SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+				<if test="compId != null and compId !=''"> AND WSG_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+				<if test="schWord != null and schWord != ''">AND WSG_T.GRP_NM LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			</where>
+	    </if>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcSchdlGrpB" resultMap="wcSchdlGrpBMap" parameterType="WcSchdlGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpBDao.selectWcSchdlGrpB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			WSG_T.SCHDL_GRP_ID,
+			WSG_T.COMP_ID,
+			WSG_T.GRP_NM,
+			WSG_T.REGR_UID,
+			WSG_T.REGR_NM,
+			WSG_T.MASTR_UID,
+			WSG_T.REG_DT
+			<if test="userUid != null">
+	        ,T.USER_UID,			
+			T.USER_NM,
+			T.MBSH_TYP_CD,
+			T.AUTH_GRAD_CD,
+			T.EMAIL_SEND_YN
+	    	</if>
+			
+		</trim>
+		FROM WC_SCHDL_GRP_B WSG_T
+		<include refid="selectWcSchdlGrpBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY WSG_T.COMP_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcSchdlGrpB" resultType="Integer" parameterType="WcSchdlGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpBDao.countWcSchdlGrpB */
+		SELECT COUNT(*) CNT
+		FROM WC_SCHDL_GRP_B WSG_T
+		<include refid="selectWcSchdlGrpBWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWcSchdlGrpB" parameterType="WcSchdlGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpBDao.insertWcSchdlGrpB */
+		INSERT INTO WC_SCHDL_GRP_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SCHDL_GRP_ID,
+			COMP_ID,
+			GRP_NM,
+			REGR_UID,
+			REGR_NM,
+			MASTR_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{schdlGrpId, jdbcType=VARCHAR},
+			#{compId, jdbcType=CHAR},
+			#{grpNm, jdbcType=VARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			#{regrNm, jdbcType=VARCHAR},
+			#{mastrUid, jdbcType=VARCHAR},
+			STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),
+			
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWcSchdlGrpB" parameterType="WcSchdlGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpBDao.updateWcSchdlGrpB */
+		UPDATE WC_SCHDL_GRP_B
+		<set>
+		   
+			<if test="grpNm != null"> GRP_NM = #{grpNm, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null"> REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regrNm != null"> REGR_NM = #{regrNm, jdbcType=VARCHAR},</if>
+			<if test="mastrUid != null"> MASTR_UID = #{mastrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null"> REG_DT = STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			
+			
+		</set>
+		<where>
+			<if test="schdlGrpId != null  and schdlGrpId != ''">AND SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+			<if test="compId != null  and compId != ''">AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWcSchdlGrpB" parameterType="WcSchdlGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpBDao.deleteWcSchdlGrpB */
+		DELETE FROM WC_SCHDL_GRP_B
+		<where>
+		 	<if test="schdlGrpId != null and schdlGrpId != ''"> SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

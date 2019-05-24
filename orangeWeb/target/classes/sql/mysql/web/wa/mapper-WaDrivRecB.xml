@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WA_DRIV_REC_B[주행기록] -->
+<mapper namespace="com.innobiz.orange.web.wa.dao.WaDrivRecBDao">
+
+	<resultMap id="waDrivRecBMap" type="WaDrivRecBVo">
+		<id property="recNo" column="REC_NO" /><!-- 기록번호 -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="corpNo" column="CORP_NO" /><!-- 법인번호 -->
+		<result property="corpNm" column="CORP_NM" /><!-- 법인명 -->
+		<result property="corpRegNo" column="CORP_REG_NO" /><!-- 사업자등록번호 -->
+		<result property="carKndNo" column="CAR_KND_NO" /><!-- 차종번호 -->
+		<result property="carKndNm" column="CAR_KND_NM" /><!-- 차종명 -->
+		<result property="carRegNo" column="CAR_REG_NO" /><!-- 자동차등록번호 -->
+		<result property="strtDt" column="STRT_DT" /><!-- 시작일 -->
+		<result property="endDt" column="END_DT" /><!-- 종료일 -->
+		<result property="bodyXml" column="BODY_XML" /><!-- 본문XML -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<sql id="selectWaDrivRecBWhere">
+		<where>
+			<if test="recNo != null"> AND T.REC_NO = #{recNo, jdbcType=INTEGER}</if>
+			<if test="compId != null and compId !=''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="corpNo != null and corpNo !=''"> AND T.CORP_NO = #{corpNo, jdbcType=VARCHAR}</if>
+			<if test="carKndNo != null and carKndNo !=''"> AND T.CAR_KND_NO = #{carKndNo, jdbcType=VARCHAR}</if>
+			<if test="durCat == 'useYmd' and durStrtDt != null and durStrtDt != ''"><![CDATA[AND T.STRT_DT <= STR_TO_DATE(#{durEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="durCat == 'useYmd' and durEndDt != null and durEndDt != ''"><![CDATA[AND T.END_DT >= STR_TO_DATE(#{durStrtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<select id="selectWaDrivRecB" resultMap="waDrivRecBMap" parameterType="WaDrivRecBVo" >
+		/* com.innobiz.orange.web.wa.dao.WaDrivRecBDao.selectWaDrivRecB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.REC_NO,
+			T.COMP_ID,
+			T.CORP_NO,
+			C.CORP_NM,
+			C.CORP_REG_NO,
+			T.CAR_KND_NO,
+			K.CAR_KND_NM,
+			K.CAR_REG_NO,
+			T.STRT_DT,
+			T.END_DT,
+			T.BODY_XML,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,						
+		</trim>
+		FROM WA_DRIV_REC_B T INNER JOIN WA_CORP_B C ON T.CORP_NO = C.CORP_NO
+										   INNER JOIN WA_CAR_KND_L K ON T.CAR_KND_NO = K.CAR_KND_NO
+		<include refid="selectWaDrivRecBWhere" />
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countWaDrivRecB" resultType="Integer" parameterType="WaDrivRecBVo" >
+		/* com.innobiz.orange.web.wa.dao.WaDrivRecBDao.countWaDrivRecB */
+		SELECT COUNT(*) CNT 
+		FROM WA_DRIV_REC_B T INNER JOIN WA_CORP_B C ON T.CORP_NO = C.CORP_NO
+										   INNER JOIN WA_CAR_KND_L K ON T.CAR_KND_NO = K.CAR_KND_NO
+		<include refid="selectWaDrivRecBWhere" />
+	</select>
+
+	<insert id="insertWaDrivRecB" parameterType="WaDrivRecBVo">
+		/* com.innobiz.orange.web.wa.dao.WaDrivRecBDao.insertWaDrivRecB */
+		INSERT INTO WA_DRIV_REC_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			REC_NO,
+			COMP_ID,
+			CORP_NO,
+			CAR_KND_NO,
+			STRT_DT,
+			END_DT,
+			BODY_XML,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{recNo, jdbcType=INTEGER},
+			#{compId, jdbcType=VARCHAR},
+			#{corpNo, jdbcType=INTEGER},
+			#{carKndNo, jdbcType=INTEGER},
+			#{strtDt, jdbcType=VARCHAR},
+			#{endDt, jdbcType=VARCHAR},
+			#{bodyXml, jdbcType=NVARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+			
+	<update id="updateWaDrivRecB" parameterType="WaDrivRecBVo" >
+		/* com.innobiz.orange.web.pt.dao.WaDrivRecBDao.updateWaDrivRecB */
+		UPDATE WA_DRIV_REC_B
+		<set>
+			<if test="corpNo != null"> CORP_NO = #{corpNo, jdbcType=INTEGER},</if>
+			<if test="carKndNo != null"> CAR_KND_NO = #{carKndNo, jdbcType=INTEGER},</if>
+			<if test="strtDt != null"> STRT_DT = #{strtDt, jdbcType=VARCHAR},</if>
+			<if test="endDt != null"> END_DT = #{endDt, jdbcType=VARCHAR},</if>
+			<if test="bodyXml != null"> BODY_XML = #{bodyXml, jdbcType=VARCHAR},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'"> MOD_DT = NOW(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="recNo != null"> AND REC_NO = #{recNo, jdbcType=INTEGER}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWaDrivRecB" parameterType="WaDrivRecBVo">
+		/* com.innobiz.orange.web.wa.dao.WaDrivRecBDao.deleteWaDrivRecB */
+		DELETE FROM WA_DRIV_REC_B
+		<where>
+			AND REC_NO = #{recNo, jdbcType=INTEGER}
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+	
+</mapper>

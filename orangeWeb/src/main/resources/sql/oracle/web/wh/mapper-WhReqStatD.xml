@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WH_REQ_STAT_D[요청상태상세] -->
+<mapper namespace="com.innobiz.orange.web.wh.dao.WhReqStatDDao">
+
+	<resultMap id="whReqStatDMap" type="WhReqStatDVo">
+		<id property="reqNo" column="REQ_NO" /><!-- 요청번호 -->
+		<id property="statCd" column="STAT_CD" /><!-- 상태코드 -->
+		<result property="htmlYn" column="HTML_YN" /><!-- HTML여부 -->
+	</resultMap>
+      
+	<!-- 조회조건 -->
+	<sql id="selectWhReqStatDWhere">
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND T.REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="statCd != null and statCd !=''"> AND T.STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+			<if test="htmlYn != null and htmlYn !=''"> AND T.HTML_YN = #{htmlYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWhReqStatD" resultMap="whReqStatDMap" parameterType="WhReqStatDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqStatDDao.selectWhReqStatD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.REQ_NO,
+	        T.STAT_CD,
+	        T.HTML_YN,
+		</trim>
+		FROM WH_REQ_STAT_D T
+		<include refid="selectWhReqStatDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REQ_NO ASC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWhReqStatD" resultType="Integer" parameterType="WhReqStatDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqStatDDao.countWhReqStatD */
+		SELECT COUNT(*) CNT
+		FROM WH_REQ_STAT_D T
+		<include refid="selectWhReqStatDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWhReqStatD" parameterType="WhReqStatDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqStatDDao.insertWhReqStatD */
+		INSERT INTO WH_REQ_STAT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			REQ_NO,
+	        STAT_CD,
+	        HTML_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{reqNo, jdbcType=INTEGER},
+			#{statCd, jdbcType=VARCHAR},
+			#{htmlYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWhReqStatD" parameterType="WhReqStatDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqStatDDao.updateWhReqStatD */
+		UPDATE WH_REQ_STAT_D
+		<set>
+			<if test="htmlYn != null"> HTML_YN = #{htmlYn, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="statCd != null and statCd !=''"> AND STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWhReqStatD" parameterType="WhReqStatDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqStatDDao.deleteWhReqStatD */
+		DELETE FROM WH_REQ_STAT_D
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="statCd != null and statCd !=''"> AND STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_SCHDL_REPET_SETUP_D[반복설정 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtSchdlRepetSetupDDao">
+
+	<resultMap id="ctSchdlRepetSetupDMap" type="CtSchdlRepetSetupDVo">
+		<id property="schdlId" column="SCHDL_ID" /><!-- 일정ID -->
+		<id property="repetPerdCd" column="REPET_PERD_CD" /><!-- 반복주기코드 -->
+		<id property="apntMm" column="APNT_MM" /><!-- 지정월 -->
+		<id property="repetMm" column="REPET_MM" /><!-- 반복월 -->
+		<id property="apntWk" column="APNT_WK" /><!-- 지정주 -->
+		<id property="repetWk" column="REPET_WK" /><!-- 반복주 -->
+		<id property="apntDy" column="APNT_DY" /><!-- 지정요일 -->
+		<id property="repetDd" column="REPET_DD" /><!-- 반복일 -->
+		<id property="apntDd" column="APNT_DD" /><!-- 지정일 -->
+		<id property="repetStartDt" column="REPET_START_DT" /><!-- 반복시작일시 -->
+		<id property="repetEndDt" column="REPET_END_DT" /><!-- 반복종료일시 -->
+	</resultMap>
+	
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtSchdlRepetSetupDWhere">
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND WRS_T.SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtSchdlRepetSetupD" resultMap="ctSchdlRepetSetupDMap" parameterType="CtSchdlRepetSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSchdlRepetSetupDDao.selectCtSchdlRepetSetupD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			WRS_T.SCHDL_ID,
+			WRS_T.REPET_PERD_CD,
+			WRS_T.APNT_MM,
+			WRS_T.REPET_MM,
+			WRS_T.APNT_WK,
+			WRS_T.REPET_WK,
+			WRS_T.APNT_DY,
+			WRS_T.REPET_DD,
+			WRS_T.APNT_DD,
+			WRS_T.REPET_START_DT,
+			WRS_T.REPET_END_DT
+		</trim>
+		FROM CT_SCHDL_REPET_SETUP_D WRS_T
+		<include refid="selectCtSchdlRepetSetupDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY WRS_T.SCHDL_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtSchdlRepetSetupD" resultType="Integer" parameterType="CtSchdlRepetSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSchdlRepetSetupDDao.countCtSchdlRepetSetupD */
+		SELECT COUNT(*) CNT
+		FROM CT_SCHDL_REPET_SETUP_D WRS_T
+		<include refid="selectCtSchdlRepetSetupDWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertCtSchdlRepetSetupD" parameterType="CtSchdlRepetSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSchdlRepetSetupDDao.insertCtSchdlRepetSetupD */
+		INSERT INTO CT_SCHDL_REPET_SETUP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SCHDL_ID,
+			REPET_PERD_CD,
+			APNT_MM,
+			REPET_MM,
+			APNT_WK,
+			REPET_WK,
+			APNT_DY,
+			REPET_DD,
+			APNT_DD,
+			REPET_START_DT,
+			REPET_END_DT
+			
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{schdlId, jdbcType=VARCHAR},
+			#{repetPerdCd, jdbcType=VARCHAR},
+			#{apntMm, jdbcType=VARCHAR},
+			#{repetMm, jdbcType=VARCHAR},
+			#{apntWk, jdbcType=VARCHAR},
+			#{repetWk, jdbcType=VARCHAR},
+			#{apntDy, jdbcType=VARCHAR},
+			#{repetDd, jdbcType=VARCHAR},
+			#{apntDd, jdbcType=VARCHAR},
+			TO_DATE(#{repetStartDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),
+			TO_DATE(#{repetEndDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),
+			
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateCtSchdlRepetSetupD" parameterType="CtSchdlRepetSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSchdlRepetSetupDDao.updateCtSchdlRepetSetupD */
+		UPDATE CT_SCHDL_REPET_SETUP_D
+		<set>
+			<if test="repetPerdCd != null"> REPET_PERD_CD = #{repetPerdCd, jdbcType=VARCHAR},</if>
+			<if test="apntMm != null"> APNT_MM = #{apntMm, jdbcType=VARCHAR},</if>
+			<if test="repetMm != null"> REPET_MM = #{repetMm, jdbcType=VARCHAR},</if>
+			<if test="apntWk != null"> APNT_WK = #{apntWk, jdbcType=VARCHAR},</if>
+			<if test="repetWk != null"> REPET_WK = #{repetWk, jdbcType=VARCHAR},</if>
+			<if test="apntDy != null"> APNT_DY = #{apntDy, jdbcType=VARCHAR},</if>
+			<if test="repetDd != null"> REPET_DD = #{repetDd, jdbcType=VARCHAR},</if>
+			<if test="apntDd != null"> APNT_DD = #{apntDd, jdbcType=VARCHAR},</if>
+			<if test="repetStartDt != null"> REPET_START_DT =TO_DATE(#{repetStartDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="repetEndDt != null"> REPET_END_DT =TO_DATE(#{repetEndDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</set>
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteCtSchdlRepetSetupD" parameterType="CtSchdlRepetSetupDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSchdlRepetSetupDDao.deleteCtSchdlRepetSetupD */
+		DELETE FROM CT_SCHDL_REPET_SETUP_D
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

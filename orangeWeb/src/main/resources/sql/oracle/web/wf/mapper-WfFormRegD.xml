@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WF_FORM_REG_D [양식등록상세] -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfFormRegDDao">
+
+	<resultMap id="wfFormRegDMap" type="WfFormRegDVo">
+		<id property="genId" column="GEN_ID" /><!-- 생성ID -->
+		<id property="formNo" column="FORM_NO" /><!-- 양식번호 -->
+		<result property="loutVa" column="LOUT_VA" /><!-- 레이아웃값 -->
+		<result property="attrVa" column="ATTR_VA" /><!-- 속성값 -->
+		<result property="tabVa" column="TAB_VA" /><!-- 탭값 -->
+		<result property="mobRegTypCd" column="MOB_REG_TYP_CD" /><!-- 모바일등록구분코드 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+	</resultMap>
+	
+	
+	<!-- 조회조건 -->
+	<sql id="selectWfFormRegDWhere">
+		<where>
+			<if test="genId != null and genId !=''"> AND T.GEN_ID = #{genId, jdbcType=VARCHAR}</if>
+			<if test="formNo != null and formNo !=''"> AND T.FORM_NO = #{formNo, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWfFormRegD" resultMap="wfFormRegDMap" parameterType="WfFormRegDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormRegDDao.selectWfFormRegD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			<if test="isHst">T.GEN_ID,</if>
+			T.FORM_NO,
+			T.LOUT_VA,
+	       <if test="!isMob"> T.ATTR_VA,</if>
+	        T.TAB_VA,
+	        <if test="!isMob">T.MOB_REG_TYP_CD,</if>
+	        <if test="isHst">G.REG_DT,</if>
+		</trim>
+		FROM <if test="!isHst"><if test="!isMob">WF_FORM_REG_D</if><if test="isMob">WF_FORM_MOB_D</if> T</if><if test="isHst"><if test="!isMob">WF_FORM_REG_H</if><if test="isMob">WF_FORM_MOB_H</if> T INNER JOIN WF_FORM_GEN_L G ON T.GEN_ID = G.GEN_ID AND T.FORM_NO = G.FORM_NO</if>
+		<include refid="selectWfFormRegDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.FORM_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWfFormRegD" resultType="Integer" parameterType="WfFormRegDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormRegDDao.countWfFormRegD */
+		SELECT COUNT(*) CNT
+		FROM <if test="!isHst"><if test="!isMob">WF_FORM_REG_D</if><if test="isMob">WF_FORM_MOB_D</if> T</if><if test="isHst"><if test="!isMob">WF_FORM_REG_H</if><if test="isMob">WF_FORM_MOB_H</if> T INNER JOIN WF_FORM_GEN_L G ON T.GEN_ID = G.GEN_ID AND T.FORM_NO = G.FORM_NO</if>
+		<include refid="selectWfFormRegDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWfFormRegD" parameterType="WfFormRegDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormRegDDao.insertWfFormRegD */
+		INSERT INTO <if test="!isHst"><if test="!isMob">WF_FORM_REG_D</if><if test="isMob">WF_FORM_MOB_D</if></if><if test="isHst"><if test="!isMob">WF_FORM_REG_H</if><if test="isMob">WF_FORM_MOB_H</if></if>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="isHst">GEN_ID,</if>
+			FORM_NO,
+			LOUT_VA,
+	        <if test="!isMob">ATTR_VA,</if>
+	        TAB_VA,
+	        <if test="!isMob">MOB_REG_TYP_CD,</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			<if test="isHst">#{genId, jdbcType=VARCHAR},</if>
+			#{formNo, jdbcType=INTEGER},
+			#{loutVa, jdbcType=LONGVARCHAR},
+			<if test="!isMob">#{attrVa, jdbcType=LONGVARCHAR},</if>
+			#{tabVa, jdbcType=LONGVARCHAR},
+			<if test="!isMob">#{mobRegTypCd, jdbcType=CHAR},</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWfFormRegD" parameterType="WfFormRegDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormRegDDao.updateWfFormRegD */
+		UPDATE <if test="!isHst"><if test="!isMob">WF_FORM_REG_D</if><if test="isMob">WF_FORM_MOB_D</if></if><if test="isHst"><if test="!isMob">WF_FORM_REG_H</if><if test="isMob">WF_FORM_MOB_H</if></if>
+		<set>
+			<if test="loutVa != null"> LOUT_VA = #{loutVa, jdbcType=LONGVARCHAR},</if>
+			<if test="!isMob"><if test="attrVa != null"> ATTR_VA = #{attrVa, jdbcType=LONGVARCHAR},</if></if>
+			<if test="tabVa != null"> TAB_VA = #{tabVa, jdbcType=LONGVARCHAR},</if>
+			<if test="!isMob"><if test="mobRegTypCd != null"> MOB_REG_TYP_CD = #{mobRegTypCd, jdbcType=LONGVARCHAR},</if></if>
+		</set>
+		<where>
+			<if test="isHst and genId != null and genId !=''"> AND GEN_ID = #{genId, jdbcType=VARCHAR}</if>
+			<if test="formNo != null and formNo !=''"> AND FORM_NO = #{formNo, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWfFormRegD" parameterType="WfFormRegDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormRegDDao.deleteWfFormRegD */
+		DELETE FROM <if test="!isHst"><if test="!isMob">WF_FORM_REG_D</if><if test="isMob">WF_FORM_MOB_D</if></if><if test="isHst"><if test="!isMob">WF_FORM_REG_H</if><if test="isMob">WF_FORM_MOB_H</if></if>
+		<where>
+			<if test="isHst and genId != null and genId !=''"> AND GEN_ID = #{genId, jdbcType=VARCHAR}</if>
+			<if test="formNo != null"> AND FORM_NO = #{formNo, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

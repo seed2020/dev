@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_SITE_B [커뮤니티 사이트 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtSiteBDao">
+
+	<resultMap id="ctSiteBMap" type="CtSiteBVo">
+		
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="ctId" column="CT_ID" /><!--커뮤니티ID-->
+		<id property="siteId" column="SITE_ID" /><!--COOL SITE ID-->
+		
+		<result property="ctFncId" column="CT_FNC_ID" /><!--커뮤니티 기능 ID-->
+		<result property="ctFncOrdr" column="CT_FNC_ORDR" /><!--커뮤니티 기능순서-->
+		<result property="subj" column="SUBJ" /><!-- 제목 -->
+		<result property="catId" column="CAT_ID" /><!-- 카테고리 ID -->
+		<result property="url" column="URL" /><!-- URL -->
+		<result property="cont" column="CONT" /><!-- 본문 -->
+		<result property="readCnt" column="READ_CNT" /><!-- 조회수 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="editorTypCd" column="EDITOR_TYP_CD" /><!-- 에디터 타입 코드-->
+		<result property="ctFncLocStep" column="CT_FNC_LOC_STEP" /><!-- 커뮤니티 기능 위치 단계 -->
+    	<result property="ctFncUid" column="CT_FNC_UID" /><!-- 커뮤니티 기능 UID -->
+    	<result property="ctFncPid" column="CT_FNC_PID" /><!-- 커뮤니티 기능 부모ID -->
+     	<result property="langTyp" column="LANG_TYP" /><!-- 사용자 언어 타입 코드 -->
+     	<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+     	<result property="modrNm" column="MODR_NM" /><!-- 수정자명 -->
+     	<result property="catNm" column="CAT_NM" /><!-- 카테고리명-->
+     	
+     	<!-- 커뮤니티 자료검색  -->
+	    <result property="fncNm" column="FNC_NM" /><!-- 기능명 -->
+	    <result property="strtDt" column="START_DT" /><!--시작 일시-->
+		<result property="endDt" column="END_DT" /><!--종료 일시-->
+		<result property="ctFncUrl" column="CT_FNC_URL" /><!--커뮤니티 기능 URL -->
+		<result property="relTblSubj" column="REL_TBL_SUBJ" /><!--관계테이블명 -->
+		<result property="ctNm" column="CT_NM" /><!--커뮤니티 명-->
+		<result property="mastNm" column="MAST_NM" /><!-- 마스터명 -->
+		<result property="mastUid" column="MAST_UID" /><!-- 마스터UID -->
+
+	</resultMap>
+
+	<!-- 조회조건 -->
+	<sql id="selectCtSiteBWhere">
+	     <if test="'masterOpt'.equals(schCat) and schWord != null and schWord != ''">
+		        INNER JOIN CT_ESTB_B CEB_T ON CSB_T.CT_ID = CEB_T.CT_ID 
+		        INNER JOIN OR_USER_B OUB ON CEB_T.MAST_UID = OUB.USER_UID
+		         		AND OUB.USER_NM LIKE '%'||#{schWord, jdbcType=VARCHAR}||'%'
+		</if>
+	    <where>
+	    	<if test="compId != null and compId != ''"> AND CSB_T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+	        <if test="ctId != null and ctId != ''"> AND CSB_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+	        <if test="siteId != null and siteId != ''"> AND CSB_T.SITE_ID = #{siteId, jdbcType=VARCHAR}</if>
+	        <if test="catId != null and catId != ''"> AND CSB_T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+	        <if test="schCat == 'SUBJ' and schWord != null and schWord != ''"> AND CSB_T.SUBJ like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<if test="schCat == 'CONT' and schWord != null and schWord != ''"> AND CSB_T.CONT like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''"> AND R.RESC_VA like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<!-- 날짜로 커뮤니티 자료검색  -->
+			<if test="strtDt != null and strtDt != '' and  endDt != null and endDt != ''">
+				AND TO_CHAR(CSB_T.REG_DT, 'YYYY-MM-DD') BETWEEN #{strtDt, jdbcType=VARCHAR} AND #{endDt, jdbcType=VARCHAR}
+			</if>
+			<if test="ctIdList != null">
+	   			<![CDATA[ AND CT_ID IN ]]>
+	   				 <foreach collection="ctIdList" item="item" index="index" separator="," open="(" close=")">
+			            	#{item, jdbcType=VARCHAR}
+			        </foreach>	   			
+	   		</if>
+			<if test="'communityOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        AND (
+							SELECT RESC_VA 
+							FROM CT_RESC_B
+							WHERE RESC_ID = (
+												SELECT CT_SUBJ_RESC 
+												FROM CT_ESTB_B
+												WHERE CT_ID = CSB_T.CT_ID
+												AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+											)
+			      		) LIKE '%'||#{schWord, jdbcType=VARCHAR}||'%'
+			</if>
+	    </where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtSiteB" resultMap="ctSiteBMap" parameterType="CtSiteBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSiteBDao.selectCtSiteB */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			CSB_T.COMP_ID, CSB_T.CT_ID, CSB_T.SITE_ID,
+			CSB_T.CT_FNC_ID, CSB_T.CT_FNC_ORDR, CSB_T.SUBJ,
+			CSB_T.CAT_ID, CSB_T.URL, CSB_T.CONT, 
+			CSB_T.READ_CNT, CSB_T.REG_DT, CSB_T.MOD_DT, 
+			CSB_T.REGR_UID, CSB_T.MODR_UID, CSB_T.EDITOR_TYP_CD,
+			CSB_T.CT_FNC_LOC_STEP, CSB_T.CT_FNC_UID, CSB_T.CT_FNC_PID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CSB_T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CSB_T.MODR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) MODR_NM,
+			(SELECT RESC_VA FROM CT_RESC_B WHERE RESC_ID = (SELECT CAT_NM_RESC_ID FROM CT_SITE_CAT_D WHERE CAT_ID = CSB_T.CAT_ID ) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko'))CAT_NM,
+			(SELECT RESC_VA FROM CT_RESC_B
+				WHERE LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+				AND RESC_ID=(				
+								SELECT CT_FNC_SUBJ_RESC_ID FROM CT_FNC_D
+								WHERE CT_FNC_UID = CSB_T.CT_FNC_UID
+							)
+      		)FNC_NM,
+      		(
+      			SELECT URL 
+				FROM CT_FNC_MNG_B
+				WHERE CSB_T.CT_FNC_ID = CT_FNC_ID
+				
+			)CT_FNC_URL,
+		   (
+      			SELECT REL_TBL_SUBJ 
+				FROM CT_FNC_MNG_B
+				WHERE CSB_T.CT_FNC_ID = CT_FNC_ID
+			)REL_TBL_SUBJ,
+			(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = (SELECT CT_SUBJ_RESC FROM CT_ESTB_B WHERE CT_ID = CSB_T.CT_ID)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CT_NM,
+      		(SELECT RESC_VA
+		      	FROM OR_RESC_B
+		      	WHERE RESC_ID = (
+		      						SELECT RESC_ID
+		      						FROM OR_USER_B
+		      						WHERE USER_UID = (
+		      											SELECT MAST_UID
+														FROM CT_ESTB_B
+														WHERE CSB_T.CT_ID = CT_ID
+		      						
+		      										)
+		      					)
+				AND LANG_TYP_CD = #{queryLang, jdbcType=VARCHAR}
+		    )MAST_NM,
+		    (
+				SELECT MAST_UID
+				FROM CT_ESTB_B
+				WHERE CSB_T.CT_ID = CT_ID
+			)MAST_UID,
+			
+		</trim>
+		FROM CT_SITE_B CSB_T
+		<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''">
+			LEFT JOIN OR_USER_B U ON CSB_T.REGR_UID = U.USER_UID
+			LEFT JOIN OR_RESC_B R ON U.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectCtSiteBWhere"/>
+		
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CSB_T.SITE_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtSiteB" resultType="Integer" parameterType="CtSiteBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSiteBDao.countCtSiteB */
+		SELECT COUNT(*) CNT
+		FROM CT_SITE_B CSB_T
+		<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''">
+			LEFT JOIN OR_USER_B U ON CSB_T.REGR_UID = U.USER_UID
+			LEFT JOIN OR_RESC_B R ON U.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectCtSiteBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtSiteB" parameterType="CtSiteBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSiteBDao.insertCtSiteB */
+		INSERT INTO CT_SITE_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID, CT_ID, SITE_ID,
+			CT_FNC_ID, CT_FNC_ORDR, SUBJ,
+			CAT_ID, URL, CONT, 
+			READ_CNT, REG_DT, MOD_DT, 
+			REGR_UID, MODR_UID, EDITOR_TYP_CD,
+			CT_FNC_LOC_STEP, CT_FNC_UID, CT_FNC_PID,
+
+		    
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=VARCHAR}, #{ctId, jdbcType=VARCHAR}, #{siteId, jdbcType=VARCHAR},
+			#{ctFncId, jdbcType=VARCHAR}, #{ctFncOrdr, jdbcType=NUMERIC}, #{subj, jdbcType=NVARCHAR},
+			#{catId, jdbcType=VARCHAR}, #{url, jdbcType=NVARCHAR}, #{cont, jdbcType=NCLOB},
+			#{readCnt, jdbcType=NUMERIC}, TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'), TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),
+			#{regrUid, jdbcType=VARCHAR}, #{modrUid, jdbcType=VARCHAR}, #{editorTypCd, jdbcType=NUMERIC},
+			#{ctFncLocStep, jdbcType=VARCHAR}, #{ctFncUid, jdbcType=VARCHAR}, #{ctFncPid, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtSiteB" parameterType="CtSiteBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSiteBDao.updateCtSiteB */
+		UPDATE CT_SITE_B
+		<set>
+			<if test="ctFncId != null"> CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR},</if>
+			<if test="ctFncOrdr != null"> CT_FNC_ORDR = #{ctFncOrdr, jdbcType=NUMERIC},</if>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=NVARCHAR},</if>
+			<if test="catId != null"> CAT_ID = #{catId, jdbcType=VARCHAR},</if>
+			<if test="url != null"> URL = #{url, jdbcType=NVARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=NCLOB},</if>
+			<if test="readCnt != null"> READ_CNT = #{readCnt, jdbcType=NUMERIC},</if>
+			<if test="modDt != null"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="editorTypCd != null"> EDITOR_TYP_CD = #{editorTypCd, jdbcType=NUMERIC},</if>
+			<if test="ctFncLocStep != null"> CT_FNC_LOC_STEP = #{ctFncLocStep, jdbcType=VARCHAR},</if>
+		    <if test="ctFncUid != null"> CT_FNC_UID = #{ctFncUid, jdbcType=VARCHAR},</if>
+		    <if test="ctFncPid != null"> CT_FNC_PID = #{ctFncPid, jdbcType=VARCHAR},</if>
+			
+		</set>
+		<where>
+		    <if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="ctId != null and ctId !=''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		    <if test="siteId != null and siteId != ''"> AND SITE_ID = #{siteId, jdbcType=VARCHAR}</if>
+	    </where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtSiteB" parameterType="CtSiteBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSiteBDao.deleteCtSiteB */
+		DELETE FROM CT_SITE_B
+		<where>
+		    <if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="ctId != null and ctId !=''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		    <if test="siteId != null and siteId != ''"> AND SITE_ID = #{siteId, jdbcType=VARCHAR}</if>
+	    </where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : OR_USER_PW_LOST_D[사용자비밀번호분실상세] -->
+<mapper namespace="com.innobiz.orange.web.or.dao.OrUserPwLostDDao">
+
+	<resultMap id="orUserPwLostDMap" type="OrUserPwLostDVo">
+		<id property="lostId" column="LOST_ID" /><!-- 분실ID -->
+		<id property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<result property="langTypCd" column="LANG_TYP_CD" /><!-- 언어구분코드 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectOrUserPwLostD" resultMap="orUserPwLostDMap" parameterType="OrUserPwLostDVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserPwLostDDao.selectOrUserPwLostD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.LOST_ID,
+			T.ODUR_UID,
+			T.LANG_TYP_CD,
+			TO_CHAR(T.REG_DT, 'YYYY-MM-DD HH24:MI:SS') REG_DT,
+		</trim>
+		FROM OR_USER_PW_LOST_D T
+		<where>
+			<if test="lostId != null">AND T.LOST_ID = #{lostId, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.LOST_ID, T.ODUR_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countOrUserPwLostD" resultType="Integer" parameterType="OrUserPwLostDVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserPwLostDDao.countOrUserPwLostD */
+		SELECT COUNT(*) CNT
+		FROM OR_USER_PW_LOST_D T
+		<where>
+			<if test="lostId != null">AND T.LOST_ID = #{lostId, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertOrUserPwLostD" parameterType="OrUserPwLostDVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserPwLostDDao.insertOrUserPwLostD */
+		INSERT INTO OR_USER_PW_LOST_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			LOST_ID,
+			ODUR_UID,
+			LANG_TYP_CD,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{lostId, jdbcType=VARCHAR},
+			#{odurUid, jdbcType=VARCHAR},
+			#{langTypCd, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateOrUserPwLostD" parameterType="OrUserPwLostDVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserPwLostDDao.updateOrUserPwLostD */
+		UPDATE OR_USER_PW_LOST_D
+		<set>
+			<if test="lostId != null">LOST_ID = #{lostId, jdbcType=VARCHAR},</if>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="langTypCd != null">LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = SYSDATE,</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="lostId != null">AND LOST_ID = #{lostId, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteOrUserPwLostD" parameterType="OrUserPwLostDVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserPwLostDDao.deleteOrUserPwLostD */
+		DELETE FROM OR_USER_PW_LOST_D
+		<where>
+			<if test="lostId != null">AND LOST_ID = #{lostId, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

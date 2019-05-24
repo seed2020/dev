@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_SCHDL_GRP_MBSH_D[일정 그룹 회원 상세] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcSchdlGrpMbshDDao">
+
+	<resultMap id="wcSchdlGrpMbshDMap" type="WcSchdlGrpMbshDVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자 UID -->
+		<id property="schdlGrpId" column="SCHDL_GRP_ID" /><!-- 일정 그룹ID -->
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<id property="mbshTypCd" column="MBSH_TYP_CD" /><!-- 회원구분코드 -->
+		<id property="authGradCd" column="AUTH_GRAD_CD" /><!-- 권한등급코드 -->
+		<id property="emailSendYn" column="EMAIL_SEND_YN" /><!-- 이메일발송여부 -->
+		
+		<result property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<result property="orgId" column="ORG_ID" /><!-- 조직ID -->
+		<result property="orgRescId" column="ORG_RESC_ID" /><!-- 조직리소스ID -->
+		<result property="deptId" column="DEPT_ID" /><!-- 부서ID -->
+		<result property="deptRescId" column="DEPT_RESC_ID" /><!-- 부서리소스ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="seculCd" column="SECUL_CD" /><!-- 보안등급코드 -->
+		<result property="gradeCd" column="GRADE_CD" /><!-- 직급코드 -->
+		<result property="titleCd" column="TITLE_CD" /><!-- 직책코드 -->
+		<result property="positCd" column="POSIT_CD" /><!-- 직위코드 -->
+		<result property="dutyCd" column="DUTY_CD" /><!-- 직무코드 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="aduTypCd" column="ADU_TYP_CD" /><!-- 겸직구분코드 -->
+		<result property="strtYmd" column="STRT_YMD" /><!-- 시작년월일 -->
+		<result property="endYmd" column="END_YMD" /><!-- 종료년월일 -->
+		<result property="userStatCd" column="USER_STAT_CD" /><!-- 사용자상태코드 -->
+		<result property="endRson" column="END_RSON" /><!-- 종료사유 -->
+		<result property="tichCont" column="TICH_CONT" /><!-- 담당업무내용 -->
+		<result property="signMthdCd" column="SIGN_MTHD_CD" /><!-- 서명방법코드 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		
+		<result property="langTypCd" column="LANG_TYP_CD" /><!-- 언어구분코드 -->
+		<result property="rescVa" column="RESC_VA" /><!-- 리소스값 -->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWcSchdlGrpMbshDWhere">
+	    <if test="'deptOption'.equals(schCat) and schWord != null and schWord != ''">
+			    INNER JOIN OR_USER_B OUB 
+			    	ON WSGM_T.USER_UID = OUB.USER_UID
+			    	
+			    	INNER JOIN OR_RESC_B ORB
+			    		ON OUB.DEPT_RESC_ID = ORB.RESC_ID 
+			    			AND ORB.LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')
+						    AND ORB.RESC_VA LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+		<where>
+			<if test="userUid != null and userUid !=''"> AND WSGM_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="schdlGrpId != null and schdlGrpId !=''"> AND WSGM_T.SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND WSGM_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="'nameOption'.equals(schCat) and schWord != null and schWord != ''">AND WSGM_T.USER_NM LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+
+
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcSchdlGrpMbshD" resultMap="wcSchdlGrpMbshDMap" parameterType="WcSchdlGrpMbshDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpMbshDDao.selectWcSchdlGrpMbshD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.USER_UID,N.SCHDL_GRP_ID,N.COMP_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			WSGM_T.USER_UID,
+			WSGM_T.SCHDL_GRP_ID,
+			WSGM_T.COMP_ID,
+			WSGM_T.USER_NM,
+			WSGM_T.MBSH_TYP_CD,
+			WSGM_T.AUTH_GRAD_CD,
+			WSGM_T.EMAIL_SEND_YN
+		</trim>
+		FROM WC_SCHDL_GRP_MBSH_D WSGM_T
+		<include refid="selectWcSchdlGrpMbshDWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY WSGM_T.USER_UID,WSGM_T.SCHDL_GRP_ID,WSGM_T.COMP_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcSchdlGrpMbshD" resultType="Integer" parameterType="WcSchdlGrpMbshDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpMbshDDao.countWcSchdlGrpMbshD */
+		SELECT COUNT(*) CNT
+		FROM WC_SCHDL_GRP_MBSH_D WSGM_T
+		<include refid="selectWcSchdlGrpMbshDWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWcSchdlGrpMbshD" parameterType="WcSchdlGrpMbshDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpMbshDDao.insertWcSchdlGrpMbshD */
+		INSERT INTO WC_SCHDL_GRP_MBSH_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			SCHDL_GRP_ID,
+			COMP_ID,
+			USER_NM,
+			MBSH_TYP_CD,
+			AUTH_GRAD_CD,
+			EMAIL_SEND_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR},
+			#{schdlGrpId, jdbcType=VARCHAR},
+			#{compId, jdbcType=CHAR},
+			#{userNm, jdbcType=VARCHAR},
+			#{mbshTypCd, jdbcType=VARCHAR},
+			#{authGradCd, jdbcType=VARCHAR},
+			#{emailSendYn, jdbcType=CHAR},
+			
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWcSchdlGrpMbshD" parameterType="WcSchdlGrpMbshDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpMbshDDao.updateWcSchdlGrpMbshD */
+		UPDATE WC_SCHDL_GRP_MBSH_D
+		<set>
+		    <if test="userNm != null"> USER_NM = #{userNm, jdbcType=VARCHAR},</if>
+			<if test="mbshTypCd != null"> MBSH_TYP_CD = #{mbshTypCd, jdbcType=VARCHAR},</if>
+			<if test="authGradCd != null"> AUTH_GRAD_CD = #{authGradCd, jdbcType=VARCHAR},</if>
+			<if test="emailSendYn != null"> EMAIL_SEND_YN = #{emailSendYn, jdbcType=CHAR},</if>
+			
+		</set>
+		<where>
+		    <if test="grpMbshList != null"> 
+		        <if test="schdlGrpId != null and schdlGrpId != ''">SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+		        AND USER_UID 
+			    IN
+			    <foreach item="grpMbsh" index="index" collection="grpMbshList"
+				      open="(" close=")" separator="," >
+				        #{grpMbsh, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+			<if test="grpMbshList == null">
+			    <if test="schdlGrpId != null and schdlGrpId != ''">SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+			    <if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWcSchdlGrpMbshD" parameterType="WcSchdlGrpMbshDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlGrpMbshDDao.deleteWcSchdlGrpMbshD */
+		DELETE FROM WC_SCHDL_GRP_MBSH_D
+		<where>
+		    <if test="grpMbshList != null"> 
+		        <if test="schdlGrpId != null and schdlGrpId != ''">SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+			    
+		        AND USER_UID 
+			    IN
+			    <foreach item="grpMbsh" index="index" collection="grpMbshList"
+				      open="(" close=")" separator="," >
+				        #{grpMbsh, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+			<if test="grpMbshList == null">
+			    <if test="schdlGrpId != null and schdlGrpId != ''">SCHDL_GRP_ID = #{schdlGrpId, jdbcType=VARCHAR}</if>
+			    <if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			</if>
+
+		</where>
+	</delete>
+
+</mapper>

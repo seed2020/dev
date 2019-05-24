@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WH_REQ_EVAL_D[요청평가상세] -->
+<mapper namespace="com.innobiz.orange.web.wh.dao.WhReqEvalDDao">
+
+	<resultMap id="whReqEvalDMap" type="WhReqEvalDVo">
+		<id property="reqNo" column="REQ_NO" /><!-- 요청번호 -->
+		<result property="evalNo" column="EVAL_NO" /><!-- 평가번호-->
+		<result property="evalNm" column="EVAL_NM" /><!-- 평가명-->
+		<result property="evalRson" column="EVAL_RSON" /><!-- 평가사유 -->
+		<result property="addReqr" column="ADD_REQR" /><!-- 추가요청사항 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->		
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWhReqEvalDWhere">
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND T.REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="evalNo != null and evalNo !=''"> AND T.EVAL_NO = #{evalNo, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid !=''"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWhReqEvalD" resultMap="whReqEvalDMap" parameterType="WhReqEvalDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqEvalDDao.selectWhReqEvalD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.REQ_NO,
+			T.EVAL_NO,
+			(SELECT RESC_VA FROM WH_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM WH_RES_EVAL_B WHERE EVAL_NO = T.EVAL_NO) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) EVAL_NM,
+			T.EVAL_RSON,
+			T.ADD_REQR,
+			T.REGR_UID,
+			T.REG_DT,
+	        (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+		</trim>
+		FROM WH_REQ_EVAL_D T
+		<include refid="selectWhReqEvalDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REQ_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWhReqEvalD" resultType="Integer" parameterType="WhReqEvalDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqEvalDDao.countWhReqEvalD */
+		SELECT COUNT(*) CNT
+		FROM WH_REQ_EVAL_D T
+		<include refid="selectWhReqEvalDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWhReqEvalD" parameterType="WhReqEvalDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqEvalDDao.insertWhReqEvalD */
+		INSERT INTO WH_REQ_EVAL_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			REQ_NO,
+	        EVAL_NO,
+			EVAL_RSON,
+			ADD_REQR,
+			REGR_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{reqNo, jdbcType=INTEGER},
+			#{evalNo, jdbcType=INTEGER},
+			#{evalRson, jdbcType=NVARCHAR},
+			#{addReqr, jdbcType=NVARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWhReqEvalD" parameterType="WhReqEvalDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqEvalDDao.updateWhReqEvalD */
+		UPDATE WH_REQ_EVAL_D
+		<set>
+			<if test="evalNo != null"> EVAL_NO = #{evalNo, jdbcType=INTEGER},</if>
+			<if test="evalRson != null"> EVAL_RSON = #{evalRson, jdbcType=NVARCHAR},</if>
+			<if test="addReqr != null"> ADD_REQR = #{addReqr, jdbcType=NVARCHAR},</if>
+		</set>
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWhReqEvalD" parameterType="WhReqEvalDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqEvalDDao.deleteWhReqEvalD */
+		DELETE FROM WH_REQ_EVAL_D
+		<where>
+			<if test="reqNo != null"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

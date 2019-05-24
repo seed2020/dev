@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_TASK_H[작업이력] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmTaskHDao">
+	
+	<resultMap id="dmTaskHMap" type="DmTaskHVo">
+		<id property="docGrpId" column="DOC_GRP_ID" /><!-- 문서그룹ID -->
+		<id property="taskDt" column="TASK_DT" /><!-- 작업일시 -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="taskCd" column="TASK_CD" /><!-- 작업코드 -->
+		<result property="note" column="NOTE" /><!-- 비고 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectDmTaskHWhere">
+		<where>
+			<if test="docGrpId != null and docGrpId !=''"> AND T.DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="'taskDt'.equals(durCat) and durStrtDt != null and durStrtDt != ''"><![CDATA[AND TO_CHAR( T.TASK_DT, 'YYYY-MM-DD') >= #{durStrtDt, jdbcType=VARCHAR}]]></if>
+			<if test="'taskDt'.equals(durCat) and durEndDt != null and durEndDt != ''"><![CDATA[AND TO_CHAR( T.TASK_DT, 'YYYY-MM-DD') <= #{durEndDt, jdbcType=VARCHAR}]]></if>
+			<if test="taskCd != null and taskCd !=''"> AND T.TASK_CD = #{taskCd, jdbcType=CHAR}</if>
+			<if test="taskDt != null and taskDt !=''"> AND TO_CHAR( T.TASK_DT, 'YYYY-MM-DD') = #{taskDt, jdbcType=VARCHAR}</if>
+			<if test="taskCdList != null and taskCdList !=''">
+				<foreach item="cdVa" index="index" collection="taskCdList" open=" AND T.TASK_CD IN(" close=")" separator=",">
+				#{cdVa, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectDmTaskH" resultMap="dmTaskHMap" parameterType="DmTaskHVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTaskHDao.selectDmTaskH */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.DOC_GRP_ID,
+			T.TASK_DT,
+			T.USER_UID,
+			T.TASK_CD,
+			T.NOTE,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+		</trim>
+		FROM DM_${tableName}_TASK_H T
+		<include refid="selectDmTaskHWhere" />
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TASK_DT DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countDmTaskH" resultType="Integer" parameterType="DmTaskHVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTaskHDao.countDmTaskH */
+		SELECT COUNT(*) CNT
+		FROM DM_${tableName}_TASK_H T
+		<include refid="selectDmTaskHWhere" />
+	</select>
+
+	<insert id="insertDmTaskH" parameterType="DmTaskHVo">
+		/* com.innobiz.orange.web.dm.dao.DmTaskHDao.insertDmTaskH */
+		INSERT INTO DM_${tableName}_TASK_H
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			DOC_GRP_ID,
+			TASK_DT,
+			USER_UID,
+			TASK_CD,
+			NOTE,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{docGrpId, jdbcType=VARCHAR},
+			<if test="taskDt == 'sysdate'"> SYSDATE,</if><if test="taskDt == null or taskDt ==''"> NULL,</if><if test="taskDt != '' and taskDt != 'sysdate'"> TO_DATE(#{taskDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{userUid, jdbcType=VARCHAR},
+			#{taskCd, jdbcType=VARCHAR},
+			#{note, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<update id="updateDmTaskH" parameterType="DmTaskHVo" >
+		/* com.innobiz.orange.web.pt.dao.DmTaskHDao.updateDmTaskH */
+		UPDATE DM_${tableName}_TASK_H
+		<set>
+			<if test="note != null"> NOTE = #{note, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}			
+			<if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="taskCd != null and taskCd != ''"> AND TASK_CD = #{taskCd, jdbcType=VARCHAR}</if>
+			<if test="taskDt != null and taskDt != ''">
+				<if test="taskDt == 'sysdate'"> AND TASK_DT = SYSDATE</if>
+				<if test="taskDt != 'sysdate'">AND TO_CHAR(#{taskDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS') = #{taskDt, jdbcType=VARCHAR}</if>
+			 </if>
+			
+		</where>
+	</update>
+
+	<delete id="deleteDmTaskH" parameterType="DmTaskHVo">
+		/* com.innobiz.orange.web.dm.dao.DmTaskHDao.deleteDmTaskH */
+		DELETE FROM DM_${tableName}_TASK_H
+		<where>
+			AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="taskDt != null and taskDt != ''"> AND TO_CHAR( TASK_DT, 'YYYY-MM-DD') = #{taskDt, jdbcType=VARCHAR}</if>
+			<if test="taskCd != null and taskCd !=''"> AND TASK_CD = #{taskCd, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

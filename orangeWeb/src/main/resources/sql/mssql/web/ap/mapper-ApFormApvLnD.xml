@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_FORM_APV_LN_D[양식결재라인상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApFormApvLnDDao">
+
+	<resultMap id="apFormApvLnDMap" type="ApFormApvLnDVo">
+		<id property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<id property="formCombSeq" column="FORM_COMB_SEQ" /><!-- 양식구성일련번호 -->
+		<id property="apvLnTitlTypCd" column="APV_LN_TITL_TYP_CD" /><!-- 결재라인타이틀구분코드 -->
+		<result property="apvLnDispTypCd" column="APV_LN_DISP_TYP_CD" /><!-- 결재라인표시구분코드 -->
+		<result property="maxCnt" column="MAX_CNT" /><!-- 최대개수 -->
+		<result property="alnVa" column="ALN_VA" /><!-- 줄맞춤값 -->
+		<result property="bordUseYn" column="BORD_USE_YN" /><!-- 테두리선사용여부 -->
+		<result property="titlUseYn" column="TITL_USE_YN" /><!-- 타이틀사용여부 -->
+		<result property="lstDupDispYn" column="LST_DUP_DISP_YN" /><!-- 목록중복표시여부 -->
+		<result property="apvLnTitlTypNm" column="APV_LN_TITL_TYP_NM" /><!-- 결재라인타이틀구분명 -->
+		<result property="apvLnDispTypNm" column="APV_LN_DISP_TYP_NM" /><!-- 결재라인표시구분명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApFormApvLnD" resultMap="apFormApvLnDMap" parameterType="ApFormApvLnDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormApvLnDDao.selectApFormApvLnD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'APV_LN_TITL_TYP_CD' AND CD = M.APV_LN_TITL_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) APV_LN_TITL_TYP_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'APV_LN_DISP_TYP_CD' AND CD = M.APV_LN_DISP_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) APV_LN_DISP_TYP_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.FORM_ID DESC, N.FORM_COMB_SEQ DESC, N.APV_LN_TITL_TYP_CD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.FORM_ID,
+			T.FORM_COMB_SEQ,
+			T.APV_LN_TITL_TYP_CD,
+			T.APV_LN_DISP_TYP_CD,
+			T.MAX_CNT,
+			T.ALN_VA,
+			T.BORD_USE_YN,
+			T.TITL_USE_YN,
+			T.LST_DUP_DISP_YN,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'APV_LN_TITL_TYP_CD' AND CD = T.APV_LN_TITL_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) APV_LN_TITL_TYP_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'APV_LN_DISP_TYP_CD' AND CD = T.APV_LN_DISP_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) APV_LN_DISP_TYP_NM,
+			</if>
+		</trim>
+		FROM AP_FORM_APV_LN_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formCombSeq != null">AND T.FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="apvLnTitlTypCd != null">AND T.APV_LN_TITL_TYP_CD = #{apvLnTitlTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.FORM_ID, T.FORM_COMB_SEQ, T.APV_LN_TITL_TYP_CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApFormApvLnD" resultType="Integer" parameterType="ApFormApvLnDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormApvLnDDao.countApFormApvLnD */
+		SELECT COUNT(*) CNT
+		FROM AP_FORM_APV_LN_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formCombSeq != null">AND T.FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="apvLnTitlTypCd != null">AND T.APV_LN_TITL_TYP_CD = #{apvLnTitlTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApFormApvLnD" parameterType="ApFormApvLnDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormApvLnDDao.insertApFormApvLnD */
+		INSERT INTO AP_FORM_APV_LN_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FORM_ID,
+			FORM_COMB_SEQ,
+			APV_LN_TITL_TYP_CD,
+			APV_LN_DISP_TYP_CD,
+			MAX_CNT,
+			ALN_VA,
+			BORD_USE_YN,
+			TITL_USE_YN,
+			LST_DUP_DISP_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{formId, jdbcType=VARCHAR},
+			#{formCombSeq, jdbcType=INTEGER},
+			#{apvLnTitlTypCd, jdbcType=VARCHAR},
+			#{apvLnDispTypCd, jdbcType=VARCHAR},
+			<if test="maxCnt == ''">NULL</if><if test="maxCnt != ''">#{maxCnt, jdbcType=INTEGER}</if>,
+			#{alnVa, jdbcType=VARCHAR},
+			#{bordUseYn, jdbcType=VARCHAR},
+			#{titlUseYn, jdbcType=VARCHAR},
+			#{lstDupDispYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApFormApvLnD" parameterType="ApFormApvLnDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormApvLnDDao.updateApFormApvLnD */
+		UPDATE AP_FORM_APV_LN_D
+		<set>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+			<if test="formCombSeq != null">FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER},</if>
+			<if test="apvLnTitlTypCd != null">APV_LN_TITL_TYP_CD = #{apvLnTitlTypCd, jdbcType=VARCHAR},</if>
+			<if test="apvLnDispTypCd != null">APV_LN_DISP_TYP_CD = #{apvLnDispTypCd, jdbcType=VARCHAR},</if>
+			<if test="maxCnt != null">MAX_CNT = <if test="maxCnt == ''">NULL</if><if test="maxCnt != ''">#{maxCnt, jdbcType=INTEGER}</if>,</if>
+			<if test="alnVa != null">ALN_VA = #{alnVa, jdbcType=VARCHAR},</if>
+			<if test="bordUseYn != null">BORD_USE_YN = #{bordUseYn, jdbcType=VARCHAR},</if>
+			<if test="titlUseYn != null">TITL_USE_YN = #{titlUseYn, jdbcType=VARCHAR},</if>
+			<if test="lstDupDispYn != null">LST_DUP_DISP_YN = #{lstDupDispYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formCombSeq != null">AND FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="apvLnTitlTypCd != null">AND APV_LN_TITL_TYP_CD = #{apvLnTitlTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApFormApvLnD" parameterType="ApFormApvLnDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormApvLnDDao.deleteApFormApvLnD */
+		DELETE FROM AP_FORM_APV_LN_D
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formCombSeq != null">AND FORM_COMB_SEQ = #{formCombSeq, jdbcType=INTEGER}</if>
+			<if test="apvLnTitlTypCd != null">AND APV_LN_TITL_TYP_CD = #{apvLnTitlTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

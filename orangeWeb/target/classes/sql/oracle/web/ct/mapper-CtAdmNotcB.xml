@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_ADM_NOTC_B [커뮤니티 게시판 마스터 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtAdmNotcBDao">
+
+	<resultMap id="ctAdmNotcBMap" type="CtAdmNotcBVo">
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		
+		<result property="bullPid" column="BULL_PID" /><!-- 부모게시물ID -->
+		<result property="replyGrpId" column="REPLY_GRP_ID" /><!-- 답변그룹ID -->
+		<result property="replyOrdr" column="REPLY_ORDR" /><!-- 답변순서 -->
+		<result property="replyDpth" column="REPLY_DPTH" /><!-- 답변단계 -->
+		<result property="bullStatCd" column="BULL_STAT_CD" /><!-- 게시물상태코드 -->
+		<result property="bullRezvYn" column="BULL_REZV_YN" /><!-- 게시물예약여부 -->
+		<result property="tgtDeptYn" column="TGT_DEPT_YN" /><!-- 대상부서지정여부 -->
+		<result property="tgtUserYn" column="TGT_USER_YN" /><!-- 대상사용자지정여부 -->
+		<result property="subj" column="SUBJ" /><!-- 제목 -->
+		<result property="bullRezvDt" column="BULL_REZV_DT" /><!-- 게시예약일시 -->
+		<result property="bullExprDt" column="BULL_EXPR_DT" /><!-- 게시완료일시 -->
+		<result property="cont" column="CONT" /><!-- 본문 -->
+		<result property="readCnt" column="READ_CNT" /><!-- 조회수 -->
+		<result property="prosCnt" column="PROS_CNT" /><!-- 찬성수 -->
+		<result property="consCnt" column="CONS_CNT" /><!-- 반대수 -->
+		<result property="recmdCnt" column="RECMD_CNT" /><!-- 추천수 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="attYn" column="ATT_YN" /><!--첨부여부-->
+		
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자명 -->
+		<result property="newYn" column="NEW_YN" /><!-- 새글여부 -->
+		<result property="exprYn" column="EXPR_YN" /><!-- 만료여부 -->
+	</resultMap>
+
+	<!-- 조회조건 -->
+	<sql id="selectCtAdmNotcBWhere">
+	    <where>
+	    	<if test="bullId != null and bullId != ''"> AND CANB_T.BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	        <if test="compId != null and compId != ''"> AND CANB_T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+	    	<if test="schCat == 'SUBJ' and schWord != null and schWord != ''"> AND CANB_T.SUBJ like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<if test="schCat == 'CONT' and schWord != null and schWord != ''"> AND CANB_T.CONT like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''"> AND R.RESC_VA like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+	    	<if test="schExpr != null and schExpr !=''"> 
+	    	    <if test="(schExpr eq 'Y'.toString())"> AND CANB_T.BULL_EXPR_DT &lt; SYSDATE </if>
+	    	    <if test="(schExpr eq 'N'.toString())"> AND CANB_T.BULL_EXPR_DT &gt; SYSDATE </if>
+	    	</if>
+	    </where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtAdmNotcB" resultMap="ctAdmNotcBMap" parameterType="CtAdmNotcBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtAdmNotcBDao.selectCtAdmNotcB */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			CANB_T.BULL_ID, CANB_T.COMP_ID,
+			CANB_T.BULL_PID, CANB_T.REPLY_GRP_ID, 
+			CANB_T.REPLY_ORDR, CANB_T.REPLY_DPTH, 
+			CANB_T.BULL_STAT_CD, CANB_T.BULL_REZV_YN, 
+			CANB_T.TGT_DEPT_YN, CANB_T.TGT_USER_YN, 
+			CANB_T.SUBJ, CANB_T.BULL_REZV_DT, 
+			CANB_T.BULL_EXPR_DT, CANB_T.CONT, 
+			CANB_T.READ_CNT, CANB_T.PROS_CNT, 
+			CANB_T.CONS_CNT, CANB_T.RECMD_CNT, 
+			CANB_T.REGR_UID, CANB_T.REG_DT, 
+			CANB_T.MODR_UID, CANB_T.MOD_DT, 
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CANB_T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CANB_T.MODR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) MODR_NM,
+			(
+			 SELECT CASE WHEN COUNT(1) > 0
+						THEN 'Y'
+						ELSE 'N'
+					END ATT_YN
+			 FROM CT_FILE_D
+			 WHERE REF_ID=TO_CHAR(CANB_T.BULL_ID)
+			
+			) AS ATT_YN,
+			CASE WHEN CANB_T.REG_DT &gt; SYSDATE -1 THEN 'Y' ELSE 'N' END NEW_YN,
+			CASE WHEN CANB_T.BULL_EXPR_DT &lt; SYSDATE -1 THEN 'Y' ELSE 'N' END EXPR_YN,
+		</trim>
+		FROM CT_ADM_NOTC_B CANB_T
+		<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''">
+			LEFT JOIN OR_USER_B U ON CANB_T.REGR_UID = U.USER_UID
+			LEFT JOIN OR_RESC_B R ON U.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectCtAdmNotcBWhere"/>
+		
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CANB_T.BULL_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtAdmNotcB" resultType="Integer" parameterType="CtAdmNotcBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtAdmNotcBDao.countCtAdmNotcB */
+		SELECT COUNT(*) CNT
+		FROM CT_ADM_NOTC_B CANB_T
+		<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''">
+			LEFT JOIN OR_USER_B U ON CANB_T.REGR_UID = U.USER_UID
+			LEFT JOIN OR_RESC_B R ON U.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectCtAdmNotcBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtAdmNotcB" parameterType="CtAdmNotcBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtAdmNotcBDao.insertCtAdmNotcB */
+		INSERT INTO CT_ADM_NOTC_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    BULL_ID, COMP_ID, BULL_PID,
+		    REPLY_GRP_ID, REPLY_ORDR, REPLY_DPTH,
+		    BULL_STAT_CD, BULL_REZV_YN, TGT_DEPT_YN,
+		    TGT_USER_YN, SUBJ, BULL_REZV_DT,
+		    BULL_EXPR_DT, CONT, READ_CNT,
+		    PROS_CNT, CONS_CNT, RECMD_CNT,
+		    REGR_UID, REG_DT, MODR_UID,
+		    MOD_DT, ATT_YN, 
+		    
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{bullId, jdbcType=NUMERIC}, #{compId, jdbcType=VARCHAR}, #{bullPid, jdbcType=NUMERIC},
+			#{replyGrpId, jdbcType=NUMERIC}, #{replyOrdr, jdbcType=NUMERIC}, #{replyDpth, jdbcType=NUMERIC},
+			#{bullStatCd, jdbcType=VARCHAR}, #{bullRezvYn, jdbcType=CHAR}, #{tgtDeptYn, jdbcType=CHAR},
+			#{tgtUserYn, jdbcType=CHAR}, #{subj, jdbcType=NVARCHAR}, 
+			<if test="bullRezvDt == null or bullRezvDt == ''">NULL,</if>
+			<if test="bullRezvDt != null and bullRezvDt != ''">TO_DATE(#{bullRezvDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="bullExprDt == null or bullExprDt == ''">NULL,</if>
+			<if test="bullExprDt != null and bullExprDt != ''">TO_DATE(#{bullExprDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{cont, jdbcType=NCLOB}, #{readCnt, jdbcType=NUMERIC},
+			#{prosCnt, jdbcType=NUMERIC}, #{consCnt, jdbcType=NUMERIC},	#{recmdCnt, jdbcType=NUMERIC},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{attYn, jdbcType=CHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtAdmNotcB" parameterType="CtAdmNotcBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtAdmNotcBDao.updateCtAdmNotcB */
+		UPDATE CT_ADM_NOTC_B
+		<set>
+			<if test="bullPid != null"> BULL_PID = #{bullPid, jdbcType=NUMERIC},</if>
+			<if test="replyGrpId != null"> REPLY_GRP_ID = #{replyGrpId, jdbcType=NUMERIC},</if>
+			<if test="replyOrdr != null"> REPLY_ORDR = #{replyOrdr, jdbcType=NUMERIC},</if>
+			<if test="replyDpth != null"> REPLY_DPTH = #{replyDpth, jdbcType=NUMERIC},</if>
+			<if test="bullStatCd != null"> BULL_STAT_CD = #{bullStatCd, jdbcType=VARCHAR},</if>
+			<if test="bullRezvYn != null"> BULL_REZV_YN = #{bullRezvYn, jdbcType=CHAR},</if>
+			<if test="tgtDeptYn != null"> TGT_DEPT_YN = #{tgtDeptYn, jdbcType=CHAR},</if>
+			<if test="tgtUserYn != null"> TGT_USER_YN = #{tgtUserYn, jdbcType=CHAR},</if>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=NVARCHAR},</if>
+			<if test="bullRezvDt != null"> BULL_REZV_DT = TO_DATE(#{bullRezvDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="bullExprDt != null"> BULL_EXPR_DT = TO_DATE(#{bullExprDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=NVARCHAR},</if>
+			<if test="readCnt != null"> READ_CNT = #{readCnt, jdbcType=NUMERIC},</if>
+			<if test="prosCnt != null"> PROS_CNT = #{prosCnt, jdbcType=NUMERIC},</if>
+			<if test="consCnt != null"> CONS_CNT = #{consCnt, jdbcType=NUMERIC},</if>
+			<if test="recmdCnt != null"> RECMD_CNT = #{recmdCnt, jdbcType=NUMERIC},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="attYn != null"> ATT_YN = #{attYn, jdbcType=CHAR},</if>
+		</set>
+		<where>
+		    <if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+	    </where>
+	</update>
+	
+	<update id="updateReadCnt" parameterType="CtAdmNotcBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtAdmNotcBDao.updateReadCnt */
+		UPDATE CT_ADM_NOTC_B
+		<set>
+			READ_CNT = READ_CNT + 1,
+		</set>
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=NUMERIC}
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtAdmNotcB" parameterType="CtAdmNotcBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtAdmNotcBDao.deleteCtAdmNotcB */
+		DELETE FROM CT_ADM_NOTC_B
+		<where>
+		    <if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+	    </where>
+	</delete>
+
+</mapper>

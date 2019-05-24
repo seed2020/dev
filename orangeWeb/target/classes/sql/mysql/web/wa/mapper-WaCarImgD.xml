@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WA_CAR_IMG_D[이미지상세] -->
+<mapper namespace="com.innobiz.orange.web.wa.dao.WaCarImgDDao">
+
+	<resultMap id="waCarImgDMap" type="WaCarImgDVo">
+		<id property="carKndNo" column="CAR_KND_NO" /><!-- 사용자UID -->
+		<result property="imgPath" column="IMG_PATH" /><!-- 이미지경로 -->
+		<result property="imgWdth" column="IMG_WDTH" /><!-- 이미지넓이 -->
+		<result property="imgHght" column="IMG_HGHT" /><!-- 이미지높이 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWaCarImgD" resultMap="waCarImgDMap" parameterType="WaCarImgDVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarImgDDao.selectWaCarImgD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.CAR_KND_NO,
+			T.IMG_PATH,
+			T.IMG_WDTH,
+			T.IMG_HGHT,
+			T.MODR_UID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM WA_CAR_IMG_D T
+		<where>
+			<if test="carKndNo != null">AND T.CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.CAR_KND_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countWaCarImgD" resultType="Integer" parameterType="WaCarImgDVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarImgDDao.countWaCarImgD */
+		SELECT COUNT(*) CNT
+		FROM WA_CAR_IMG_D T
+		<where>
+			<if test="carKndNo != null">AND T.CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWaCarImgD" parameterType="WaCarImgDVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarImgDDao.insertWaCarImgD */
+		INSERT INTO WA_CAR_IMG_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CAR_KND_NO,
+			IMG_PATH,
+			IMG_WDTH,
+			IMG_HGHT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{carKndNo, jdbcType=INTEGER},
+			#{imgPath, jdbcType=VARCHAR},
+			#{imgWdth, jdbcType=INTEGER},
+			#{imgHght, jdbcType=INTEGER},
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateWaCarImgD" parameterType="WaCarImgDVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarImgDDao.updateWaCarImgD */
+		UPDATE WA_CAR_IMG_D
+		<set>
+			<if test="imgPath != null">IMG_PATH = #{imgPath, jdbcType=VARCHAR},</if>
+			<if test="imgWdth != null">IMG_WDTH = #{imgWdth, jdbcType=INTEGER},</if>
+			<if test="imgHght != null">IMG_HGHT = #{imgHght, jdbcType=INTEGER},</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="carKndNo != null">AND CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWaCarImgD" parameterType="WaCarImgDVo" >
+		/* com.innobiz.orange.web.wa.dao.WaCarImgDDao.deleteWaCarImgD */
+		DELETE FROM WA_CAR_IMG_D
+		<where>
+			<if test="carKndNo != null">AND CAR_KND_NO = #{carKndNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_TAKOVR_B[인수인계 기본] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmTakovrBDao">
+
+	<resultMap id="dmTakovrBMap" type="DmTakovrBVo">
+		<id property="storId" column="STOR_ID" /><!-- 저장소ID -->
+		<id property="docGrpId" column="DOC_GRP_ID" /><!-- 문서그룹ID -->
+		<result property="takOrgId" column="TAK_ORG_ID" /><!-- 인계조직ID -->
+		<result property="tgtOrgId" column="TGT_ORG_ID" /><!-- 대상조직ID -->
+		<result property="compYn" column="COMP_YN" /><!-- 회사여부 -->
+		<result property="takStatCd" column="TAK_STAT_CD" /><!-- 상태코드 -->
+		<result property="takRegrUid" column="TAK_REGR_UID" /><!-- 등록자 -->
+		<result property="takRegDt" column="TAK_REG_DT" /><!-- 등록일시 -->
+		<result property="takRegrNm" column="TAK_REGR_NM" /><!-- 등록자명 -->
+		<result property="takOrgNm" column="TAK_ORG_NM" /><!-- 인계조직명 -->
+		<result property="tgtOrgNm" column="TGT_ORG_NM" /><!-- 대상조직명 -->
+	</resultMap>
+	        
+	<!-- 조회조건 -->
+	<sql id="selectDmTakovrBWhere">
+		<where>
+			<if test="storId != null and storId != ''"> AND T.STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="docGrpId != null and docGrpId !=''"> AND T.DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+			<if test="takOrgId != null and takOrgId !=''"> AND T.TAK_ORG_ID = #{takOrgId, jdbcType=VARCHAR}</if>
+			<if test="tgtOrgId != null and tgtOrgId !=''"> AND T.TGT_ORG_ID = #{tgtOrgId, jdbcType=VARCHAR}</if>
+			<if test="compYn != null and compYn !=''"> AND T.COMP_YN = #{compYn, jdbcType=VARCHAR}</if>
+			<if test="takStatCd != null and takStatCd !=''"> AND T.TAK_STAT_CD = #{takStatCd, jdbcType=VARCHAR}</if>
+			<if test="takRegrUid != null and takRegrUid !=''"> AND T.TAK_REGR_UID = #{takRegrUid, jdbcType=VARCHAR}</if>
+			<!-- 다중 조회조건(String) -->
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmTakovrB" resultMap="dmTakovrBMap" parameterType="DmTakovrBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTakovrBDao.selectDmTakovrB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.STOR_ID,
+	        T.DOC_GRP_ID,
+	        T.TAK_ORG_ID,
+	        T.TGT_ORG_ID,
+	        T.COMP_YN,
+	        T.TAK_STAT_CD,
+	        T.TAK_REGR_UID,
+	        T.TAK_REG_DT,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.TAK_REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) TAK_REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_ORG_B WHERE ORG_ID = T.TAK_ORG_ID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS TAK_ORG_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_ORG_B WHERE ORG_ID = T.TGT_ORG_ID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS TGT_ORG_NM,
+		</trim>
+		FROM DM_TAKOVR_B T
+		<include refid="selectDmTakovrBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TAK_REG_DT DESC </if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmTakovrB" resultType="Integer" parameterType="DmTakovrBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTakovrBDao.countDmTakovrB */
+		SELECT COUNT(*) CNT
+		FROM DM_TAKOVR_B T
+		<include refid="selectDmTakovrBWhere"/>
+	</select>
+		
+	<!-- 등록 저장 -->
+	<insert id="insertDmTakovrB" parameterType="DmTakovrBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTakovrBDao.insertDmTakovrB */
+		INSERT INTO DM_TAKOVR_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			STOR_ID,
+	        DOC_GRP_ID,
+	        TAK_ORG_ID,
+	        TGT_ORG_ID,
+	        COMP_YN,
+	        TAK_STAT_CD,
+	        TAK_REGR_UID,
+	        TAK_REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{storId, jdbcType=VARCHAR},
+			#{docGrpId, jdbcType=VARCHAR},
+			#{takOrgId, jdbcType=VARCHAR},
+			#{tgtOrgId, jdbcType=VARCHAR},
+			#{compYn, jdbcType=CHAR},
+			#{takStatCd, jdbcType=NVARCHAR},
+			#{takRegrUid, jdbcType=VARCHAR},
+			<if test="takRegDt == 'sysdate'">NOW(),</if><if test="takRegDt == null or takRegDt == ''">NULL,</if>
+			<if test="takRegDt != null and takRegDt != '' and takRegDt != 'sysdate'">STR_TO_DATE(#{takRegDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateDmTakovrB" parameterType="DmTakovrBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTakovrBDao.updateDmTakovrB */
+		UPDATE DM_TAKOVR_B
+		<set>
+			<if test="takStatCd != null"> TAK_STAT_CD = #{takStatCd, jdbcType=VARCHAR},</if>
+			<if test="tgtOrgId != null"> TGT_ORG_ID = #{tgtOrgId, jdbcType=VARCHAR},</if>
+			<if test="compYn != null"> COMP_YN = #{compYn, jdbcType=CHAR},</if>
+			<if test="takRegrUid != null"> TAK_REGR_UID = #{takRegrUid, jdbcType=VARCHAR},</if>
+			<if test="takRegDt != null"> 
+				<if test="takRegDt == 'sysdate'"> TAK_REG_DT = NOW(),</if>
+				<if test="takRegDt == ''"> TAK_REG_DT = NULL,</if>
+				<if test="takRegDt != '' and takRegDt != 'sysdate'"> TAK_REG_DT = STR_TO_DATE(#{takRegDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="docGrpId != null and docGrpId !=''"> AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteDmTakovrB" parameterType="DmTakovrBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmTakovrBDao.deleteDmTakovrB */
+		DELETE FROM DM_TAKOVR_B
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="docGrpId != null and docGrpId !=''"> AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+			<if test="tgtOrgId != null and tgtOrgId !=''"> AND TGT_ORG_ID = #{tgtOrgId, jdbcType=VARCHAR}</if>
+			<if test="takStatCd != null and takStatCd !=''"> AND TAK_STAT_CD = #{takStatCd, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_USER_UAGNT_D[사용자유저에이전트상세] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtUserUagntDDao">
+
+	<resultMap id="ptUserUagntDMap" type="PtUserUagntDVo">
+		<id property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<id property="uagntHashVa" column="UAGNT_HASH_VA" /><!-- 유저에이전트해쉬값 -->
+		<result property="uagntTknVa" column="UAGNT_TKN_VA" /><!-- 유저에이전트토큰값 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtUserUagntD" resultMap="ptUserUagntDMap" parameterType="PtUserUagntDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserUagntDDao.selectPtUserUagntD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.ODUR_UID,
+			T.UAGNT_HASH_VA,
+			T.UAGNT_TKN_VA,
+		</trim>
+		FROM PT_USER_UAGNT_D T
+		<where>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="uagntHashVa != null">AND T.UAGNT_HASH_VA = #{uagntHashVa, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.ODUR_UID, T.UAGNT_HASH_VA</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countPtUserUagntD" resultType="Integer" parameterType="PtUserUagntDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserUagntDDao.countPtUserUagntD */
+		SELECT COUNT(*) CNT
+		FROM PT_USER_UAGNT_D T
+		<where>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="uagntHashVa != null">AND T.UAGNT_HASH_VA = #{uagntHashVa, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtUserUagntD" parameterType="PtUserUagntDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserUagntDDao.insertPtUserUagntD */
+		INSERT INTO PT_USER_UAGNT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ODUR_UID,
+			UAGNT_HASH_VA,
+			UAGNT_TKN_VA,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{odurUid, jdbcType=VARCHAR},
+			#{uagntHashVa, jdbcType=INTEGER},
+			#{uagntTknVa, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updatePtUserUagntD" parameterType="PtUserUagntDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserUagntDDao.updatePtUserUagntD */
+		UPDATE PT_USER_UAGNT_D
+		<set>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="uagntHashVa != null">UAGNT_HASH_VA = #{uagntHashVa, jdbcType=INTEGER},</if>
+			<if test="uagntTknVa != null">UAGNT_TKN_VA = #{uagntTknVa, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="uagntHashVa != null">AND UAGNT_HASH_VA = #{uagntHashVa, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtUserUagntD" parameterType="PtUserUagntDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserUagntDDao.deletePtUserUagntD */
+		DELETE FROM PT_USER_UAGNT_D
+		<where>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="uagntHashVa != null">AND UAGNT_HASH_VA = #{uagntHashVa, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

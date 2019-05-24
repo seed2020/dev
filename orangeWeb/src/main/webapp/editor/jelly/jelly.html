@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="jquery-1.10.2.min.js" charset="UTF-8"></script>
+<script type="text/javascript" src="jellyEditor.1.0.min.js" charset="UTF-8"></script>
+<title>jelly editor</title>
+<style type="text/css">
+<!--
+body { padding:0px; margin:0px; }
+/* .editor { word-break:break-all; margin:0px; padding:5px 0 0 5px; font-size:10pt; } */
+.editor { word-break:break-all; margin:0px; padding:5px 0 0 5px; }
+.editor P, .editor li { margin-top:2px; margin-bottom:2px; word-break:break-all; }
+.editor ul, .editor ol { margin-top:5px; margin-bottom:5px; padding-top:0px; padding-bottom:0px; }
+.editor td, .editor th { margin: 1px 2px 1px 2px; word-break:break-all; }
+
+dl, dt, dd { margin:0; padding:0; }
+hr { display:none; }
+img { border:none; }
+a { selector-dummy:expression(this.hideFocus=true); }
+body, html { font:12px "dotum","arial"; color:#454545; 
+             scrollbar-face-color:#ffffff; 
+			 scrollbar-highlight-color:#bbbbbb; 
+			 scrollbar-3dlight-color:#ffffff; 
+			 scrollbar-shadow-color:#bbbbbb;
+             scrollbar-darkshadow-color:#ffffff; 
+			 scrollbar-track-color:#f5f5f5; 
+			 scrollbar-arrow-color:#bbbbbb; 
+			 background:#ffffff; margin:0; }
+
+.toparea { float:left; width:100%; border:1px solid #c5c5c5; background:#f6f6f6; padding:0; margin:0; }
+.toolbar { float:left; width:100%; line-height:normal; padding:0 0 0 3px; }
+.toolbar ul { list-style:none; padding:0; margin:0; }
+.toolbar li { display:inline; padding:0; margin:0; float:left; }
+
+.toolbar ul li.select { padding:5px 3px 0px 0px; height:24px; }
+.toolbar ul li.btn { display:block; width:24px; height:30px; background:url("editor.png") no-repeat; padding:0 3px 0 0; margin:0; cursor:hand; }
+.toolbar ul li.br { background-position:-81px 0; width:6px; height:30px; padding:0px; margin:0px; }
+.toolbar ul li.m1 { background-position:0 -31px; }
+.toolbar ul li.m2 { background-position:-27px -31px; }
+.toolbar ul li.m3 { background-position:-54px -31px; }
+.toolbar ul li.m4 { background-position:-87px -31px; }
+.toolbar ul li.m5 { background-position:-114px -31px; }
+.toolbar ul li.m6 { background-position:-141px -31px; }
+.toolbar ul li.m7 { background-position:-174px -31px; }
+.toolbar ul li.m8 { background-position:-201px -31px; }
+.toolbar ul li.m9 { background-position:-234px -31px; }
+.toolbar ul li.m10 { background-position:-261px -31px; }
+.toolbar ul li.m11 { background-position:-288px -31px; }
+.toolbar ul li.m12 { background-position:-321px -31px; }
+.toolbar ul li.m13 { background-position:-348px -31px; }
+.toolbar ul li.m14 { background-position:-381px -31px; }
+.toolbar ul li.m15 { background-position:-408px -31px; }
+.toolbar ul li.m16 { background-position:-441px -31px; }
+.toolbar ul li.m17 { background-position:-468px -31px; }
+.toolbar ul li.m18 { background-position:-495px -31px; }
+.toolbar ul li.m19 { background-position:-528px -31px; }
+.toolbar ul li.m20 { background-position:-555px -31px; }
+.toolbar ul li.m21 { background-position:-588px -31px; }
+.toolbar ul li.m22 { background-position:-615px -31px; }
+.toolbar ul li.m23 { background-position:-642px -31px; }
+.toolbar ul li.m24 { background-position:-675px -31px; }
+.toolbar ul li.m25 { background-position:-702px -31px; }
+.toolbar ul li.m26 { background-position:-729px -31px; }
+.toolbar ul li.m27 { background-position:-756px -31px; }
+.toolbar ul li.m28 { background-position:-789px -31px; }
+.toolbar ul li.m29 { background-position:-816px -31px; }
+.toolbar ul li.on  { background-position-y: -62px; }
+.toolbar ul li.dis  { background-position-y: 0px; }
+
+.centerarea { float:left; width:100%; border-left:1px solid #c5c5c5; border-right:1px solid #c5c5c5; padding:0; margin:0; }
+.centerarea textarea { font:10pt "dotum","arial"; color:#454545; line-height:18px; border:0px solid #ffffff; background:#ffffff; padding:0; margin:0; scrollbar-highlight-color:#ffffff; scrollbar-3dlight-color:#e6e6e6; }
+
+.bottomarea { float:left; width:100%; line-height:normal; height:23px; border:1px solid #c5c5c5; background:#f6f6f6; }
+.bottomarea ul { list-style:none; padding:0; margin:0; }
+.bottomarea li { display:inline; padding:0; margin:0; }
+
+.bottomarea .button a { float:left; background:url("editor.png") no-repeat left -96px; text-decoration:none; padding:0 0 0 0; margin:-1px 0 0 0; }
+.bottomarea .button a span { float:left; height:19px; display:block; background:url("editor.png") no-repeat right -96px; color:#454545; padding:6px 20px 0 20px; margin:0; }   
+.bottomarea .button a:hover span { color:#a2a2a2; } 
+.bottomarea .button a:hover { background-position:0% -96px; cursor:hand; }
+.bottomarea .button a:hover span { background-position:100% -96px; }
+
+.bottomarea .button.off a { float:left; background:url("editor.png") no-repeat left -124px; text-decoration:none; padding:0 0 0 0; margin:0 0 0 0; }
+.bottomarea .button.off a span { float:left; height:19px; display:block; background:url("editor.png") no-repeat right -124px; color:#454545; padding:6px 20px 0 20px; margin:0; }   
+.bottomarea .button.off a:hover span { color:#a2a2a2; } 
+.bottomarea .button.off a:hover { background-position:0% -124px; cursor:hand; }
+.bottomarea .button.off a:hover span { background-position:100% -124px; }
+
+#colors { z-index:9000; position:absolute; top:70px; left:20px; background-color:white; }
+#colors td { width:14px; height:14px; }
+
+#tables { z-index:900; position:absolute; top:70px; left:400px; background-color:white; }
+#tables td { width:12px; height:12px; border:1px solid grey; font-size:1px; }
+
+/* popup */
+.poparea { border:1px solid #b1b1b1; background-color:#ffffff; padding:5px 5px 5px 5px; margin:0; }
+.poparea .txt { float:left; color:#454545; line-height:16px; }
+
+/* list */
+.listarea  { float:left; width:100%; padding:0; margin:0; }
+.listtable { width:100%; background:#c5c5c5; color:#454545; }
+.listtable tr { background:#ffffff; }
+.listtable .head_lt { height:22px; background:#eeecec; line-height:17px; padding:2px 0 0 4px; }
+.listtable .bg { height:22px; background:#ffffff; padding:1px 0 1px 3px; }
+.listtable input { height:14px; font:11px "dotum"; color:#454545; padding:2px 2px 0 2px; border:1px solid #c5c5c5; }
+
+/* btn */
+.poparea .btnarea { float:right; line-height:normal; height:20px; }
+.poparea .btnarea ul { list-style:none; padding:0; margin:0; }
+.poparea .btnarea li { display:inline; padding:0; margin:0; }
+.btnw, .btnw span, .btnw input { position:relative; color:#454545; display:inline-block; white-space:nowrap; overflow:visible; margin:0; }
+.btnw { cursor:pointer; } span.btnw { cursor:default; }
+.white { background:url('btn.png') no-repeat left -146px; font-size:11px; margin:0 10px 0 0; }
+.white span, .white input { left:10px; height:15px; padding:5px 6px 0 0; background:url("btn.png") no-repeat right -146px; }
+
+.btng, .btng span, .btng input { position:relative; color:#454545; display:inline-block; white-space:nowrap; overflow:visible; margin:0; }
+.btng { cursor:pointer; } span.btng { cursor:default; }
+.gray { background:url('btn.png') no-repeat left -104px; font-size:11px; margin:0 10px 0 0; }
+.gray span, .gray input { left:10px; height:15px; padding:5px 6px 0 0; background:url("btn.png") no-repeat right -104px; }
+
+/* width blank */
+.blankw { clear:both; height:5px; }
+.width3 { width:3px; }
+
+//-->
+</style>
+<script type="text/javascript">
+$(document).ready(function() {
+	initialize();
+});
+</script>
+</head>
+<body>
+
+<div id="jellyTab">
+	
+	<div id="icoArea" class="toparea">
+		<div class="toolbar">
+		<ul>
+			<li class="select"><select id="font-family" >
+				<option class="heading" selected="selected">FONT</option>
+				<script type="text/javascript">document.write(getFontFamily());</script>
+			</select></li>
+			<li class="select"><select id="font-size" >
+				<option class="heading" selected="selected">SIZE</option>
+				<script type="text/javascript">document.write(getFontSize());</script>
+			</select></li>
+			<script type="text/javascript">document.write(getToolbars());</script>
+		</ul>
+		</div>
+	</div>
+	
+	<div class="centerarea" style="position:relative; overflow:auto;">
+	<div id="jellyDoc" class="editor" contenteditable="true" style="border:0px"></div>
+	</div>
+	
+	<div class="centerarea" style="display:none">
+	<textarea id="jellySrc"></textarea>
+	</div>
+	
+	<div class="bottomarea">
+	<ul>
+	<script type="text/javascript">document.write(getTabBar());</script>
+	</ul>
+	</div>
+</div>
+
+<script type="text/javascript">document.write(getUploadFrame());</script>
+<div id="rsh" style="position:absolute; z-index:990; width:15px; height:15px; display:none; background:url(cursor.gif) no-repeat; }"></div>
+<div id="rsw" style="position:absolute; z-index:990; width:15px; height:15px; display:none; background:url(cursor.gif) no-repeat; background-position:-15px 0px; }"></div>
+
+</body>
+</html>

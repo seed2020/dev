@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_ESTB_B [커뮤니티 개설 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtEstbBDao">
+
+	<resultMap id="ctEstbBMap" type="CtEstbBVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+	    
+	    <result property="mastUid" column="MAST_UID" /><!--마스터 UID-->
+	    <result property="ctSubjResc" column="CT_SUBJ_RESC" /><!--커뮤니티 제목 리소스 ID-->
+	    <result property="ctItro" column="CT_ITRO" /><!--커뮤니티 소개-->
+	    <result property="ctKwd" column="CT_KWD" /><!--커뮤니티 키워드-->
+	    <result property="mngTgtYn" column="MNG_TGT_YN" /><!--관리대상 여부-->
+	    <result property="joinMet" column="JOIN_MET" /><!--가입방법-->
+	    <result property="dftAuth" column="DFT_AUTH" /><!--기본권한-->
+	    <result property="extnOpenYn" column="EXTN_OPEN_YN" /><!--외부 공개여부-->
+	    <result property="attLimSize" column="ATT_LIM_SIZE" /><!--첨부제한용량-->
+	    <result property="attYn" column="ATT_YN" /><!--첨부여부-->
+	    <result property="mbshCnt" column="MBSH_CNT" /><!--회원수-->
+	    <result property="ctStat" column="CT_STAT" /><!--커뮤니티 상태-->
+	    <result property="ctApvdDt" column="CT_APVD_DT" /><!--커뮤니티 승인일시-->
+	    <result property="rjtOpinCont" column="RJT_OPIN_CONT" /><!--반려의견내용-->
+	    <result property="ctActStat" column="CT_ACT_STAT" /><!--커뮤니티 활동 상태-->
+	    <result property="ctEndCont" column="CT_END_CONT" /><!--커뮤니티 종료 내용-->
+	    <result property="recmdYn" column="RECMD_YN" /><!--추천여부-->
+	    <result property="recmdDt" column="RECMD_DT" /><!--추천일자-->
+	    <result property="ctEvalCd" column="CT_EVAL_CD" /><!--커뮤니티 평가코드-->
+	    <result property="regDt" column="REG_DT" /><!--등록일시-->
+	    <result property="modDt" column="MOD_DT" /><!--수정일시-->
+	    <result property="regrUid" column="REGR_UID" /><!--등록자UID-->
+	    <result property="modrUid" column="MODR_UID" /><!--수정자UID-->
+	    <result property="ctNm" column="CT_NM" /><!--커뮤니티 명-->
+	    <result property="catNm" column="CAT_NM" /><!--카테고리 분류명-->
+	    <result property="catId" column="CAT_ID" /><!--카테고리ID-->
+	    <result property="catPnm" column="CAT_PNM" /><!--카테고리 폴더명-->
+	    <result property="langTyp" column="LANG_TYP" /><!--사용자 언어타입-->
+	    <result property="modifyYn" column="MODIFY_YN" /><!-- 수정여부 -->
+	    <result property="mastNm" column="MAST_NM" /><!-- 마스터명 -->
+	    <result property="ctFncUid" column="CT_FNC_UID" /><!-- 커뮤니티 기능 UID(메뉴ID) -->
+	    <result property="logUserJoinStat" column="LOG_USER_JOIN_STAT" /><!-- 로그인 사용자 가입상태 -->
+	    <result property="logUserSeculCd" column="LOG_USER_SECUL_CD" /><!-- 사용자 보안 등급 코드 -->
+	    
+	    <result property="ctTotalVisitCnt" column="CT_TOTAL_VISIT_CNT" /><!-- 총 방문자 수 -->
+	    <result property="ctTotalBullCnt" column="CT_TOTAL_BULL_CNT" /><!-- 총 게시물 수 -->
+	    
+	    <result property="termStartDt" column="TERM_START_DT" /><!-- 기간 시작일시 -->
+	    <result property="termEndDt" column="TERM_END_DT" /><!-- 기간 종료일시 -->
+	    <result property="ctTermVisitCnt" column="CT_TERM_VISIT_CNT" /><!-- 기간 내 방문자 수 -->
+	    <result property="ctTermBullCnt" column="CT_TERM_BULL_CNT" /><!-- 기간 내 게시물 수 -->
+	    
+	    <result property="ctTermMbshCnt" column="CT_TERM_MBSH_CNT" /><!-- 기간 내 회원가입자 수 -->
+	    <result property="bullRealActUserCnt" column="BULL_REAL_ACT_USER_CNT" /><!-- 게시판 실제 활동인원수 -->
+	    
+	    <result property="strtDt" column="START_DT" /><!--시작 일시-->
+		<result property="endDt" column="END_DT" /><!--종료 일시-->
+		
+		<result property="ranking" column="RANKING" /><!--순위-->
+		<result property="clsReqsYn" column="CLS_REQS_YN" /><!--폐쇄 신청 여부-->
+	    <result property="allCompYn" column="ALL_COMP_YN" /><!--전사 여부-->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtEstbBWhere">
+		<if test="(signal eq 'my'.toString())">
+			INNER JOIN CT_MBSH_D CMD
+		    	ON #{logUserUid, jdbcType=VARCHAR} = CMD.USER_UID AND CEB_T.CT_ID = CMD.CT_ID
+	    	<if test="'masterOpt'.equals(schCat) and schWord != null and schWord != ''">
+		        INNER JOIN OR_USER_B AS OUB
+		        	ON CEB_T.MAST_UID = OUB.USER_UID
+		         		AND OUB.USER_NM LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'
+		    </if>
+			<where>
+			    <if test="compId != null and compId != ''"> AND CEB_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			    <if test="ctId != null and ctId != ''"> AND CEB_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+			    <if test="ctStat != null and ctStat != ''"> AND CEB_T.CT_STAT = #{ctStat, jdbcType=VARCHAR}</if>
+				<if test="ctActStat != null and ctActStat != ''">AND CEB_T.CT_ACT_STAT = #{ctActStat, jdbcType=VARCHAR}</if>
+				<if test="ctSearchList != null">
+		   			<![CDATA[ AND CT_STAT IN ]]>
+		   				 <foreach collection="ctSearchList" item="item" index="index" separator="," open="(" close=")">
+				            	#{item, jdbcType=VARCHAR}
+				        </foreach>	   			
+		   		</if>
+		   		<if test="ctActStatList != null">
+		   			<![CDATA[ AND CT_ACT_STAT IN ]]>
+		   				 <foreach collection="ctActStatList" item="item" index="index" separator="," open="(" close=")">
+				            	#{item, jdbcType=VARCHAR}
+				        </foreach>	   			
+		   		</if>
+		   		<if test="joinStatList != null">
+		   			<![CDATA[ AND JOIN_STAT IN ]]>
+		   				 <foreach collection="joinStatList" item="item" index="index" separator="," open="(" close=")">
+				            	#{item, jdbcType=VARCHAR}
+				        </foreach>	   			
+		   		</if>
+			    <if test="regrUid != null and regrUid != ''"> AND CEB_T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			    <if test="'communityOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        AND (
+							SELECT RESC_VA 
+							FROM CT_RESC_B
+							WHERE RESC_ID = CEB_T.CT_SUBJ_RESC
+							AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			      		) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+			</where>
+		</if>
+		<if test="signal == null or (signal eq ''.toString()) or !(signal eq 'my'.toString())">
+			<if test="'masterOpt'.equals(schCat) and schWord != null and schWord != ''">
+		        INNER JOIN OR_USER_B AS OUB
+		        	ON CEB_T.MAST_UID = OUB.USER_UID
+		         		AND OUB.USER_NM LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'
+		    </if>
+			<where>
+			    <if test="compId != null and compId != ''"> AND CEB_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			    <if test="ctId != null and ctId != ''"> AND CEB_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+			    <if test="ctStat != null and ctStat != ''"> AND CEB_T.CT_STAT = #{ctStat, jdbcType=VARCHAR}</if>
+			    <if test="ctActStat != null and ctActStat != ''">AND CEB_T.CT_ACT_STAT = #{ctActStat, jdbcType=VARCHAR}</if>
+			    <if test="regrUid != null and regrUid != ''">AND CEB_T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			    <if test="modifyYn != null and modifyYn != ''"> AND CEB_T.MODIFY_YN = #{modifyYn, jdbcType=CHAR}</if>
+			    <if test="recmdYn != null and recmdYn != ''"> AND CEB_T.RECMD_YN = #{recmdYn, jdbcType=CHAR}</if>
+			    <if test="ctEvalCd != null and ctEvalCd != ''"> AND CEB_T.CT_EVAL_CD = #{ctEvalCd, jdbcType=VARCHAR}</if>
+			    <if test="extnOpenYn != null and extnOpenYn != ''"> AND CEB_T.EXTN_OPEN_YN = #{extnOpenYn, jdbcType=CHAR}</if>
+			    <if test="mngTgtYn != null and mngTgtYn != ''"> AND CEB_T.MNG_TGT_YN = #{mngTgtYn, jdbcType=CHAR}</if>
+			    <if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+			    <if test="strtDt != null and strtDt != '' and  endDt != null and endDt != ''">
+					AND CONVERT(VARCHAR(10), CEB_T.REG_DT, 120) BETWEEN #{strtDt, jdbcType=VARCHAR} AND #{endDt, jdbcType=VARCHAR}
+				</if>
+			    <if test="ctSearchList != null">
+		   			<![CDATA[ AND CT_STAT IN ]]>
+		   				 <foreach collection="ctSearchList" item="item" index="index" separator="," open="(" close=")">
+				            	#{item, jdbcType=VARCHAR}
+				        </foreach>	   			
+		   		</if>
+		   		<if test="ctActStatList != null">
+		   			<![CDATA[ AND CT_ACT_STAT IN ]]>
+		   				 <foreach collection="ctActStatList" item="item" index="index" separator="," open="(" close=")">
+				            	#{item, jdbcType=VARCHAR}
+				        </foreach>	   			
+		   		</if>
+		   		
+			    <if test="mngTgtYn != null and mngTgtYn != ''"> AND CEB_T.MNG_TGT_YN = #{mngTgtYn, jdbcType=CHAR}</if>
+			   	<if test="'communityOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        AND (
+							SELECT RESC_VA 
+							FROM CT_RESC_B
+							WHERE RESC_ID = CEB_T.CT_SUBJ_RESC
+							AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			      		) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+			</where>
+		    
+		</if>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtEstbB" resultMap="ctEstbBMap" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.selectCtEstbB */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CT_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+				<if test="ranking != null and ranking != ''">
+				 TOP(#{ranking, jdbcType=NUMERIC})
+				 </if>
+			</if>
+			CEB_T.COMP_ID,
+			CEB_T.CT_ID,
+			
+			CEB_T.MAST_UID,
+			CEB_T.CT_SUBJ_RESC,
+			CEB_T.CT_ITRO,
+			CEB_T.CT_KWD,
+			CEB_T.MNG_TGT_YN,
+			CEB_T.JOIN_MET,
+			CEB_T.DFT_AUTH,
+			CEB_T.EXTN_OPEN_YN,
+			CEB_T.ATT_LIM_SIZE,
+			CEB_T.ATT_YN,
+			CEB_T.CT_STAT,
+			CEB_T.CT_APVD_DT,
+			CEB_T.RJT_OPIN_CONT,
+			CEB_T.CT_ACT_STAT,
+			CEB_T.CT_END_CONT,
+			CEB_T.RECMD_YN,
+			CEB_T.RECMD_DT,
+			CEB_T.CT_EVAL_CD,
+			CEB_T.REG_DT,
+			CEB_T.MOD_DT,
+			CEB_T.REGR_UID,
+			CEB_T.MODR_UID,
+			CEB_T.MODIFY_YN,
+			(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = CEB_T.CT_SUBJ_RESC
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CT_NM,
+      		
+      		(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = (SELECT CAT_SUBJ_RESC_ID FROM CT_CAT_B WHERE CAT_ID = (SELECT CAT_PID FROM CT_CAT_B WHERE CAT_ID = (SELECT CAT_ID FROM CT_BLON_CAT_D WHERE CT_ID = CEB_T.CT_ID)))
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CAT_PNM,
+			
+			(
+      			SELECT RESC_VA 
+      			FROM CT_RESC_B
+				WHERE RESC_ID  = (
+									SELECT CAT_SUBJ_RESC_ID 
+									FROM CT_CAT_B
+									WHERE CAT_ID=
+										(SELECT CAT_ID 
+			
+											FROM CT_BLON_CAT_D BLON_CAT
+											WHERE CT_ID = CEB_T.CT_ID
+										)
+								 )
+			   AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+	      )CAT_NM,
+		  (SELECT CAT_ID 
+		  FROM CT_BLON_CAT_D BLON_CAT
+		  WHERE CT_ID = CEB_T.CT_ID
+		  ) CAT_ID,
+
+	      (
+	      	SELECT RESC_VA
+	      	FROM OR_RESC_B
+	      	WHERE RESC_ID = (
+	      						SELECT RESC_ID
+	      						FROM OR_USER_B
+	      						WHERE USER_UID =  CEB_T.MAST_UID
+	      					)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+	      )MAST_NM,
+	      
+	     (
+			SELECT TOP 1 CT_FNC_UID 
+			FROM CT_FNC_D
+			WHERE CT_ID=CEB_T.CT_ID AND CT_FNC_ID='CTHOME' 
+			
+		 )CT_FNC_UID,
+		 (
+			SELECT JOIN_STAT
+			FROM CT_MBSH_D
+			WHERE CT_ID=CEB_T.CT_ID AND USER_UID=#{logUserUid, jdbcType=VARCHAR}
+			
+		 )LOG_USER_JOIN_STAT,
+		 (
+			SELECT USER_SECUL_CD
+			FROM CT_MBSH_D
+			WHERE CT_ID=CEB_T.CT_ID AND USER_UID=#{logUserUid, jdbcType=VARCHAR}
+			
+		 )LOG_USER_SECUL_CD,
+		 (
+		 	SELECT COUNT(*) 
+		 	FROM CT_MBSH_D
+		 	WHERE CT_ID = CEB_T.CT_ID
+		 )MBSH_CNT,
+		 (
+		 	SELECT COUNT(*)
+		 	FROM CT_VISTR_HST_D 
+		 	WHERE CT_ID = CEB_T.CT_ID
+		 )CT_TOTAL_VISIT_CNT,
+		 (
+		 	SELECT COUNT(*)
+		 	FROM CT_BULL_MAST_B
+		 	WHERE CT_ID = CEB_T.CT_ID
+		 )CT_TOTAL_BULL_CNT,
+		 <if test="(termStartDt != null and termStartDt != '') or (termEndDt != null and termEndDt != '')">
+		 	(
+		 		SELECT COUNT(*)  
+		 			FROM CT_VISTR_HST_D 
+		 			WHERE CT_ID = CEB_T.CT_ID
+	 				<if test="termStartDt != null and termStartDt != ''"><![CDATA[ AND ACCS_DT >= CONVERT(DATETIME, #{termStartDt, jdbcType=VARCHAR}, 120)]]></if>
+	 				<if test="termEndDt != null and termEndDt != ''"><![CDATA[ AND ACCS_DT <= CONVERT(DATETIME, #{termEndDt, jdbcType=VARCHAR}, 120)]]></if>
+      		) CT_TERM_VISIT_CNT,
+      		(
+      			SELECT COUNT(*) 
+      				FROM CT_BULL_MAST_B 
+		 			  	WHERE CT_ID = CEB_T.CT_ID
+		 			  	<if test="termStartDt != null and termStartDt != ''"><![CDATA[ AND REG_DT >= CONVERT(DATETIME, #{termStartDt, jdbcType=VARCHAR}, 120)]]></if>
+		 				<if test="termEndDt != null and termEndDt != ''"><![CDATA[ AND REG_DT <= CONVERT(DATETIME, #{termEndDt, jdbcType=VARCHAR}, 120)]]></if>
+				
+      		) CT_TERM_BULL_CNT,
+      		(
+      			SELECT COUNT(*)
+      			FROM CT_MBSH_D
+      			WHERE CT_ID = CEB_T.CT_ID
+      			<if test="termStartDt != null and termStartDt != ''"><![CDATA[ AND JOIN_DT >= CONVERT(DATETIME, #{termStartDt, jdbcType=VARCHAR}, 120)]]></if>
+		 		<if test="termEndDt != null and termEndDt != ''"><![CDATA[ AND JOIN_DT <= CONVERT(DATETIME, #{termEndDt, jdbcType=VARCHAR}, 120)]]></if>
+				
+      		) CT_TERM_MBSH_CNT,
+		     
+		 </if>
+		 (
+		 	SELECT COUNT(DISTINCT REGR_UID)
+				FROM CT_BULL_MAST_B
+					WHERE CT_ID = CEB_T.CT_ID
+		 )BULL_REAL_ACT_USER_CNT,
+		 CEB_T.CLS_REQS_YN,
+		 CEB_T.ALL_COMP_YN,
+		</trim>
+		FROM CT_ESTB_B CEB_T
+		<include refid="selectCtEstbBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CEB_T.CT_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	
+	<select id="selectCtAllEstbB" resultMap="ctEstbBMap" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.selectCtAllEstbB */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CT_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+				<if test="ranking != null and ranking != ''">
+				 TOP(#{ranking, jdbcType=NUMERIC})
+				 </if>
+			</if>
+			CEB_T.COMP_ID,
+			CEB_T.CT_ID,
+			
+			CEB_T.MAST_UID,
+			CEB_T.CT_SUBJ_RESC,
+			CEB_T.CT_ITRO,
+			CEB_T.CT_KWD,
+			CEB_T.MNG_TGT_YN,
+			CEB_T.JOIN_MET,
+			CEB_T.DFT_AUTH,
+			CEB_T.EXTN_OPEN_YN,
+			CEB_T.ATT_LIM_SIZE,
+			CEB_T.ATT_YN,
+			CEB_T.CT_STAT,
+			CEB_T.CT_APVD_DT,
+			CEB_T.RJT_OPIN_CONT,
+			CEB_T.CT_ACT_STAT,
+			CEB_T.CT_END_CONT,
+			CEB_T.RECMD_YN,
+			CEB_T.RECMD_DT,
+			CEB_T.CT_EVAL_CD,
+			CEB_T.REG_DT,
+			CEB_T.MOD_DT,
+			CEB_T.REGR_UID,
+			CEB_T.MODR_UID,
+			CEB_T.MODIFY_YN,
+			(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = CEB_T.CT_SUBJ_RESC
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CT_NM,
+      		
+      		(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = (SELECT CAT_SUBJ_RESC_ID FROM CT_CAT_B WHERE CAT_ID = (SELECT CAT_PID FROM CT_CAT_B WHERE CAT_ID = (SELECT CAT_ID FROM CT_BLON_CAT_D WHERE CT_ID = CEB_T.CT_ID)))
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CAT_PNM,
+			
+			(
+      			SELECT RESC_VA 
+      			FROM CT_RESC_B
+				WHERE RESC_ID  = (
+									SELECT CAT_SUBJ_RESC_ID 
+									FROM CT_CAT_B
+									WHERE CAT_ID=
+										(SELECT CAT_ID 
+			
+											FROM CT_BLON_CAT_D BLON_CAT
+											WHERE CT_ID = CEB_T.CT_ID
+										)
+								 )
+			   AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+	      )CAT_NM,
+	      
+	      (
+	      	SELECT RESC_VA
+	      	FROM OR_RESC_B
+	      	WHERE RESC_ID = (
+	      						SELECT RESC_ID
+	      						FROM OR_USER_B
+	      						WHERE USER_UID =  CEB_T.MAST_UID
+	      					)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+	      )MAST_NM,
+	      
+	     (
+			SELECT TOP 1 CT_FNC_UID 
+			FROM CT_FNC_D
+			WHERE CT_ID=CEB_T.CT_ID AND CT_FNC_ID='CTHOME' 
+			
+		 )CT_FNC_UID,
+		 (
+			SELECT JOIN_STAT
+			FROM CT_MBSH_D
+			WHERE CT_ID=CEB_T.CT_ID AND USER_UID=#{logUserUid, jdbcType=VARCHAR}
+			
+		 )LOG_USER_JOIN_STAT,
+		 (
+			SELECT USER_SECUL_CD
+			FROM CT_MBSH_D
+			WHERE CT_ID=CEB_T.CT_ID AND USER_UID=#{logUserUid, jdbcType=VARCHAR}
+			
+		 )LOG_USER_SECUL_CD,
+		 (
+		 	SELECT COUNT(*) 
+		 	FROM CT_MBSH_D
+		 	WHERE CT_ID = CEB_T.CT_ID
+		 )MBSH_CNT,
+		 (
+		 	SELECT COUNT(*)
+		 	FROM CT_VISTR_HST_D 
+		 	WHERE CT_ID = CEB_T.CT_ID
+		 )CT_TOTAL_VISIT_CNT,
+		 (
+		 	SELECT COUNT(*)
+		 	FROM CT_BULL_MAST_B
+		 	WHERE CT_ID = CEB_T.CT_ID
+		 )CT_TOTAL_BULL_CNT,
+		 <if test="(termStartDt != null and termStartDt != '') or (termEndDt != null and termEndDt != '')">
+		 	(
+		 		SELECT COUNT(*)  
+		 		FROM CT_VISTR_HST_D
+		 		WHERE CT_ID = CEB_T.CT_ID
+ 				<if test="termStartDt != null and termStartDt != ''"><![CDATA[ AND ACCS_DT >= CONVERT(DATETIME, #{termStartDt, jdbcType=VARCHAR}, 120)]]></if>
+ 				<if test="termEndDt != null and termEndDt != ''"><![CDATA[ AND ACCS_DT <= CONVERT(DATETIME, #{termEndDt, jdbcType=VARCHAR}, 120)]]></if>
+      		) CT_TERM_VISIT_CNT,
+      		(
+      			SELECT COUNT(*) 
+      			FROM CT_BULL_MAST_B
+      			WHERE CT_ID = CEB_T.CT_ID
+ 			  	<if test="termStartDt != null and termStartDt != ''"><![CDATA[ AND REG_DT >= CONVERT(DATETIME, #{termStartDt, jdbcType=VARCHAR}, 120)]]></if>
+ 				<if test="termEndDt != null and termEndDt != ''"><![CDATA[ AND REG_DT <= CONVERT(DATETIME, #{termEndDt, jdbcType=VARCHAR}, 120)]]></if> 
+      		) CT_TERM_BULL_CNT,
+      		(
+      			SELECT COUNT(*)
+      			FROM CT_MBSH_D
+      			WHERE CT_ID = CEB_T.CT_ID
+      			<if test="termStartDt != null and termStartDt != ''"><![CDATA[ AND JOIN_DT >= CONVERT(DATETIME, #{termStartDt, jdbcType=VARCHAR}, 120)]]></if>
+		 		<if test="termEndDt != null and termEndDt != ''"><![CDATA[ AND JOIN_DT <= CONVERT(DATETIME, #{termEndDt, jdbcType=VARCHAR}, 120)]]></if>
+      		) CT_TERM_MBSH_CNT,
+		     
+		 </if>
+		 (
+		 	SELECT COUNT(DISTINCT REGR_UID)
+				FROM CT_BULL_MAST_B
+					WHERE CT_ID = CEB_T.CT_ID
+		 )BULL_REAL_ACT_USER_CNT,
+		 CEB_T.CLS_REQS_YN,
+		 CEB_T.ALL_COMP_YN,
+		</trim>
+		FROM CT_ESTB_B CEB_T
+			INNER JOIN CT_BLON_CAT_D CBC_T
+				ON CEB_T.CT_ID = CBC_T.CT_ID AND CBC_T.CAT_ID = (
+																	SELECT CAT_ID FROM CT_CAT_B CCB_T 
+																		WHERE CBC_T.CAT_ID = CCB_T.CAT_ID
+																			AND CCB_T.EXTN_OPEN_YN = 'Y'
+																			<if test="closedFldList != null">
+																		   			<![CDATA[ AND CCB_T.CAT_PID NOT IN ]]>
+																		   				 <foreach collection="closedFldList" item="item" index="index" separator="," open="(" close=")">
+																				            	#{item, jdbcType=VARCHAR}
+																				        </foreach>	   			
+																   			</if>
+																)
+		    	<if test="'masterOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        INNER JOIN OR_USER_B OUB
+			        	ON CEB_T.MAST_UID = OUB.USER_UID
+			         		AND OUB.USER_NM LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'
+			    </if>
+																
+		<where>
+		    <if test="compId != null and compId != ''"> AND CEB_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CEB_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		    <if test="catId != null and catId != ''"> AND CBC_T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		    <if test="ctStat != null and ctStat != ''"> AND CEB_T.CT_STAT = #{ctStat, jdbcType=VARCHAR}</if>
+		    <if test="ctActStat != null and ctActStat != ''">AND CEB_T.CT_ACT_STAT = #{ctActStat, jdbcType=VARCHAR}</if>
+		    <if test="regrUid != null and regrUid != ''">AND CEB_T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+		    <if test="modifyYn != null and modifyYn != ''"> AND CEB_T.MODIFY_YN = #{modifyYn, jdbcType=CHAR}</if>
+		    <if test="recmdYn != null and recmdYn != ''"> AND CEB_T.RECMD_YN = #{recmdYn, jdbcType=CHAR}</if>
+		    <if test="ctEvalCd != null and ctEvalCd != ''"> AND CEB_T.CT_EVAL_CD = #{ctEvalCd, jdbcType=VARCHAR}</if>
+		    <if test="extnOpenYn != null and extnOpenYn != ''"> AND CEB_T.EXTN_OPEN_YN = #{extnOpenYn, jdbcType=CHAR}</if>
+		    <if test="mngTgtYn != null and mngTgtYn != ''"> AND CEB_T.MNG_TGT_YN = #{mngTgtYn, jdbcType=CHAR}</if>
+		    <if test="strtDt != null and strtDt != '' and  endDt != null and endDt != ''">
+				AND CONVERT(VARCHAR(10), CEB_T.REG_DT, 120) BETWEEN #{strtDt, jdbcType=VARCHAR} AND #{endDt, jdbcType=VARCHAR}
+			</if>
+		    <if test="ctSearchList != null">
+	   			<![CDATA[ AND CT_STAT IN ]]>
+	   				 <foreach collection="ctSearchList" item="item" index="index" separator="," open="(" close=")">
+			            #{item, jdbcType=VARCHAR}
+			        </foreach>	   			
+	   		</if>
+	   		<if test="ctActStatList != null">
+	   			<![CDATA[ AND CT_ACT_STAT IN ]]>
+	   				 <foreach collection="ctActStatList" item="item" index="index" separator="," open="(" close=")">
+			            #{item, jdbcType=VARCHAR}
+			        </foreach>	   			
+	   		</if>
+	   		<if test="'communityOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        AND (
+							SELECT RESC_VA 
+							FROM CT_RESC_B
+							WHERE RESC_ID = CEB_T.CT_SUBJ_RESC
+							AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			      		) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+		</where>														
+																
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CEB_T.CT_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtEstbB" resultType="Integer" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.countCtEstbB */
+		SELECT COUNT(*) CNT
+		FROM CT_ESTB_B CEB_T
+		<include refid="selectCtEstbBWhere"/>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtAllEstbB" resultType="Integer" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.countCtAllEstbB */
+		SELECT COUNT(*) CNT
+		FROM CT_ESTB_B CEB_T
+			INNER JOIN CT_BLON_CAT_D CBC_T
+				ON CEB_T.CT_ID = CBC_T.CT_ID AND CBC_T.CAT_ID = (
+																	SELECT CAT_ID FROM CT_CAT_B CCB_T 
+																		WHERE CBC_T.CAT_ID = CCB_T.CAT_ID
+																			AND CCB_T.EXTN_OPEN_YN = 'Y'
+																			<if test="closedFldList != null">
+																		   			<![CDATA[ AND CCB_T.CAT_PID NOT IN ]]>
+																		   				 <foreach collection="closedFldList" item="item" index="index" separator="," open="(" close=")">
+																				            	#{item, jdbcType=VARCHAR}
+																				        </foreach>	   			
+																   			</if>
+																)
+		    	<if test="'masterOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        INNER JOIN OR_USER_B OUB
+			        	ON CEB_T.MAST_UID = OUB.USER_UID
+			         		AND OUB.USER_NM LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'
+			    </if>
+																
+		<where>
+		    <if test="compId != null and compId != ''"> AND CEB_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CEB_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		    <if test="catId != null and catId != ''"> AND CBC_T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		    <if test="ctStat != null and ctStat != ''"> AND CEB_T.CT_STAT = #{ctStat, jdbcType=VARCHAR}</if>
+		    <if test="ctActStat != null and ctActStat != ''">AND CEB_T.CT_ACT_STAT = #{ctActStat, jdbcType=VARCHAR}</if>
+		    <if test="regrUid != null and regrUid != ''">AND CEB_T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+		    <if test="modifyYn != null and modifyYn != ''"> AND CEB_T.MODIFY_YN = #{modifyYn, jdbcType=CHAR}</if>
+		    <if test="recmdYn != null and recmdYn != ''"> AND CEB_T.RECMD_YN = #{recmdYn, jdbcType=CHAR}</if>
+		    <if test="ctEvalCd != null and ctEvalCd != ''"> AND CEB_T.CT_EVAL_CD = #{ctEvalCd, jdbcType=VARCHAR}</if>
+		    <if test="extnOpenYn != null and extnOpenYn != ''"> AND CEB_T.EXTN_OPEN_YN = #{extnOpenYn, jdbcType=CHAR}</if>
+		    <if test="mngTgtYn != null and mngTgtYn != ''"> AND CEB_T.MNG_TGT_YN = #{mngTgtYn, jdbcType=CHAR}</if>
+		    <if test="strtDt != null and strtDt != '' and  endDt != null and endDt != ''">
+				AND CONVERT(CHAR(10), CEB_T.REG_DT, 120) BETWEEN #{strtDt, jdbcType=VARCHAR} AND #{endDt, jdbcType=VARCHAR}
+			</if>
+		    <if test="ctSearchList != null">
+	   			<![CDATA[ AND CT_STAT IN ]]>
+	   				 <foreach collection="ctSearchList" item="item" index="index" separator="," open="(" close=")">
+			            #{item, jdbcType=VARCHAR}
+			        </foreach>	   			
+	   		</if>
+	   		<if test="ctActStatList != null">
+	   			<![CDATA[ AND CT_ACT_STAT IN ]]>
+	   				 <foreach collection="ctActStatList" item="item" index="index" separator="," open="(" close=")">
+			            #{item, jdbcType=VARCHAR}
+			        </foreach>	   			
+	   		</if>
+	   		<if test="'communityOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        AND (
+							SELECT RESC_VA 
+							FROM CT_RESC_B
+							WHERE RESC_ID = CEB_T.CT_SUBJ_RESC
+							AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			      		) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+		    <if test="allCompYn != null and allCompYn != ''"> AND CEB_T.ALL_COMP_YN = #{allCompYn, jdbcType=CHAR}</if>		    
+		</where>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countRankCtEstbB" resultType="Integer" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.countRankCtEstbB */
+		SELECT COUNT(#{ranking, jdbcType=NUMERIC}) CNT 
+		FROM CT_ESTB_B CEB_T
+		<include refid="selectCtEstbBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtEstbB" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.insertCtEstbB */
+		INSERT INTO CT_ESTB_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID,
+		    CT_ID,
+		    MAST_UID,
+		    CT_SUBJ_RESC,
+		    CT_ITRO,
+		    CT_KWD,
+		    MNG_TGT_YN,
+		    JOIN_MET,
+		    DFT_AUTH,
+		    EXTN_OPEN_YN,
+		    ATT_LIM_SIZE,
+		    ATT_YN,
+		    MBSH_CNT,
+		    CT_STAT,
+		    CT_APVD_DT,
+		    RJT_OPIN_CONT,
+		    CT_ACT_STAT,
+		    CT_END_CONT,
+		    RECMD_YN,
+		    RECMD_DT,
+		    CT_EVAL_CD,
+		    REG_DT,
+		    MOD_DT,
+		    REGR_UID,
+		    MODR_UID,
+		    MODIFY_YN,
+		    CLS_REQS_YN,
+		    ALL_COMP_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR},
+			#{ctId, jdbcType=VARCHAR},
+			#{mastUid, jdbcType=VARCHAR},
+			#{ctSubjResc, jdbcType=VARCHAR},
+			#{ctItro, jdbcType=VARCHAR},
+			#{ctKwd, jdbcType=VARCHAR},
+			#{mngTgtYn, jdbcType=CHAR}, 
+			#{joinMet, jdbcType=VARCHAR},
+			#{dftAuth, jdbcType=VARCHAR},
+			#{extnOpenYn, jdbcType=CHAR}, 
+			#{attLimSize, jdbcType=NUMERIC}, 
+			#{attYn, jdbcType=CHAR},
+			#{mbshCnt, jdbcType=NUMERIC},
+			#{ctStat, jdbcType=VARCHAR}, 
+			CONVERT(DATETIME, #{ctApvdDt, jdbcType=VARCHAR}, 120),
+			#{rjtOpinCont, jdbcType=VARCHAR}, 
+			#{ctActStat, jdbcType=VARCHAR}, 
+			#{ctEndCont, jdbcType=VARCHAR},
+			#{recmdYn, jdbcType=CHAR}, 
+			CONVERT(DATETIME, #{recmdDt, jdbcType=VARCHAR}, 120), 
+			#{ctEvalCd, jdbcType=VARCHAR},
+			CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120), 
+			CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120), 
+			#{regrUid, jdbcType=VARCHAR},
+			#{modrUid, jdbcType=VARCHAR},
+			#{modifyYn, jdbcType=CHAR},
+			#{clsReqsYn, jdbcType=CHAR},
+			#{allCompYn, jdbcType=CHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtEstbB" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.updateCtEstbB */
+		UPDATE CT_ESTB_B
+		<set>
+			<if test="mastUid != null"> MAST_UID = #{mastUid, jdbcType=VARCHAR},</if>
+			<if test="ctSubjResc != null"> CT_SUBJ_RESC = #{ctSubjResc, jdbcType=VARCHAR},</if>
+			<if test="ctItro != null"> CT_ITRO = #{ctItro, jdbcType=VARCHAR},</if>
+			<if test="ctKwd != null"> CT_KWD = #{ctKwd, jdbcType=VARCHAR},</if>
+			<if test="mngTgtYn != null"> MNG_TGT_YN = #{mngTgtYn, jdbcType=CHAR},</if>
+			<if test="joinMet != null"> JOIN_MET = #{joinMet, jdbcType=VARCHAR},</if>
+			<if test="dftAuth != null"> DFT_AUTH = #{dftAuth, jdbcType=VARCHAR},</if>
+			<if test="extnOpenYn != null"> EXTN_OPEN_YN = #{extnOpenYn, jdbcType=CHAR},</if>
+			<if test="attLimSize != null"> ATT_LIM_SIZE = #{attLimSize, jdbcType=NUMERIC},</if>
+			<if test="attYn != null"> ATT_YN = #{attYn, jdbcType=CHAR},</if>
+			<if test="mbshCnt != null"> MBSH_CNT = #{mbshCnt, jdbcType=NUMERIC},</if>
+			<if test="ctStat != null"> CT_STAT = #{ctStat, jdbcType=VARCHAR},</if>
+			<if test="ctApvdDt != null"> CT_APVD_DT = CONVERT(DATETIME, #{ctApvdDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="rjtOpinCont != null"> RJT_OPIN_CONT = #{rjtOpinCont, jdbcType=VARCHAR},</if>
+			<if test="ctActStat != null"> CT_ACT_STAT = #{ctActStat, jdbcType=VARCHAR},</if>
+			<if test="ctEndCont != null"> CT_END_CONT = #{ctEndCont, jdbcType=VARCHAR},</if>
+			<if test="recmdYn != null"> RECMD_YN = #{recmdYn, jdbcType=CHAR},</if>
+			<if test="recmdDt != null"> RECMD_DT = CONVERT(DATETIME, #{recmdDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="ctEvalCd != null"> CT_EVAL_CD = #{ctEvalCd, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> MOD_DT = CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modifyYn != null"> MODIFY_YN = #{modifyYn, jdbcType=VARCHAR},</if>
+			<if test="clsReqsYn != null"> CLS_REQS_YN = #{clsReqsYn, jdbcType=CHAR},</if>
+			<if test="allCompYn != null"> ALL_COMP_YN = #{allCompYn, jdbcType=CHAR},</if>
+		</set>
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtEstbB" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.deleteCtEstbB */
+		DELETE FROM CT_ESTB_B
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

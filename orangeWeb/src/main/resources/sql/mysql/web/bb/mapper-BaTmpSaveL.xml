@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_TMP_SAVE_L[게시물 임시저장] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaTmpSaveLDao">
+
+	<resultMap id="baTmpSaveLMap" type="BaTmpSaveLVo">
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<id property="brdId" column="BRD_ID" /><!-- 게시판ID -->
+		<id property="brdNm" column="BRD_NM" /><!-- 게시판명 -->
+		<id property="subj" column="SUBJ" /><!-- 제목 -->
+		<id property="cont" column="CONT" /><!-- 본문 -->
+		<id property="brdIdList" column="BRD_ID_LIST" /><!-- 게시판ID목록 -->
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<id property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<id property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<id property="modrNm" column="MODR_NM" /><!-- 수정자명 -->
+		<id property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<id property="secuYn" column="SECU_YN" /><!-- 보안여부 -->
+		<id property="ugntYn" column="UGNT_YN" /><!-- 긴급여부 -->
+		<id property="notcYn" column="NOTC_YN" /><!-- 공지여부 -->
+		<id property="fileCnt" column="FILE_CNT" /><!-- 첨부파일수 -->
+	</resultMap>
+
+	<select id="selectBaTmpSaveL" resultMap="baTmpSaveLMap" parameterType="BaTmpSaveLVo" >
+		/* com.innobiz.orange.web.bb.dao.BaTmpSaveLDao.selectBaTmpSaveL */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.BULL_ID,
+			T.BRD_ID,
+			(SELECT RESC_VA FROM BA_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM BA_BRD_B WHERE BRD_ID = T.BRD_ID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) BRD_NM,
+			T.SUBJ,
+			<if test="withLob">T.CONT,</if>
+			T.BRD_ID_LIST,
+			T.REGR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			T.REG_DT,
+			T.MODR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) MODR_NM,
+			T.MOD_DT,
+			-- (SELECT COUNT(*) FROM BA_BULL_FILE_D WHERE REF_ID = CONVERT(T.BULL_ID, CHAR)) FILE_CNT,
+			IFNULL(O.SECU_YN, 'N') SECU_YN,
+			IFNULL(O.UGNT_YN, 'N') UGNT_YN,
+			IFNULL(O.NOTC_YN, 'N') NOTC_YN,
+		</trim>
+		FROM BA_TMP_SAVE_L T LEFT JOIN BA_BULL_OPT_D O ON T.BULL_ID = O.BULL_ID
+		<if test="schCat == 'BRD_NM' and schWord != null and schWord != ''">
+			LEFT JOIN BA_BRD_B B ON T.BRD_ID = B.BRD_ID
+			LEFT JOIN BA_RESC_B R ON B.RESC_ID = R.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<where>
+			AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}
+			<if test="bullId != null"> AND T.BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="brdId != null"> AND T.BRD_ID = #{brdId, jdbcType=VARCHAR}</if>
+			<if test="schCat == 'SUBJ' and schWord != null and schWord != ''"> AND T.SUBJ LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="schCat == 'CONT' and schWord != null and schWord != ''"> AND T.CONT LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="schCat == 'BRD_NM' and schWord != null and schWord != ''"> AND R.RESC_VA LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.BULL_ID DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countBaTmpSaveL" resultType="Integer" parameterType="BaTmpSaveLVo" >
+		/* com.innobiz.orange.web.bb.dao.BaTmpSaveLDao.countBaTmpSaveL */
+		SELECT COUNT(*) CNT
+		FROM BA_TMP_SAVE_L T
+		<if test="schCat == 'BRD_NM' and schWord != null and schWord != ''">
+			LEFT JOIN BA_BRD_B B ON T.BRD_ID = B.BRD_ID
+			LEFT JOIN BA_RESC_B R ON B.RESC_ID = R.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<where>
+			AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}
+			<if test="bullId != null"> AND T.BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="brdId != null"> AND T.BRD_ID = #{brdId, jdbcType=VARCHAR}</if>
+			<if test="schCat == 'SUBJ' and schWord != null and schWord != ''"> AND T.SUBJ LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="schCat == 'CONT' and schWord != null and schWord != ''"> AND T.CONT LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="schCat == 'BRD_NM' and schWord != null and schWord != ''"> AND R.RESC_VA LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertBaTmpSaveL" parameterType="BaTmpSaveLVo">
+		/* com.innobiz.orange.web.bb.dao.BaTmpSaveLDao.insertBaTmpSaveL */
+		INSERT INTO BA_TMP_SAVE_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			BULL_ID,
+			BRD_ID,
+			SUBJ,
+			CONT,
+			BRD_ID_LIST,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{bullId, jdbcType=VARCHAR},
+			#{brdId, jdbcType=VARCHAR},
+			#{subj, jdbcType=NVARCHAR},
+			#{cont, jdbcType=CLOB},
+			#{brdIdList, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateBaTmpSaveL" parameterType="BaTmpSaveLVo" >
+		/* com.innobiz.orange.web.bb.dao.BaTmpSaveLDao.updateBaTmpSaveL */
+		UPDATE BA_TMP_SAVE_L
+		<set>
+			<if test="brdId != null"> BRD_ID = #{brdId, jdbcType=VARCHAR},</if>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=NVARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=CLOB},</if>
+			<if test="brdIdList != null"> BRD_ID_LIST = #{brdIdList, jdbcType=VARCHAR},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'"> MOD_DT = NOW(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			AND REGR_UID = #{regrUid, jdbcType=VARCHAR}
+			<if test="bullId != null"> AND BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="bullId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteBaTmpSaveL" parameterType="BaTmpSaveLVo">
+		/* com.innobiz.orange.web.bb.dao.BaTmpSaveLDao.deleteBaTmpSaveL */
+		DELETE FROM BA_TMP_SAVE_L
+		<where>
+			AND REGR_UID = #{regrUid, jdbcType=VARCHAR}
+			<if test="bullId != null"> AND BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="brdId != null"> AND BRD_ID = #{brdId, jdbcType=VARCHAR}</if>
+			<if test="bullId == null and brdId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : ST_SITE_B[사이트기본] -->
+<mapper namespace="com.innobiz.orange.web.st.dao.StSiteBDao">
+
+	<resultMap id="stSiteBMap" type="StSiteBVo">
+		<id property="siteId" column="SITE_ID" /><!-- 카테고리ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="catId" column="CAT_ID" /><!-- 카테고리ID -->
+		<result property="siteNm" column="SITE_NM" /><!-- 사이트명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="cont" column="CONT" /><!-- 내용 -->
+		<result property="siteUrl" column="SITE_URL" /><!-- 사이트URL -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectStSiteBWhere">
+		<where>
+			<if test="siteId != null and siteId !=''"> AND T.SITE_ID = #{siteId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="catId != null and catId != ''"> AND T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test='schCat != null and "siteNm".equals(schCat) and schWord != null and schWord != ""'> AND R.RESC_VA like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectStSiteB" resultMap="stSiteBMap" parameterType="StSiteBVo" >
+		/* com.innobiz.orange.web.st.dao.StSiteBDao.selectStSiteB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.SITE_ID,
+			T.COMP_ID,
+			T.CAT_ID,
+			(SELECT RESC_VA FROM ST_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) AS SITE_NM,
+			T.RESC_ID,
+			T.CONT,
+			T.SITE_URL,
+			T.SORT_ORDR,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM ST_SITE_B T
+		<if test='schCat != null and "siteNm".equals(schCat) and schWord != null and schWord != ""'>
+			INNER JOIN ST_RESC_B R ON T.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectStSiteBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countStSiteB" resultType="Integer" parameterType="StSiteBVo" >
+		/* com.innobiz.orange.web.st.dao.StSiteBDao.countStSiteB */
+		SELECT COUNT(*) CNT
+		FROM ST_SITE_B T
+		<if test='schCat != null and "siteNm".equals(schCat) and schWord != null and schWord != ""'>
+			INNER JOIN ST_RESC_B R ON T.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectStSiteBWhere"/>
+	</select>
+	
+	<!-- 사이트 등록 저장 -->
+	<insert id="insertStSiteB" parameterType="StSiteBVo" >
+		/* com.innobiz.orange.web.st.dao.StSiteBDao.insertStSiteB */
+		INSERT INTO ST_SITE_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SITE_ID,
+			COMP_ID,
+			CAT_ID,
+			SITE_NM,
+			RESC_ID,
+			CONT,
+			SITE_URL,
+			SORT_ORDR,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{siteId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{catId, jdbcType=VARCHAR},
+			#{siteNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{cont, jdbcType=NVARCHAR},
+			#{siteUrl, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 사이트 수정 -->
+	<update id="updateStSiteB" parameterType="StSiteBVo" >
+		/* com.innobiz.orange.web.st.dao.StSiteBDao.updateStSiteB */
+		UPDATE ST_SITE_B
+		<set>
+			<if test="catId != null"> CAT_ID = #{catId, jdbcType=VARCHAR},</if>
+			<if test="siteNm != null"> SITE_NM = #{siteNm, jdbcType=NVARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=NVARCHAR},</if>
+			<if test="siteUrl != null"> SITE_URL = #{siteUrl, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="siteId != null and siteId !=''"> AND SITE_ID = #{siteId, jdbcType=VARCHAR}</if>			
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 사이트 삭제 -->
+	<delete id="deleteStSiteB" parameterType="StSiteBVo" >
+		/* com.innobiz.orange.web.st.dao.StSiteBDao.deleteStSiteB */
+		DELETE FROM ST_SITE_B
+		<where>
+			<if test="siteId != null and siteId !=''"> AND SITE_ID = #{siteId, jdbcType=VARCHAR}</if>
+			<if test="catId != null and catId !=''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+	
+	
+	<!-- 순서 조회 -->
+	<select id="maxStSiteB" resultType="Integer" parameterType="StSiteBVo" >
+		/* com.innobiz.orange.web.st.dao.StSiteBDao.maxStSiteB */
+		SELECT MAX(SORT_ORDR) AS SORT_ORDR
+		FROM ST_SITE_B
+		<where>
+			<if test="catId != null and catId !=''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+	
+</mapper>

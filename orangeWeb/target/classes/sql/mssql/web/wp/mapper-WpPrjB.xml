@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WP_PRJ_B[프로잭트기본] -->
+<mapper namespace="com.innobiz.orange.web.wp.dao.WpPrjBDao">
+
+	<resultMap id="wpPrjBMap" type="WpPrjBVo">
+		<id property="prjNo" column="PRJ_NO" /><!-- 프로잭트번호 -->
+		<result property="ver" column="VER" /><!-- 버전 -->
+		<result property="prjCd" column="PRJ_CD" /><!-- 프로잭트코드 -->
+		<result property="prjNm" column="PRJ_NM" /><!-- 프로잭트명 -->
+		<result property="grpId" column="GRP_ID" /><!-- 그룹ID -->
+		<result property="strtYmd" column="STRT_YMD" /><!-- 시작년월일 -->
+		<result property="endYmd" column="END_YMD" /><!-- 종료년월일 -->
+		<result property="cmplYmd" column="CMPL_YMD" /><!-- 완료년월일 -->
+		<result property="prjMm" column="PRJ_MM" /><!-- 프로잭트맨먼스 -->
+		<result property="prjAmt" column="PRJ_AMT" /><!-- 프로잭트금액 -->
+		<result property="pmId" column="PM_ID" /><!-- 피엠ID -->
+		<result property="pmMpTypCd" column="PM_MP_TYP_CD" /><!-- 피엠인력구분코드 -->
+		<result property="smry" column="SMRY" /><!-- 개요 -->
+		<result property="custNm" column="CUST_NM" /><!-- 고객명 -->
+		<result property="custZipNo" column="CUST_ZIP_NO" /><!-- 고객우편번호 -->
+		<result property="custAdr" column="CUST_ADR" /><!-- 고객주소 -->
+		<result property="prjStatCd" column="PRJ_STAT_CD" /><!-- 프로잭트상태코드 -->
+		<result property="modStatCd" column="MOD_STAT_CD" /><!-- 변경상태코드 -->
+		<result property="modCont" column="MOD_CONT" /><!-- 수정내용 -->
+		<result property="rejtRson" column="REJT_RSON" /><!-- 반려사유 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일 -->
+		<result property="regUid" column="REG_UID" /><!-- 등록자UID -->
+		<result property="pmNm" column="PM_NM" /><!-- 피엠명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWpPrjB" resultMap="wpPrjBMap" parameterType="WpPrjBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjBDao.selectWpPrjB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.PRJ_NO DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.PRJ_NO,
+			T.VER,
+			T.PRJ_CD,
+			T.PRJ_NM,
+			T.GRP_ID,
+			CONVERT(VARCHAR(10), T.STRT_YMD, 120) STRT_YMD,
+			CONVERT(VARCHAR(10), T.END_YMD, 120) END_YMD,
+			CONVERT(VARCHAR(10), T.CMPL_YMD, 120) CMPL_YMD,
+			T.PRJ_MM,
+			T.PRJ_AMT,
+			T.PM_ID,
+			T.PM_MP_TYP_CD,
+			T.SMRY,
+			T.CUST_NM,
+			T.CUST_ZIP_NO,
+			T.CUST_ADR,
+			T.PRJ_STAT_CD,
+			T.MOD_STAT_CD,
+			T.MOD_CONT,
+			T.REJT_RSON,
+			CONVERT(VARCHAR(19), T.REG_DT, 120) REG_DT,
+			T.REG_UID,
+			(CASE WHEN T.PM_MP_TYP_CD = 'emp' THEN (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.PM_ID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) WHEN T.PM_MP_TYP_CD = 'out' THEN (SELECT MP_NM FROM WP_MP_B WHERE MP_ID = T.PM_ID) ELSE NULL END) PM_NM,
+		</trim>
+		FROM WP_PRJ_${tableType} T<if test="(mpId != null and mpId != '')">, WP_PRJ_MP_PLAN_${tableDType} A</if>
+		<where>
+			<if test="prjNo != null">AND T.PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND T.VER = #{ver, jdbcType=NUMERIC}</if>
+			<if test="prjCd != null and prjCd != ''">AND T.PRJ_CD = #{prjCd, jdbcType=VARCHAR}</if>
+			<if test="prjNm != null and prjNm != ''">AND T.PRJ_NM LIKE '%' + #{prjNm, jdbcType=NVARCHAR} + '%'</if>
+			<if test="grpId != null and grpId != ''">AND T.GRP_ID = #{grpId, jdbcType=VARCHAR}</if>
+			<if test="strtYmd != null and strtYmd != ''">AND T.END_YMD <![CDATA[>=]]> CONVERT(DATETIME, #{strtYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="endYmd != null and endYmd != ''">AND T.STRT_YMD <![CDATA[<=]]> CONVERT(DATETIME, #{endYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="pmId != null and pmId != ''">AND T.PM_ID = #{pmId, jdbcType=VARCHAR}</if>
+			<if test="modStatCd != null and modStatCd != ''">AND T.MOD_STAT_CD = #{modStatCd, jdbcType=VARCHAR}</if>
+			<if test="regUid != null and regUid != ''">AND T.REG_UID = #{regUid, jdbcType=VARCHAR}</if>
+			<if test="prjNoList != null">AND T.PRJ_NO IN ( <foreach collection="prjNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="modStatCdList != null">AND T.MOD_STAT_CD IN ( <foreach collection="modStatCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="(mpId != null and mpId != '')">
+				AND T.PRJ_NO = A.PRJ_NO
+				<if test="mpId != null and mpId != ''">AND A.MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+				<if test="prjRole2Cd != null and prjRole2Cd != ''">AND A.PRJ_ROLE2_CD = #{prjRole2Cd, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.PRJ_NO</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWpPrjB" resultType="Integer" parameterType="WpPrjBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjBDao.countWpPrjB */
+		SELECT COUNT(*) CNT
+		FROM WP_PRJ_${tableType} T<if test="(mpId != null and mpId != '')">, WP_PRJ_MP_PLAN_${tableDType} A</if>
+		<where>
+			<if test="prjNo != null">AND T.PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND T.VER = #{ver, jdbcType=NUMERIC}</if>
+			<if test="prjCd != null and prjCd != ''">AND T.PRJ_CD = #{prjCd, jdbcType=VARCHAR}</if>
+			<if test="prjNm != null and prjNm != ''">AND T.PRJ_NM LIKE '%' + #{prjNm, jdbcType=NVARCHAR} + '%'</if>
+			<if test="grpId != null and grpId != ''">AND T.GRP_ID = #{grpId, jdbcType=VARCHAR}</if>
+			<if test="strtYmd != null and strtYmd != ''">AND T.END_YMD <![CDATA[>=]]> CONVERT(DATETIME, #{strtYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="endYmd != null and endYmd != ''">AND T.STRT_YMD <![CDATA[<=]]> CONVERT(DATETIME, #{endYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="pmId != null and pmId != ''">AND T.PM_ID = #{pmId, jdbcType=VARCHAR}</if>
+			<if test="modStatCd != null and modStatCd != ''">AND T.MOD_STAT_CD = #{modStatCd, jdbcType=VARCHAR}</if>
+			<if test="regUid != null and regUid != ''">AND T.REG_UID = #{regUid, jdbcType=VARCHAR}</if>
+			<if test="prjNoList != null">AND T.PRJ_NO IN ( <foreach collection="prjNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="modStatCdList != null">AND T.MOD_STAT_CD IN ( <foreach collection="modStatCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="(mpId != null and mpId != '')">
+				AND T.PRJ_NO = A.PRJ_NO
+				<if test="mpId != null and mpId != ''">AND A.MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+				<if test="prjRole2Cd != null and prjRole2Cd != ''">AND A.PRJ_ROLE2_CD = #{prjRole2Cd, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWpPrjB" parameterType="WpPrjBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjBDao.insertWpPrjB */
+		INSERT INTO WP_PRJ_${tableType}
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			PRJ_NO,
+			VER,
+			PRJ_CD,
+			PRJ_NM,
+			GRP_ID,
+			STRT_YMD,
+			END_YMD,
+			CMPL_YMD,
+			PRJ_MM,
+			PRJ_AMT,
+			PM_ID,
+			PM_MP_TYP_CD,
+			SMRY,
+			CUST_NM,
+			CUST_ZIP_NO,
+			CUST_ADR,
+			PRJ_STAT_CD,
+			MOD_STAT_CD,
+			MOD_CONT,
+			REJT_RSON,
+			REG_DT,
+			REG_UID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{prjNo, jdbcType=BIGINT},
+			#{ver, jdbcType=NUMERIC},
+			#{prjCd, jdbcType=VARCHAR},
+			#{prjNm, jdbcType=NVARCHAR},
+			#{grpId, jdbcType=VARCHAR},
+			<if test="strtYmd == 'sysdate'">GETDATE(),</if><if test="strtYmd == null or strtYmd == ''">NULL,</if>
+			<if test="strtYmd != null and strtYmd != '' and strtYmd != 'sysdate'">CONVERT(DATETIME, #{strtYmd, jdbcType=VARCHAR}, 120),</if>
+			<if test="endYmd == 'sysdate'">GETDATE(),</if><if test="endYmd == null or endYmd == ''">NULL,</if>
+			<if test="endYmd != null and endYmd != '' and endYmd != 'sysdate'">CONVERT(DATETIME, #{endYmd, jdbcType=VARCHAR}, 120),</if>
+			<if test="cmplYmd == 'sysdate'">GETDATE(),</if><if test="cmplYmd == null or cmplYmd == ''">NULL,</if>
+			<if test="cmplYmd != null and cmplYmd != '' and cmplYmd != 'sysdate'">CONVERT(DATETIME, #{cmplYmd, jdbcType=VARCHAR}, 120),</if>
+			<if test="prjMm == ''">NULL</if><if test="prjMm != ''">#{prjMm, jdbcType=NUMERIC}</if>,
+			<if test="prjAmt == ''">NULL</if><if test="prjAmt != ''">#{prjAmt, jdbcType=BIGINT}</if>,
+			#{pmId, jdbcType=VARCHAR},
+			#{pmMpTypCd, jdbcType=VARCHAR},
+			#{smry, jdbcType=VARCHAR},
+			#{custNm, jdbcType=VARCHAR},
+			#{custZipNo, jdbcType=VARCHAR},
+			#{custAdr, jdbcType=VARCHAR},
+			#{prjStatCd, jdbcType=VARCHAR},
+			#{modStatCd, jdbcType=VARCHAR},
+			#{modCont, jdbcType=VARCHAR},
+			#{rejtRson, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			#{regUid, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateWpPrjB" parameterType="WpPrjBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjBDao.updateWpPrjB */
+		UPDATE WP_PRJ_${tableType}
+		<set>
+			<if test="prjNo != null">PRJ_NO = #{prjNo, jdbcType=BIGINT},</if>
+			<if test="prjCd != null">PRJ_CD = #{prjCd, jdbcType=VARCHAR},</if>
+			<if test="prjNm != null">PRJ_NM = #{prjNm, jdbcType=NVARCHAR},</if>
+			<if test="grpId != null">GRP_ID = #{grpId, jdbcType=VARCHAR},</if>
+			<if test="strtYmd != null">
+				<if test="strtYmd == 'sysdate'">STRT_YMD = GETDATE(),</if>
+				<if test="strtYmd == ''">STRT_YMD = NULL,</if>
+				<if test="strtYmd != '' and strtYmd != 'sysdate'">STRT_YMD = CONVERT(DATETIME, #{strtYmd, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="endYmd != null">
+				<if test="endYmd == 'sysdate'">END_YMD = GETDATE(),</if>
+				<if test="endYmd == ''">END_YMD = NULL,</if>
+				<if test="endYmd != '' and endYmd != 'sysdate'">END_YMD = CONVERT(DATETIME, #{endYmd, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="cmplYmd != null">
+				<if test="cmplYmd == 'sysdate'">CMPL_YMD = GETDATE(),</if>
+				<if test="cmplYmd == ''">CMPL_YMD = NULL,</if>
+				<if test="cmplYmd != '' and cmplYmd != 'sysdate'">CMPL_YMD = CONVERT(DATETIME, #{cmplYmd, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="prjMm != null">PRJ_MM = <if test="prjMm == ''">NULL</if><if test="prjMm != ''">#{prjMm, jdbcType=NUMERIC}</if>,</if>
+			<if test="prjAmt != null">PRJ_AMT = <if test="prjAmt == ''">NULL</if><if test="prjAmt != ''">#{prjAmt, jdbcType=BIGINT}</if>,</if>
+			<if test="pmId != null">PM_ID = #{pmId, jdbcType=VARCHAR},</if>
+			<if test="pmMpTypCd != null">PM_MP_TYP_CD = #{pmMpTypCd, jdbcType=VARCHAR},</if>
+			<if test="smry != null">SMRY = #{smry, jdbcType=VARCHAR},</if>
+			<if test="custNm != null">CUST_NM = #{custNm, jdbcType=VARCHAR},</if>
+			<if test="custZipNo != null">CUST_ZIP_NO = #{custZipNo, jdbcType=VARCHAR},</if>
+			<if test="custAdr != null">CUST_ADR = #{custAdr, jdbcType=VARCHAR},</if>
+			<if test="prjStatCd != null">PRJ_STAT_CD = #{prjStatCd, jdbcType=VARCHAR},</if>
+			<if test="modStatCd != null">MOD_STAT_CD = #{modStatCd, jdbcType=VARCHAR},</if>
+			<if test="modCont != null">MOD_CONT = #{modCont, jdbcType=VARCHAR},</if>
+			<if test="rejtRson != null">REJT_RSON = #{rejtRson, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = GETDATE(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="regUid != null">REG_UID = #{regUid, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="prjNo != null">AND PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND VER = #{ver, jdbcType=NUMERIC}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWpPrjB" parameterType="WpPrjBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjBDao.deleteWpPrjB */
+		DELETE FROM WP_PRJ_${tableType}
+		<where>
+			<if test="prjNo != null">AND PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND VER = #{ver, jdbcType=NUMERIC}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

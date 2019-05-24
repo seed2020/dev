@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 저장소 테이블 생성 -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfxTableDao">
+
+	<!-- 기본테이블 -->
+	<update id="createWfWorksL" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE [WFG_${formId}_WORKS_L](
+	[WORK_NO] 					[BIGINT]           NOT NULL,
+	[COMP_ID] 						[VARCHAR](3)   NOT NULL,
+	[FORM_NO] 					[BIGINT]           NOT NULL,
+	[GEN_ID] 					[VARCHAR](30)           NULL,
+	[JSON_VA] 					[NTEXT]         NULL,
+	[LOUT_VA] 					[NTEXT]         NULL,
+	[ATTR_VA] 					[NTEXT]         NULL,
+	[MOB_LOUT_VA] 			[NTEXT]         NULL,
+	[MOB_TAB_VA]  			[NTEXT]         NULL,
+	[STAT_CD] 					CHAR(1) 		NOT NULL,
+	[REGR_UID]		[VARCHAR]	(30)	NULL,
+	[REG_DT]		[DATETIME]		NULL,
+	[MODR_UID]		[VARCHAR]	(30)	NULL,
+	[MOD_DT]		[DATETIME]		NULL,
+    CONSTRAINT [PK_WFG_${formNo}_WORKS_L] PRIMARY KEY CLUSTERED (
+    [WORK_NO] ASC
+) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]</if><if
+	test="sqlSeq == 2">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'업무목록', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L'</if><if
+	test="sqlSeq == 3">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'업무번호', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'WORK_NO'</if><if
+	test="sqlSeq == 4">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'회사ID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'COMP_ID'</if><if
+	test="sqlSeq == 5">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'양식번호', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'FORM_NO'</if><if
+	test="sqlSeq == 6">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'생성ID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'GEN_ID'</if><if
+	test="sqlSeq == 7">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'JSON값', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'JSON_VA'</if><if
+	test="sqlSeq == 8">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'레이아웃값', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'LOUT_VA'</if><if
+	test="sqlSeq == 9">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'속성값', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'ATTR_VA'</if><if
+	test="sqlSeq == 10">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'모바일레이아웃값', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'MOB_LOUT_VA'</if><if
+	test="sqlSeq == 11">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'모바일탭값', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'MOB_TAB_VA'</if><if
+	test="sqlSeq == 12">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'상태코드', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'STAT_CD'</if><if
+	test="sqlSeq == 13">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'등록자UID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'REGR_UID'</if><if
+	test="sqlSeq == 14">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'등록일시', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'REG_DT'</if><if
+	test="sqlSeq == 15">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'수정자UID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'MODR_UID'</if><if
+	test="sqlSeq == 16">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'수정일시', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_L', @level2Type = N'Column', @Level2Name = 'MOD_DT'</if>
+	</update><!-- 코드테이블 -->
+	<update id="createWfWorksCodeL" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksCodeL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE [dbo].[WFG_${formId}_WORKS_CODE_L](
+	[WORK_NO] INT NOT NULL,
+	[TYP_CD] VARCHAR(30) NOT NULL,
+	[COLM_NM] VARCHAR(120) NOT NULL,
+	[CD_VA] VARCHAR(30) NOT NULL,
+	[SORT_ORDR] INT NOT NULL,
+	CONSTRAINT [PK_WFG_${formId}_WORKS_CODE_L] PRIMARY KEY CLUSTERED
+	(
+	[WORK_NO] ASC,
+	[TYP_CD] ASC,
+	[COLM_NM] ASC,
+	[CD_VA] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]</if><if
+	test="sqlSeq == 2">
+EXEC sp_addextendedproperty @name=N'Caption', @value=N'업무코드목록' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_CODE_L'</if><if
+	test="sqlSeq == 3">
+EXEC sp_addextendedproperty @name=N'Caption', @value=N'업무번호' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_CODE_L', @level2type=N'COLUMN',@level2name=N'WORK_NO'</if><if
+	test="sqlSeq == 4">
+EXEC sp_addextendedproperty @name=N'Caption', @value=N'구분코드' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_CODE_L', @level2type=N'COLUMN',@level2name=N'TYP_CD'</if><if
+	test="sqlSeq == 5">
+EXEC sp_addextendedproperty @name=N'Caption', @value=N'컬럼명' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_CODE_L', @level2type=N'COLUMN',@level2name=N'COLM_NM'</if><if
+	test="sqlSeq == 6">
+EXEC sp_addextendedproperty @name=N'Caption', @value=N'코드값' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_CODE_L', @level2type=N'COLUMN',@level2name=N'CD_VA'</if><if
+	test="sqlSeq == 7">
+EXEC sp_addextendedproperty @name=N'Caption', @value=N'정렬순서' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_CODE_L', @level2type=N'COLUMN',@level2name=N'SORT_ORDR'</if>
+	</update><!-- 목록 테이블 -->
+	<update id="createWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE [WFG_${formId}_WORKS_D](
+	[WORK_NO] 					[BIGINT]           NOT NULL,
+	[COMP_ID] 						[VARCHAR](3)   NOT NULL,
+	[FORM_NO] 					[BIGINT]           NOT NULL,
+	[GEN_ID] 					[VARCHAR](30)           NULL,
+    <foreach item="colmVo" index="index" collection="colmVoList">
+		[${colmVo.colmDbNm}] [${colmVo.dataTyp}] <if test="colmVo.dataLen != null and colmVo.dataLen != ''">(${colmVo.dataLen})</if>,
+	</foreach>
+	[READ_CNT]	[INT]		NULL,
+	[REGR_UID]		[VARCHAR]	(30)	NULL,
+	[REG_DT]		[DATETIME]		NULL,
+	[MODR_UID]		[VARCHAR]	(30)	NULL,
+	[MOD_DT]		[DATETIME]		NULL,
+    CONSTRAINT [PK_WFG_${formNo}_WORKS_D] PRIMARY KEY CLUSTERED (
+    [WORK_NO] ASC
+) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]</if><if
+	test="sqlSeq == 2">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'업무목록', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D'</if><if
+	test="sqlSeq == 3">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'업무번호', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'WORK_NO'</if><if
+	test="sqlSeq == 4">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'회사ID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'COMP_ID'</if><if
+	test="sqlSeq == 5">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'양식번호', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'FORM_NO'</if><if
+	test="sqlSeq == 6">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'생성ID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'GEN_ID'</if><if
+	test="sqlSeq == 7">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'조회수', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'READ_CNT'</if><if
+	test="sqlSeq == 8">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'등록자UID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'REGR_UID'</if><if
+	test="sqlSeq == 9">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'등록일시', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'REG_DT'</if><if
+	test="sqlSeq == 10">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'수정자UID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'MODR_UID'</if><if
+	test="sqlSeq == 11">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'수정일시', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_D', @level2Type = N'Column', @Level2Name = 'MOD_DT'</if>
+	</update><!-- 조회이력 -->
+	<update id="createWfWorksReadH" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksReadH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE [WFG_${formId}_WORKS_READ_H](
+	[WORK_NO] INT NOT NULL,
+	[USER_UID] VARCHAR(30) NOT NULL,
+	[REG_DT] DATETIME NOT NULL,
+	CONSTRAINT [PK_WFG_${formId}_WORKS_READ_H] PRIMARY KEY CLUSTERED (
+	[WORK_NO] ASC,
+	[USER_UID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]</if><if
+	test="sqlSeq == 2">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'조회이력', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_READ_H'</if><if
+	test="sqlSeq == 3">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'업무번호', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_READ_H', @level2Type = N'Column', @Level2Name = 'WORK_NO'</if><if
+	test="sqlSeq == 4">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'사용자UID', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_READ_H', @level2Type = N'Column', @Level2Name = 'USER_UID'</if><if
+	test="sqlSeq == 5">
+EXEC sp_addextendedproperty @name = N'Caption', @value = N'등록일시', @level0Type = N'Schema', @Level0Name = dbo, @level1Type = N'Table', @Level1Name = 'WFG_${formId}_WORKS_READ_H', @level2Type = N'Column', @Level2Name = 'REG_DT'</if>
+	</update><!-- 파일 테이블 -->
+	<update id="createWfWorksFileD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksFileD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE [WFG_${formId}_WORKS_FILE_D](
+	[FILE_ID] INT NOT NULL,
+	[REF_ID] INT,
+	[DISP_NM] NVARCHAR(240),
+	[DISP_ORDR] INT,
+	[FILE_EXT] VARCHAR(30),
+	[FILE_SIZE] INT,
+	[SAVE_PATH] VARCHAR(240),
+	[USE_YN] CHAR(1),
+	[REGR_UID] VARCHAR(30),
+	[REG_DT] DATETIME,
+	CONSTRAINT [PK_WFG_${formId}_WORKS_FILE_D] PRIMARY KEY CLUSTERED
+	(
+	[FILE_ID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]</if><if
+	test="sqlSeq == 2">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'생성테이블첨부파일' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D'</if><if
+	test="sqlSeq == 3">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'파일ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'FILE_ID'</if><if
+	test="sqlSeq == 4">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'참조ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'REF_ID'</if><if
+	test="sqlSeq == 5">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'표시이름' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'DISP_NM'</if><if
+	test="sqlSeq == 6">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'표시순서' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'DISP_ORDR'</if><if
+	test="sqlSeq == 7">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'파일확장자' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'FILE_EXT'</if><if
+	test="sqlSeq == 8">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'파일크기' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'FILE_SIZE'</if><if
+	test="sqlSeq == 9">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'저장경로' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'SAVE_PATH'</if><if
+	test="sqlSeq == 10">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'사용여부' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'USE_YN'</if><if
+	test="sqlSeq == 11">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'등록자' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'REGR_UID'</if><if
+	test="sqlSeq == 12">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'등록일시' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_FILE_D', @level2type=N'COLUMN',@level2name=N'REG_DT'</if>
+	</update><!-- 이미지 테이블 -->
+	<update id="createWfWorksImgD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksImgD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE [WFG_${formId}_WORKS_IMG_D](
+	[IMG_NO] INT NOT NULL,
+	[WORK_NO] INT NOT NULL,
+	[COLM_NM] VARCHAR(120) NOT NULL,
+	[IMG_PATH] VARCHAR(240) NOT NULL,
+	[IMG_WDTH] INT NOT NULL,
+	[IMG_HGHT] INT NOT NULL,
+	[MODR_UID] VARCHAR(30),
+	[MOD_DT] DATETIME,
+	CONSTRAINT [PK_WFG_${formId}_WORKS_IMG_D] PRIMARY KEY CLUSTERED
+	(
+	[IMG_NO] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]</if><if
+	test="sqlSeq == 2">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'생성테이블이미지' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D'</if><if
+	test="sqlSeq == 3">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'이미지번호' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'IMG_NO'</if><if
+	test="sqlSeq == 4">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'업무번호' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'WORK_NO'</if><if
+	test="sqlSeq == 5">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'컬럼명' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'COLM_NM'</if><if
+	test="sqlSeq == 6">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'이미지경로' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'IMG_PATH'</if><if
+	test="sqlSeq == 7">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'가로길이' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'IMG_WDTH'</if><if
+	test="sqlSeq == 8">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'세로길이' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'IMG_HGHT'</if><if
+	test="sqlSeq == 9">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'수정자' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'MODR_UID'</if><if
+	test="sqlSeq == 10">
+EXEC sys.sp_addextendedproperty @name=N'Caption', @value=N'수정일시' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WFG_${formId}_WORKS_IMG_D', @level2type=N'COLUMN',@level2name=N'MOD_DT'</if>
+	</update>
+	<update id="indexWfWorksL" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.indexWfWorksL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_WFG_${formId}_WORKS_L ON dbo.WFG_${formId}_WORKS_L (WORK_NO)</if>
+	</update>
+	<update id="indexWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.indexWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_WFG_${formId}_WORKS_D ON dbo.WFG_${formId}_WORKS_D (WORK_NO)</if>
+	</update>
+	<update id="backupWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.backupWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+SELECT * INTO [WFG_${formId}_WORKS_D_BAK] FROM [WFG_${formId}_WORKS_D]</if><if
+	test="sqlSeq == 2">DROP TABLE [WFG_${formId}_WORKS_D]</if>
+</update><update id="insertWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.insertWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+INSERT INTO [WFG_${formId}_WORKS_D]([WORK_NO]
+      ,[COMP_ID]
+      ,[FORM_NO]
+      ,[GEN_ID]
+      <foreach item="colmVo" index="index" collection="colmVoList">
+	    ,[${colmVo.colmDbNm}]
+	   </foreach>
+	  ,[READ_CNT] 
+      ,[REGR_UID]
+      ,[REG_DT]
+      ,[MODR_UID]
+      ,[MOD_DT])
+SELECT [WORK_NO]
+      ,[COMP_ID]
+      ,[FORM_NO]
+      ,[GEN_ID]
+      <foreach item="colmVo" index="index" collection="mergeColmVoList">
+	    ,${colmVo.colmDbNm}
+	   </foreach>
+	  ,[READ_CNT]
+      ,[REGR_UID]
+      ,[REG_DT]
+      ,[MODR_UID]
+      ,[MOD_DT]
+FROM [WFG_${formId}_WORKS_D_BAK]</if><if
+	test="sqlSeq == 2">DROP TABLE [WFG_${formId}_WORKS_D_BAK]</if>
+</update>
+<update id="dropWfWorksL" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksL */
+DROP TABLE WFG_${formId}_WORKS_L
+	</update><update id="dropWfWorksCodeL" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksCodeL */
+DROP TABLE WFG_${formId}_WORKS_CODE_L
+	</update><update id="dropWfWorksFileD" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksFileD */
+DROP TABLE WFG_${formId}_WORKS_FILE_D
+	</update><update id="dropWfWorksImgD" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksImgD */
+DROP TABLE WFG_${formId}_WORKS_IMG_D
+	</update><update id="dropWfWorksReadH" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksImgD */
+DROP TABLE WFG_${formId}_WORKS_READ_H
+	</update><update id="dropWfWorksD" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksD */
+DROP TABLE WFG_${formId}_WORKS_D
+	</update><update id="dropWfWorksDBak" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksDBak */
+DROP TABLE WFG_${formId}_WORKS_D_BAK
+	</update><update id="insertCmSeq" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.insertCmSeq */
+INSERT INTO CM_SEQ_B VALUES ('WFG_${formId}_WORKS_L', '1')
+	</update><update id="deleteCmSeq" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.deleteCmSeq */
+DELETE FROM CM_SEQ_B WHERE SEQ_ID = 'WFG_${formId}_WORKS_L'
+	</update>
+	
+</mapper>

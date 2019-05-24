@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WF_RESC_B[리소스기본] -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfRescBDao">
+
+	<resultMap id="wfRescBMap" type="WfRescBVo">
+		<id property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<id property="langTypCd" column="LANG_TYP_CD" /><!-- 언어구분코드 -->
+		<result property="rescVa" column="RESC_VA" /><!-- 리소스값 -->
+	</resultMap>
+	<!-- 조회조건 -->
+	<sql id="selectWfRescBWhere">
+		<where>
+			<if test="rescId != null and rescId != ''"> AND T.RESC_ID = #{rescId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null and langTypCd != ''"> AND T.LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWfRescB" resultMap="wfRescBMap" parameterType="WfRescBVo" >
+		/* com.innobiz.orange.web.wf.dao.WfRescBDao.selectWfRescB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.RESC_ID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.RESC_ID,
+			T.LANG_TYP_CD,
+			T.RESC_VA ,
+		</trim>
+		FROM WF_RESC_B T
+		<include refid="selectWfRescBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.RESC_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWfRescB" resultType="Integer" parameterType="WfRescBVo" >
+		/* com.innobiz.orange.web.wf.dao.WfRescBDao.countWfRescB */
+		SELECT COUNT(*) CNT
+		FROM WF_RESC_B T
+		<include refid="selectWfRescBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWfRescB" parameterType="WfRescBVo" >
+		/* com.innobiz.orange.web.wf.dao.WfRescBDao.insertWfRescB */
+		INSERT INTO WF_RESC_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			RESC_ID,
+			LANG_TYP_CD,
+			RESC_VA ,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{rescId, jdbcType=VARCHAR},
+			#{langTypCd, jdbcType=VARCHAR},
+			#{rescVa, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWfRescB" parameterType="WfRescBVo" >
+		/* com.innobiz.orange.web.wf.dao.WfRescBDao.updateWfRescB */
+		UPDATE WF_RESC_B
+		<set>
+			<if test="rescVa != null"> RESC_VA = #{rescVa, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="rescId != null and rescId != ''"> AND RESC_ID = #{rescId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null and langTypCd != ''"> AND LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWfRescB" parameterType="WfRescBVo" >
+		/* com.innobiz.orange.web.wf.dao.WfRescBDao.deleteWfRescB */
+		DELETE FROM WF_RESC_B
+		<where>
+			<if test="rescId != null and rescId != ''"> AND RESC_ID = #{rescId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null and langTypCd != ''"> AND LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGO_FORM_IMG_D[진행양식이미지상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngoFormImgDDao">
+
+	<resultMap id="apOngoFormImgDMap" type="ApOngoFormImgDVo">
+		<id property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<id property="formSeq" column="FORM_SEQ" /><!-- 양식일련번호 -->
+		<id property="formImgTypCd" column="FORM_IMG_TYP_CD" /><!-- 양식이미지구분코드 -->
+		<result property="imgPath" column="IMG_PATH" /><!-- 이미지경로 -->
+		<result property="imgWdth" column="IMG_WDTH" /><!-- 이미지넓이 -->
+		<result property="imgHght" column="IMG_HGHT" /><!-- 이미지높이 -->
+		<result property="formImgTypNm" column="FORM_IMG_TYP_NM" /><!-- 양식이미지구분명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngoFormImgD" resultMap="apOngoFormImgDMap" parameterType="ApOngoFormImgDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormImgDDao.selectApOngoFormImgD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'FORM_IMG_TYP_CD' AND CD = M.FORM_IMG_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) FORM_IMG_TYP_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.FORM_ID,
+			T.FORM_SEQ,
+			T.FORM_IMG_TYP_CD,
+			T.IMG_PATH,
+			T.IMG_WDTH,
+			T.IMG_HGHT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'FORM_IMG_TYP_CD' AND CD = T.FORM_IMG_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) FORM_IMG_TYP_NM,
+			</if>
+		</trim>
+		FROM AP_ONGO_FORM_IMG_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND T.FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formImgTypCd != null">AND T.FORM_IMG_TYP_CD = #{formImgTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.FORM_ID, T.FORM_SEQ, T.FORM_IMG_TYP_CD</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countApOngoFormImgD" resultType="Integer" parameterType="ApOngoFormImgDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormImgDDao.countApOngoFormImgD */
+		SELECT COUNT(*) CNT
+		FROM AP_ONGO_FORM_IMG_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND T.FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formImgTypCd != null">AND T.FORM_IMG_TYP_CD = #{formImgTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngoFormImgD" parameterType="ApOngoFormImgDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormImgDDao.insertApOngoFormImgD */
+		INSERT INTO AP_ONGO_FORM_IMG_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FORM_ID,
+			FORM_SEQ,
+			FORM_IMG_TYP_CD,
+			IMG_PATH,
+			IMG_WDTH,
+			IMG_HGHT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{formId, jdbcType=VARCHAR},
+			#{formSeq, jdbcType=INTEGER},
+			#{formImgTypCd, jdbcType=VARCHAR},
+			#{imgPath, jdbcType=VARCHAR},
+			<if test="imgWdth == ''">NULL</if><if test="imgWdth != ''">#{imgWdth, jdbcType=INTEGER}</if>,
+			<if test="imgHght == ''">NULL</if><if test="imgHght != ''">#{imgHght, jdbcType=INTEGER}</if>,
+		</trim>
+	</insert>
+
+	<update id="updateApOngoFormImgD" parameterType="ApOngoFormImgDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormImgDDao.updateApOngoFormImgD */
+		UPDATE AP_ONGO_FORM_IMG_D
+		<set>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+			<if test="formSeq != null">FORM_SEQ = #{formSeq, jdbcType=INTEGER},</if>
+			<if test="formImgTypCd != null">FORM_IMG_TYP_CD = #{formImgTypCd, jdbcType=VARCHAR},</if>
+			<if test="imgPath != null">IMG_PATH = #{imgPath, jdbcType=VARCHAR},</if>
+			<if test="imgWdth != null">IMG_WDTH = <if test="imgWdth == ''">NULL</if><if test="imgWdth != ''">#{imgWdth, jdbcType=INTEGER}</if>,</if>
+			<if test="imgHght != null">IMG_HGHT = <if test="imgHght == ''">NULL</if><if test="imgHght != ''">#{imgHght, jdbcType=INTEGER}</if>,</if>
+		</set>
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formImgTypCd != null">AND FORM_IMG_TYP_CD = #{formImgTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngoFormImgD" parameterType="ApOngoFormImgDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngoFormImgDDao.deleteApOngoFormImgD */
+		DELETE FROM AP_ONGO_FORM_IMG_D
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formSeq != null">AND FORM_SEQ = #{formSeq, jdbcType=INTEGER}</if>
+			<if test="formImgTypCd != null">AND FORM_IMG_TYP_CD = #{formImgTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_FORM_BX_DEPT_R[양식함부서관계] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApFormBxDeptRDao">
+
+	<resultMap id="apFormBxDeptRMap" type="ApFormBxDeptRVo">
+		<id property="formBxId" column="FORM_BX_ID" /><!-- 양식함ID -->
+		<id property="formBxDeptId" column="FORM_BX_DEPT_ID" /><!-- 양식부서ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApFormBxDeptR" resultMap="apFormBxDeptRMap" parameterType="ApFormBxDeptRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormBxDeptRDao.selectApFormBxDeptR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.FORM_BX_ID DESC, N.FORM_BX_DEPT_ID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.FORM_BX_ID,
+			T.FORM_BX_DEPT_ID,
+			T.SORT_ORDR,
+		</trim>
+		FROM AP_FORM_BX_DEPT_R T
+		<where>
+			<if test="formBxId != null">AND T.FORM_BX_ID = #{formBxId, jdbcType=VARCHAR}</if>
+			<if test="formBxDeptId != null">AND T.FORM_BX_DEPT_ID = #{formBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.FORM_BX_ID, T.FORM_BX_DEPT_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countApFormBxDeptR" resultType="Integer" parameterType="ApFormBxDeptRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormBxDeptRDao.countApFormBxDeptR */
+		SELECT COUNT(*) CNT
+		FROM AP_FORM_BX_DEPT_R T
+		<where>
+			<if test="formBxId != null">AND T.FORM_BX_ID = #{formBxId, jdbcType=VARCHAR}</if>
+			<if test="formBxDeptId != null">AND T.FORM_BX_DEPT_ID = #{formBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApFormBxDeptR" parameterType="ApFormBxDeptRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormBxDeptRDao.insertApFormBxDeptR */
+		INSERT INTO AP_FORM_BX_DEPT_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FORM_BX_ID,
+			FORM_BX_DEPT_ID,
+			SORT_ORDR,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{formBxId, jdbcType=VARCHAR},
+			#{formBxDeptId, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT ISNULL(MAX(SORT_ORDR),0)+1 FROM AP_FORM_BX_DEPT_R WHERE FORM_BX_ID = #{formBxId, jdbcType=VARCHAR}),</if>
+		</trim>
+	</insert>
+
+	<update id="updateApFormBxDeptR" parameterType="ApFormBxDeptRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormBxDeptRDao.updateApFormBxDeptR */
+		UPDATE AP_FORM_BX_DEPT_R
+		<set>
+			<if test="formBxId != null">FORM_BX_ID = #{formBxId, jdbcType=VARCHAR},</if>
+			<if test="formBxDeptId != null">FORM_BX_DEPT_ID = #{formBxDeptId, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="formBxId != null">AND FORM_BX_ID = #{formBxId, jdbcType=VARCHAR}</if>
+			<if test="formBxDeptId != null">AND FORM_BX_DEPT_ID = #{formBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApFormBxDeptR" parameterType="ApFormBxDeptRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormBxDeptRDao.deleteApFormBxDeptR */
+		DELETE FROM AP_FORM_BX_DEPT_R
+		<where>
+			<if test="formBxId != null">AND FORM_BX_ID = #{formBxId, jdbcType=VARCHAR}</if>
+			<if test="formBxDeptId != null">AND FORM_BX_DEPT_ID = #{formBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

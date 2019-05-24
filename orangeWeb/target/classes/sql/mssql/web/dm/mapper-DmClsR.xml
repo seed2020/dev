@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_CLS_R[분류체계기본] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmClsRDao">
+
+	<resultMap id="dmClsRMap" type="DmClsRVo">
+		<id property="docGrpId" column="DOC_GRP_ID" /><!-- 문서그룹ID -->
+		<id property="clsId" column="CLS_ID" /><!-- 분류체계ID -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectDmClsRWhere">
+		<where>
+			<if test="docGrpId != null and docGrpId !=''"> AND T.DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+			<if test="clsId != null and clsId !=''"> AND T.CLS_ID = #{clsId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmClsR" resultMap="dmClsRMap" parameterType="DmClsRVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsRDao.selectDmClsR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CLS_ID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.DOC_GRP_ID,
+			T.CLS_ID,
+		</trim>
+		FROM DM_${tableName}_CLS_R T
+		<include refid="selectDmClsRWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.CLS_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmClsR" resultType="Integer" parameterType="DmClsRVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsRDao.countDmClsR */
+		SELECT COUNT(*) CNT
+		FROM DM_${tableName}_CLS_R T
+		<include refid="selectDmClsRWhere"/>
+	</select>
+	
+	<!-- 분류체계관계 등록 저장 -->
+	<insert id="insertDmClsR" parameterType="DmClsRVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsRDao.insertDmClsR */
+		INSERT INTO DM_${tableName}_CLS_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			DOC_GRP_ID,
+			CLS_ID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{docGrpId, jdbcType=VARCHAR},
+			#{clsId, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<!-- 분류체계관계 삭제 -->
+	<delete id="deleteDmClsR" parameterType="DmClsRVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsRDao.deleteDmClsR */
+		DELETE FROM DM_${tableName}_CLS_R
+		<where>
+			<if test="docGrpId != null and docGrpId !=''"> AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+			<if test="clsId != null and clsId !=''"> AND CLS_ID = #{clsId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

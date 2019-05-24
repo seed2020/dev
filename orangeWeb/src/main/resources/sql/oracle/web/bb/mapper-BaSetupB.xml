@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_SETUP_B[설정] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaSetupBDao">
+
+	<resultMap id="baSetupBMap" type="BaSetupBVo">
+		<id property="ddln" column="DDLN" /><!-- 기한 -->
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<id property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<id property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+
+	<select id="selectBaSetupB" resultMap="baSetupBMap" parameterType="BaSetupBVo" >
+		/* com.innobiz.orange.web.bb.dao.BaSetupBDao.selectBaSetupB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.DDLN,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM BA_SETUP_B T
+	</select>
+
+	<update id="updateBaSetupB" parameterType="BaSetupBVo" >
+		/* com.innobiz.orange.web.pt.dao.BaSetupBDao.updateBaSetupB */
+		UPDATE BA_SETUP_B
+		<set>
+			<if test="ddln != null"> DDLN = #{ddln, jdbcType=INTEGER},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+	</update>
+	
+	<insert id="insertBaSetupB" parameterType="BaSetupBVo" >
+		/* com.innobiz.orange.web.pt.dao.BaSetupBDao.insertBaSetupB */
+		INSERT INTO BA_SETUP_B (DDLN, REGR_UID , REG_DT)
+		VALUES (
+			#{ddln, jdbcType=INTEGER},
+			#{regrUid, jdbcType=VARCHAR},
+			SYSDATE
+		)
+	</insert>
+
+</mapper>

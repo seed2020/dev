@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_BUMK_D[즐겨찾기 상세] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcBumkDDao">
+
+	<resultMap id="wcBumkDMap" type="WcBumkDVo">
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="bumkId" column="BUMK_ID" /><!-- 즐겨찾기ID -->
+		<result	property="bumkDispNm" column="BUMK_DISP_NM"/><!-- 즐겨찾기표시명 -->
+		<result	property="bumkTgtUid" column="BUMK_TGT_UID"/><!-- 즐겨찾기 대상자 UID -->
+		<result	property="bumkTgtDeptId" column="BUMK_TGT_DEPT_ID"/><!-- 즐겨찾기 대상 부서ID -->
+		<result	property="userDeptTypCd" column="USER_DEPT_TYP_CD"/><!-- 사용자 부서 구분 코드 -->
+		<result	property="bumkTgtNm" column="BUMK_TGT_NM"/><!--  즐겨찾기 대상자명 -->
+		<result	property="bumkTgtDeptNm" column="BUMK_TGT_DEPT_NM"/><!--  즐겨찾기 대상부서명 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWcBumkDWhere">
+		<where>
+			<if test="compId != null and compId !=''"> AND WB_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND WB_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="bumkId != null and bumkId !=''"> AND WB_T.BUMK_ID = #{bumkId, jdbcType=VARCHAR}</if>
+			<if test="userDeptTypCd != null and userDeptTypCd !=''"> AND WB_T.USER_DEPT_TYP_CD = #{userDeptTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcBumkD" resultMap="wcBumkDMap" parameterType="WcBumkDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcBumkDDao.selectWcBumkD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			WB_T.COMP_ID,WB_T.USER_UID,WB_T.BUMK_ID,WB_T.BUMK_DISP_NM, WB_T.BUMK_TGT_UID, WB_T.BUMK_TGT_DEPT_ID, WB_T.USER_DEPT_TYP_CD,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = WB_T.BUMK_TGT_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS BUMK_TGT_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_ORG_B WHERE ORG_ID = WB_T.BUMK_TGT_DEPT_ID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS BUMK_TGT_DEPT_NM,
+		</trim>
+		FROM WC_BUMK_D WB_T
+		<include refid="selectWcBumkDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY WB_T.COMP_ID,WB_T.USER_UID,WB_T.BUMK_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcBumkD" resultType="Integer" parameterType="WcBumkDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcBumkDDao.countWcBumkD */
+		SELECT COUNT(*) CNT
+		FROM WC_BUMK_D WB_T
+		<include refid="selectWcBumkDWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWcBumkD" parameterType="WcBumkDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcBumkDDao.insertWcBumkD */
+		INSERT INTO WC_BUMK_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			 	COMP_ID, USER_UID, BUMK_ID, BUMK_DISP_NM, BUMK_TGT_UID, BUMK_TGT_DEPT_ID, USER_DEPT_TYP_CD,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR},#{userUid, jdbcType=VARCHAR},#{bumkId, jdbcType=VARCHAR},#{bumkDispNm, jdbcType=NVARCHAR},#{bumkTgtUid, jdbcType=VARCHAR},#{bumkTgtDeptId, jdbcType=VARCHAR},#{userDeptTypCd, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWcBumkD" parameterType="WcBumkDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcBumkDDao.updateWcBumkD */
+		UPDATE WC_BUMK_D
+		<set>
+			BUMK_DISP_NM =  #{bumkDispNm, jdbcType=NVARCHAR},
+<!-- 			
+			<if test="userUid != null"> BUMK_TGT_UID =  #{bumkTgtUid, jdbcType=VARCHAR},</if>
+			<if test="bumkId != null"> BUMK_TGT_DEPT_ID = #{bumkTgtDeptId, jdbcType=VARCHAR},</if>
+			<if test="bumkId != null"> USER_DEPT_TYP_CD = #{userDeptTypCd, jdbcType=VARCHAR},</if>
+ -->
+			
+		</set>
+		<where>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="bumkId != null and bumkId !=''"> AND BUMK_ID = #{bumkId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWcBumkD" parameterType="WcBumkDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcBumkDDao.deleteWcBumkD */
+		DELETE FROM WC_BUMK_D
+		<where>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="bumkId != null and bumkId !=''"> AND BUMK_ID = #{bumkId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

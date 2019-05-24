@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGD_PICH_D[진행문서담당자상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngdPichDDao">
+
+	<resultMap id="apOngdPichDMap" type="ApOngdPichDVo">
+		<id property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<id property="pichTypCd" column="PICH_TYP_CD" /><!-- 담당자구분코드 -->
+		<result property="pichUid" column="PICH_UID" /><!-- 담당자UID -->
+		<result property="pichDeptId" column="PICH_DEPT_ID" /><!-- 담당자부서ID -->
+		<result property="pichNm" column="PICH_NM" /><!-- 담당자명 -->
+		<result property="pichDeptNm" column="PICH_DEPT_NM" /><!-- 담당자부서명 -->
+		<result property="pichOpinCont" column="PICH_OPIN_CONT" /><!-- 담당자의견내용 -->
+		<result property="hdlStatCd" column="HDL_STAT_CD" /><!-- 처리상태코드 -->
+		<result property="hdlDt" column="HDL_DT" /><!-- 처리일시 -->
+		<result property="vwDt" column="VW_DT" /><!-- 조회일시 -->
+		<result property="prevApvrApvDt" column="PREV_APVR_APV_DT" /><!-- 이전결재자결재일시 -->
+		<result property="hdlStatNm" column="HDL_STAT_NM" /><!-- 처리상태명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngdPichD" resultMap="apOngdPichDMap" parameterType="ApOngdPichDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPichDDao.selectApOngdPichD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.APV_NO DESC, N.PICH_TYP_CD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.APV_NO,
+			T.PICH_TYP_CD,
+			T.PICH_UID,
+			T.PICH_DEPT_ID,
+			T.PICH_NM,
+			T.PICH_DEPT_NM,
+			T.PICH_OPIN_CONT,
+			T.HDL_STAT_CD,
+			CONVERT(VARCHAR(19), T.HDL_DT, 120) HDL_DT,
+			CONVERT(VARCHAR(19), T.VW_DT, 120) VW_DT,
+			CONVERT(VARCHAR(19), T.PREV_APVR_APV_DT, 120) PREV_APVR_APV_DT,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'HDL_STAT_CD' AND CD = T.HDL_STAT_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) HDL_STAT_NM,
+		</trim>
+		FROM AP_${storage}_PICH_D T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="pichTypCd != null">AND T.PICH_TYP_CD = #{pichTypCd, jdbcType=VARCHAR}</if>
+			<if test="pichUid != null and pichUid != ''">AND T.PICH_UID = #{pichUid, jdbcType=VARCHAR}</if>
+			<if test="pichDeptId != null and pichDeptId != ''">AND T.PICH_DEPT_ID = #{pichDeptId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.APV_NO, T.PICH_TYP_CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countApOngdPichD" resultType="Integer" parameterType="ApOngdPichDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPichDDao.countApOngdPichD */
+		SELECT COUNT(*) CNT
+		FROM AP_${storage}_PICH_D T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="pichTypCd != null">AND T.PICH_TYP_CD = #{pichTypCd, jdbcType=VARCHAR}</if>
+			<if test="pichUid != null and pichUid != ''">AND T.PICH_UID = #{pichUid, jdbcType=VARCHAR}</if>
+			<if test="pichDeptId != null and pichDeptId != ''">AND T.PICH_DEPT_ID = #{pichDeptId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngdPichD" parameterType="ApOngdPichDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPichDDao.insertApOngdPichD */
+		INSERT INTO AP_${storage}_PICH_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			APV_NO,
+			PICH_TYP_CD,
+			PICH_UID,
+			PICH_DEPT_ID,
+			PICH_NM,
+			PICH_DEPT_NM,
+			PICH_OPIN_CONT,
+			HDL_STAT_CD,
+			HDL_DT,
+			VW_DT,
+			PREV_APVR_APV_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{apvNo, jdbcType=BIGINT},
+			#{pichTypCd, jdbcType=VARCHAR},
+			#{pichUid, jdbcType=VARCHAR},
+			#{pichDeptId, jdbcType=VARCHAR},
+			#{pichNm, jdbcType=NVARCHAR},
+			#{pichDeptNm, jdbcType=NVARCHAR},
+			#{pichOpinCont, jdbcType=NVARCHAR},
+			#{hdlStatCd, jdbcType=VARCHAR},
+			<if test="hdlDt == 'sysdate'">GETDATE(),</if><if test="hdlDt == null or hdlDt == ''">NULL,</if>
+			<if test="hdlDt != null and hdlDt != '' and hdlDt != 'sysdate'">CONVERT(DATETIME, #{hdlDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="vwDt == 'sysdate'">GETDATE(),</if><if test="vwDt == null or vwDt == ''">NULL,</if>
+			<if test="vwDt != null and vwDt != '' and vwDt != 'sysdate'">CONVERT(DATETIME, #{vwDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="prevApvrApvDt == 'sysdate'">GETDATE(),</if><if test="prevApvrApvDt == null or prevApvrApvDt == ''">NULL,</if>
+			<if test="prevApvrApvDt != null and prevApvrApvDt != '' and prevApvrApvDt != 'sysdate'">CONVERT(DATETIME, #{prevApvrApvDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+
+	<update id="updateApOngdPichD" parameterType="ApOngdPichDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPichDDao.updateApOngdPichD */
+		UPDATE AP_${storage}_PICH_D
+		<set>
+			<if test="apvNo != null">APV_NO = #{apvNo, jdbcType=BIGINT},</if>
+			<if test="pichTypCd != null">PICH_TYP_CD = #{pichTypCd, jdbcType=VARCHAR},</if>
+			<if test="pichUid != null">PICH_UID = #{pichUid, jdbcType=VARCHAR},</if>
+			<if test="pichDeptId != null">PICH_DEPT_ID = #{pichDeptId, jdbcType=VARCHAR},</if>
+			<if test="pichNm != null">PICH_NM = #{pichNm, jdbcType=NVARCHAR},</if>
+			<if test="pichDeptNm != null">PICH_DEPT_NM = #{pichDeptNm, jdbcType=NVARCHAR},</if>
+			<if test="pichOpinCont != null">PICH_OPIN_CONT = #{pichOpinCont, jdbcType=NVARCHAR},</if>
+			<if test="hdlStatCd != null">HDL_STAT_CD = #{hdlStatCd, jdbcType=VARCHAR},</if>
+			<if test="hdlDt != null">
+				<if test="hdlDt == 'sysdate'">HDL_DT = GETDATE(),</if>
+				<if test="hdlDt == ''">HDL_DT = NULL,</if>
+				<if test="hdlDt != '' and hdlDt != 'sysdate'">HDL_DT = CONVERT(DATETIME, #{hdlDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="vwDt != null">
+				<if test="vwDt == 'sysdate'">VW_DT = GETDATE(),</if>
+				<if test="vwDt == ''">VW_DT = NULL,</if>
+				<if test="vwDt != '' and vwDt != 'sysdate'">VW_DT = CONVERT(DATETIME, #{vwDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="prevApvrApvDt != null">
+				<if test="prevApvrApvDt == 'sysdate'">PREV_APVR_APV_DT = GETDATE(),</if>
+				<if test="prevApvrApvDt == ''">PREV_APVR_APV_DT = NULL,</if>
+				<if test="prevApvrApvDt != '' and prevApvrApvDt != 'sysdate'">PREV_APVR_APV_DT = CONVERT(DATETIME, #{prevApvrApvDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="pichTypCd != null">AND PICH_TYP_CD = #{pichTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngdPichD" parameterType="ApOngdPichDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPichDDao.deleteApOngdPichD */
+		DELETE FROM AP_${storage}_PICH_D
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="pichTypCd != null">AND PICH_TYP_CD = #{pichTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

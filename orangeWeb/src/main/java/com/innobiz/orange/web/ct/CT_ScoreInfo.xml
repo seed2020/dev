@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<!DOCTYPE Score_Info
+[
+<!ELEMENT Score_Info ANY>
+<!ELEMENT UserNum ANY>
+<!ATTLIST UserNum count CDATA #REQUIRED>
+<!ELEMENT nBoardCount ANY>
+<!ATTLIST nBoardCount count CDATA #REQUIRED>
+<!ELEMENT nPdsCount ANY>
+<!ATTLIST nPdsCount count CDATA #REQUIRED>
+<!ELEMENT nPdsUserCount ANY>
+<!ATTLIST nPdsUserCount count CDATA #REQUIRED>
+<!ELEMENT nBoardUserCount ANY>
+<!ATTLIST nBoardUserCount count CDATA #REQUIRED>
+]>
+<Score_Info>
+    <!-- Member Count -->
+    <UserNum count="5">
+        <uPoint_0 min="0" max="5">1</uPoint_0>
+        <uPoint_1 min="5" max="10">2</uPoint_1>
+        <uPoint_2 min="10" max="15">3</uPoint_2>
+        <uPoint_3 min="15" max="20">4</uPoint_3>
+        <uPoint_4 min="20" max="infinity">5</uPoint_4>
+    </UserNum>
+    
+    <!-- BBS Count -->
+    <nBoardCount count="10">
+        <nBPoint_0 min="0" max="10">1</nBPoint_0>
+        <nBPoint_1 min="10" max="15">2</nBPoint_1>
+        <nBPoint_2 min="15" max="20">3</nBPoint_2>
+        <nBPoint_3 min="20" max="25">4</nBPoint_3>
+        <nBPoint_4 min="25" max="30">5</nBPoint_4>
+        <nBPoint_5 min="30" max="35">6</nBPoint_5>
+        <nBPoint_6 min="35" max="40">7</nBPoint_6>
+        <nBPoint_7 min="40" max="45">8</nBPoint_7>
+        <nBPoint_8 min="45" max="50">9</nBPoint_8>
+        <nBPoint_9 min="50" max="infinity">10</nBPoint_9>
+    </nBoardCount>
+    
+    <!-- PDS Count -->
+    <nPdsCount count="10">
+        <nPoint_0 min="0" max="10">1</nPoint_0>
+        <nPoint_1 min="10" max="15">2</nPoint_1>
+        <nPoint_2 min="15" max="20">3</nPoint_2>
+        <nPoint_3 min="20" max="25">4</nPoint_3>
+        <nPoint_4 min="25" max="30">5</nPoint_4>
+        <nPoint_5 min="30" max="35">6</nPoint_5>
+        <nPoint_6 min="35" max="40">7</nPoint_6>
+        <nPoint_7 min="40" max="45">8</nPoint_7>
+        <nPoint_8 min="45" max="50">9</nPoint_8>
+        <nPoint_9 min="50" max="infinity">10</nPoint_9>
+    </nPdsCount>
+    
+    <!-- BBS Real Active User Count -->
+    <nBoardUserCount count="4">
+        <nBUPoint_0 min="0" max="5">5</nBUPoint_0>
+        <nBUPoint_1 min="5" max="10">10</nBUPoint_1>
+        <nBUPoint_2 min="10" max="15">15</nBUPoint_2>
+        <nBUPoint_3 min="15" max="infinity">20</nBUPoint_3>
+    </nBoardUserCount>
+    
+    <!-- PDS Real Active User Count -->
+    <nPdsUserCount count="4">
+        <nPUPoint_0 min="0" max="5">5</nPUPoint_0>
+        <nPUPoint_1 min="5" max="10">10</nPUPoint_1>
+        <nPUPoint_2 min="10" max="15">15</nPUPoint_2>
+        <nPUPoint_3 min="15" max="infinity">20</nPUPoint_3>
+    </nPdsUserCount>
+</Score_Info>

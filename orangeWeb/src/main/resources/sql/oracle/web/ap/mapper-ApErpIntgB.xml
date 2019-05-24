@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ERP_INTG_B[ERP연계기본] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApErpIntgBDao">
+
+	<resultMap id="apErpIntgBMap" type="ApErpIntgBVo">
+		<id property="intgNo" column="INTG_NO" /><!-- 연계번호 -->
+		<result property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<result property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<result property="rid" column="RID" /><!-- 참조ID -->
+		<result property="intgStatCd" column="INTG_STAT_CD" /><!-- 연계상태코드 -->
+		<result property="docSubj" column="DOC_SUBJ" /><!-- 문서제목 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="intgUrl" column="INTG_URL" /><!-- 연계URL -->
+		<result property="intgTypCd" column="INTG_TYP_CD" /><!-- 연계구분코드 -->
+		<result property="formNm" column="FORM_NM" /><!-- 양식명 -->
+		<result property="refVa" column="REF_VA" /><!-- 참조값 -->
+		<result property="bodyHtml" column="BODY_HTML" jdbcType="CLOB" javaType="java.lang.String" /><!-- 본문HTML -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApErpIntgB" resultMap="apErpIntgBMap" parameterType="ApErpIntgBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgBDao.selectApErpIntgB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.INTG_NO,
+			T.APV_NO,
+			T.FORM_ID,
+			T.RID,
+			T.INTG_STAT_CD,
+			T.DOC_SUBJ,
+			TO_CHAR(T.REG_DT, 'YYYY-MM-DD HH24:MI:SS') REG_DT,
+			T.INTG_URL,
+			T.INTG_TYP_CD,
+			T.FORM_NM,
+			T.REF_VA,
+			T.BODY_HTML,
+		</trim>
+		FROM AP_ERP_INTG_B T
+		<where>
+			<if test="intgNo != null">AND T.INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.INTG_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApErpIntgB" resultType="Integer" parameterType="ApErpIntgBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgBDao.countApErpIntgB */
+		SELECT COUNT(*) CNT
+		FROM AP_ERP_INTG_B T
+		<where>
+			<if test="intgNo != null">AND T.INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApErpIntgB" parameterType="ApErpIntgBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgBDao.insertApErpIntgB */
+		INSERT INTO AP_ERP_INTG_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			INTG_NO,
+			APV_NO,
+			FORM_ID,
+			RID,
+			INTG_STAT_CD,
+			DOC_SUBJ,
+			REG_DT,
+			INTG_URL,
+			INTG_TYP_CD,
+			FORM_NM,
+			REF_VA,
+			BODY_HTML,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{intgNo, jdbcType=BIGINT},
+			<if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,
+			#{formId, jdbcType=VARCHAR},
+			#{rid, jdbcType=NVARCHAR},
+			#{intgStatCd, jdbcType=VARCHAR},
+			#{docSubj, jdbcType=NVARCHAR},
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{intgUrl, jdbcType=NVARCHAR},
+			#{intgTypCd, jdbcType=VARCHAR},
+			#{formNm, jdbcType=NVARCHAR},
+			#{refVa, jdbcType=NVARCHAR},
+			#{bodyHtml, jdbcType=CLOB},
+		</trim>
+	</insert>
+
+	<update id="updateApErpIntgB" parameterType="ApErpIntgBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgBDao.updateApErpIntgB */
+		UPDATE AP_ERP_INTG_B
+		<set>
+			<if test="intgNo != null">INTG_NO = #{intgNo, jdbcType=BIGINT},</if>
+			<if test="apvNo != null">APV_NO = <if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,</if>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+			<if test="rid != null">RID = #{rid, jdbcType=NVARCHAR},</if>
+			<if test="intgStatCd != null">INTG_STAT_CD = #{intgStatCd, jdbcType=VARCHAR},</if>
+			<if test="docSubj != null">DOC_SUBJ = #{docSubj, jdbcType=NVARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = SYSDATE,</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="intgUrl != null">INTG_URL = #{intgUrl, jdbcType=NVARCHAR},</if>
+			<if test="intgTypCd != null">INTG_TYP_CD = #{intgTypCd, jdbcType=VARCHAR},</if>
+			<if test="formNm != null">FORM_NM = #{formNm, jdbcType=NVARCHAR},</if>
+			<if test="refVa != null">REF_VA = #{refVa, jdbcType=NVARCHAR},</if>
+			<if test="bodyHtml != null">BODY_HTML = #{bodyHtml, jdbcType=CLOB},</if>
+		</set>
+		<where>
+			<if test="intgNo != null">AND INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApErpIntgB" parameterType="ApErpIntgBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgBDao.deleteApErpIntgB */
+		DELETE FROM AP_ERP_INTG_B
+		<where>
+			<if test="intgNo != null">AND INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+	<select id="selectMaxApErpIntgB" resultType="Long" parameterType="ApErpIntgBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgBDao.selectMaxApErpIntgB */
+		SELECT NVL(MAX(INTG_NO), 0) + 1 FROM AP_ERP_INTG_B
+	</select>
+
+</mapper>

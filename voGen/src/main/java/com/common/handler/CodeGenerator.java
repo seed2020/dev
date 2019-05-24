@@ -218,6 +218,9 @@ public class CodeGenerator {
 				returnString="NCLOB";
 			} else if("IMAGE".equals(dataTyp)){
 				returnString="BLOB";
+			} else if("CHAR".equals(dataTyp)){
+				returnString="CHAR";
+				if(dataLen!=null) returnString+="("+dataLen+")";
 			} else {
 				returnString="VARCHAR2";
 			}
@@ -226,6 +229,9 @@ public class CodeGenerator {
 				returnString=dataTyp;
 			} else if("VARCHAR".equals(dataTyp) || "NVARCHAR".equals(dataTyp)){
 				returnString="VARCHAR";
+				if(dataLen!=null) returnString+="("+dataLen+")";
+			}  else if("CHAR".equals(dataTyp)){
+				returnString="CHAR";
 				if(dataLen!=null) returnString+="("+dataLen+")";
 			} else if("TEXT".equals(dataTyp) || "NTEXT".equals(dataTyp)){
 				returnString="LONGTEXT";
@@ -288,7 +294,7 @@ public class CodeGenerator {
 			StringBuilder code = new StringBuilder();
 			
 			if(voPackage!=null) {
-				code.append("package ").append(voPackage).append("\n\n");
+				code.append("package ").append(voPackage).append(";\n\n");
 			}
 			
 			code.append("/****** Object:  Vo - Date: ").append(StringUtil.getCurrDateTime()).append(" ******/\n");
@@ -497,7 +503,7 @@ public class CodeGenerator {
 			
 			code = new StringBuilder();
 			
-			code.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>/\n");
+			code.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			code.append("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\" >\n\n");
 			
 			code.append("<!-- TABLE : ").append(tableId);
@@ -626,13 +632,12 @@ public class CodeGenerator {
 			
 			
 			code.append("\t<!-- 목록조회 건수-->\n");
-			code.append("\t<select id=\"count").append(classNm).append("D\" resultType=\"Integer\" parameterType=\"").append(classNm).append("Vo\" >\n");
+			code.append("\t<select id=\"count").append(classNm).append("\" resultType=\"Integer\" parameterType=\"").append(classNm).append("Vo\" >\n");
 			code.append("\t\t/* com.innobiz.orange.web.").append(mdNm).append(".dao.").append(classNm).append("Dao.count").append(classNm).append(" */\n");
 			code.append("\t\tSELECT COUNT(*) CNT\n");
-			code.append("\t\tFROM WE_CD_D T\n");
+			code.append("\t\tFROM ").append(tableId).append(" T\n");
 			code.append("\t\t<include refid=\"select").append(classNm).append("Where\"/>\n");
 			code.append("\t</select>\n\n");
-			
 			
 			code.append("\t<!-- 등록 저장 -->\n");
 			code.append("\t<insert id=\"insert").append(classNm).append("\" parameterType=\"").append(classNm).append("Vo\" >\n");
@@ -640,7 +645,7 @@ public class CodeGenerator {
 			code.append("\t\t/* com.innobiz.orange.web.").append(mdNm).append(".dao.").append(classNm).append("Dao.insert").append(classNm).append(" */\n");
 			code.append("\t\tINSERT INTO ").append(tableId).append("\n");
 			
-			code.append("\t\t<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">/\n");
+			code.append("\t\t<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 			
 			// 컬럼 목록
 			for(Map<String,String> colmMap : colmList){

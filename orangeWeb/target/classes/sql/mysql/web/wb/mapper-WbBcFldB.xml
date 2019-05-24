@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_AUTH_GRP_USER_R[권한그룹사용자관계] -->
+<mapper namespace="com.innobiz.orange.web.wb.dao.WbBcFldBDao">
+
+	<resultMap id="wbBcFldBMap" type="WbBcFldBVo">
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="bcFldId" column="BC_FLD_ID" /><!-- 폴더ID -->
+		<result property="fldNm" column="FLD_NM" /><!-- 폴더명 -->
+		<result property="abvFldId" column="ABV_FLD_ID" /><!-- 상위폴더ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="abvFldNm" column="ABV_FLD_NM" /><!-- 상위폴더명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWbBcFldBWhere">
+		<where>
+			<if test="bcFldId != null and bcFldId !=''"> 
+				<if test="isPub"> AND T.FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>
+				<if test="!isPub"> AND T.BC_FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="!isPub"><if test="regrUid != null"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if></if>
+			<if test="schWord != null and schWord != ''">
+				<if test="!isPub"> AND T.FLD_NM LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			</if>
+			<if test="compId != null and compId !=''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWbBcFldB" resultMap="wbBcFldBMap" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.selectWbBcFldB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="!isPub">
+			T.COMP_ID,
+			T.REGR_UID,
+			T.BC_FLD_ID,
+			T.FLD_NM,
+			T.ABV_FLD_ID,
+			T.SORT_ORDR ,
+			( SELECT FLD_NM FROM WB_BC_FLD_B T2 WHERE T2.REGR_UID = T.REGR_UID AND T2.BC_FLD_ID = T.ABV_FLD_ID ) AS ABV_FLD_NM ,
+			</if>
+			<if test="isPub">
+			T.FLD_ID AS BC_FLD_ID,
+			T.COMP_ID,
+			(SELECT RESC_VA FROM WM_RESC_B WHERE COMP_ID = T.COMP_ID AND RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AS FLD_NM,
+			T.RESC_ID,
+			T.FLD_PID AS ABV_FLD_ID,
+			T.SORT_ORDR,
+			T.USE_YN,
+			(SELECT RESC_VA FROM WM_RESC_B WHERE COMP_ID = T.COMP_ID AND RESC_ID = (SELECT RESC_ID FROM WB_PUB_FLD_B WHERE FLD_ID = T.FLD_PID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AS ABV_FLD_NM,
+			</if>
+		</trim>
+		FROM <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if> T
+		<include refid="selectWbBcFldBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 [트리]  -->
+	<select id="selectWbBcFldTreeB" resultMap="wbBcFldBMap" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.selectWbBcFldTreeB */
+		WITH TEMP_T( BC_FLD_ID, LEVELS, FLD_NM) AS 
+		(
+		 SELECT <if test="!isPub">BC_FLD_ID</if><if test="isPub">FLD_ID AS BC_FLD_ID</if>, 0 AS LEVELS, T.FLD_NM
+		 FROM <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if> T
+		 WHERE <if test="!isPub">T.BC_FLD_ID</if><if test="isPub">T.FLD_ID</if> = #{bcFldId, jdbcType=VARCHAR}
+		 UNION ALL
+		 SELECT <if test="!isPub">T2.BC_FLD_ID</if><if test="isPub">T2.FLD_ID AS BC_FLD_ID</if>, levels + 1 as levels, T2.FLD_NM
+		 FROM <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if> T2
+		 INNER JOIN TEMP_T AS TMP ON <if test="!isPub">T2.ABV_FLD_ID</if><if test="isPub">T2.FLD_PID</if> = TMP.BC_FLD_ID 
+		)
+		SELECT LEVELS , BC_FLD_ID , FLD_NM
+		FROM TEMP_T
+		ORDER BY LEVELS, BC_FLD_ID
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWbBcFldB" resultType="Integer" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.countWbBcFldB */
+		SELECT COUNT(*) CNT
+		FROM <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if> T
+		<include refid="selectWbBcFldBWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWbBcFldB" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.insertWbBcFldB */
+		INSERT INTO <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="!isPub">
+			REGR_UID,
+			BC_FLD_ID,
+			FLD_NM,
+			ABV_FLD_ID,
+			SORT_ORDR,
+			COMP_ID,
+			REG_DT,
+			</if>
+			<if test="isPub">
+			FLD_ID,
+			COMP_ID,
+			FLD_NM,
+			RESC_ID,
+			FLD_PID,
+			SORT_ORDR,
+			USE_YN,
+			REGR_UID,
+			REG_DT,
+			</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			<if test="!isPub">
+			#{regrUid, jdbcType=VARCHAR},
+			#{bcFldId, jdbcType=VARCHAR},
+			#{fldNm, jdbcType=VARCHAR},
+			#{abvFldId, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			#{compId, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			</if>
+			<if test="isPub">
+			#{bcFldId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{fldNm, jdbcType=VARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{abvFldId, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			'Y',
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWbBcFldB" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.updateWbBcFldB */
+		UPDATE <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if>
+		<set>
+			<if test="fldNm != null"> FLD_NM = #{fldNm, jdbcType=VARCHAR},</if>
+			<if test="abvFldId != null">
+				<if test="!isPub"> ABV_FLD_ID = #{abvFldId, jdbcType=VARCHAR},</if>
+				<if test="isPub"> FLD_PID = #{abvFldId, jdbcType=VARCHAR},</if> 
+			</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = NOW(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="bcFldId != null">
+				<if test="!isPub"> AND BC_FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>
+				<if test="isPub"> AND FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>  
+			</if>
+			<if test="!isPub"><if test="regrUid != null"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if></if>
+			<if test="compId != null"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWbBcFldB" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.deleteWbBcFldB */
+		DELETE FROM <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if>
+		<where>
+			<if test="bcFldId != null">
+				<if test="!isPub"> AND BC_FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>
+				<if test="isPub"> AND FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>  
+			</if>
+			<if test="!isPub"><if test="regrUid != null"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if></if>
+			<if test="compId != null"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+	
+	<!-- 순서 조회-->
+	<select id="maxWbBcFldB" resultType="Integer" parameterType="WbBcFldBVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcFldBDao.maxWbBcFldB */
+		SELECT MAX(IFNULL(SORT_ORDR,0))+1 AS CNT
+		FROM <if test="!isPub">WB_BC_FLD_B</if><if test="isPub">WB_PUB_FLD_B</if> T
+		<where>
+		<if test="compId != null"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		<if test="bcFldId != null">
+			<if test="!isPub"> AND BC_FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>
+			<if test="isPub"> AND FLD_ID = #{bcFldId, jdbcType=VARCHAR}</if>  
+		</if>
+		<if test="abvFldId != null">
+			<if test="!isPub"> AND ABV_FLD_ID = #{abvFldId, jdbcType=VARCHAR}</if>
+			<if test="isPub"> AND FLD_PID = #{abvFldId, jdbcType=VARCHAR}</if>  
+		</if>
+		<if test="!isPub"><if test="regrUid != null"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if></if>
+		</where>
+	</select>
+
+</mapper>

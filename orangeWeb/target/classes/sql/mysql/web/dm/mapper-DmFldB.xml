@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_FLD_B[폴더기본] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmFldBDao">
+
+	<resultMap id="dmFldBMap" type="DmFldBVo">
+		<id property="storId" column="STOR_ID" /><!-- 저장소ID -->
+		<id property="fldId" column="FLD_ID" /><!-- 폴더ID -->
+		<result property="fldGrpId" column="FLD_GRP_ID" /><!-- 폴더그룹ID -->
+		<result property="catId" column="CAT_ID" /><!-- 유형ID -->
+		<result property="fldNm" column="FLD_NM" /><!-- 폴더명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="fldPid" column="FLD_PID" /><!-- 상위폴더ID -->
+		<result property="fldTypCd" column="FLD_TYP_CD" /><!-- 폴더구분코드 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectDmFldBWhere">
+		<where>
+			<if test="storId != null and storId != ''"> AND T.STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="prefix == null or prefix == ''">
+				<if test="fldGrpId != null and fldGrpId !=''"> AND T.FLD_GRP_ID = #{fldGrpId, jdbcType=VARCHAR}</if>
+				<if test="catId != null and catId !=''"> AND T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="fldId != null and fldId !=''"> AND T.FLD_ID = #{fldId, jdbcType=VARCHAR}</if>
+			<if test="fldPid != null and fldPid !=''"> AND T.FLD_PID = #{fldPid, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn !=''"> AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="selIdList != null">AND T.FLD_ID IN ( <foreach collection="selIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="prefix != null and prefix != ''">
+				<if test="regrUid != null and regrUid !=''"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmFldB" resultMap="dmFldBMap" parameterType="DmFldBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmFldBDao.selectDmFldB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.STOR_ID,
+			T.FLD_ID,
+			<if test="prefix == null or prefix == ''">T.FLD_GRP_ID,</if>
+			T.CAT_ID,
+			(SELECT RESC_VA FROM DM_${prefix}RESC_B WHERE <if test="prefix == null or prefix == ''">STOR_ID = T.STOR_ID AND</if> RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AS FLD_NM,
+			T.RESC_ID,
+			T.FLD_PID,
+			<if test="prefix == null or prefix == ''">T.FLD_TYP_CD,</if>
+			T.SORT_ORDR,
+			T.USE_YN,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM DM_${prefix}FLD_B T
+		<include refid="selectDmFldBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmFldB" resultType="Integer" parameterType="DmFldBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmFldBDao.countDmFldB */
+		SELECT COUNT(*) CNT
+		FROM DM_FLD_B T
+		<include refid="selectDmFldBWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertDmFldB" parameterType="DmFldBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmFldBDao.insertDmFldB */
+		INSERT INTO DM_${prefix}FLD_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			STOR_ID,
+			FLD_ID,
+			<if test="prefix == null or prefix == ''">FLD_GRP_ID,</if>
+			CAT_ID,
+			FLD_NM,
+			RESC_ID,
+			FLD_PID,
+			<if test="prefix == null or prefix == ''">FLD_TYP_CD,</if>
+			SORT_ORDR,
+			USE_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{storId, jdbcType=VARCHAR},
+			#{fldId, jdbcType=VARCHAR},
+			<if test="prefix == null or prefix == ''">#{fldGrpId, jdbcType=VARCHAR},</if>
+			#{catId, jdbcType=VARCHAR},
+			#{fldNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{fldPid, jdbcType=VARCHAR},
+			<if test="prefix == null or prefix == ''">#{fldTypCd, jdbcType=VARCHAR},</if>
+			#{sortOrdr, jdbcType=INTEGER},
+			#{useYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateDmFldB" parameterType="DmFldBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmFldBDao.updateDmFldB */
+		UPDATE DM_${prefix}FLD_B
+		<set>
+			<if test="fldNm != null"> FLD_NM = #{fldNm, jdbcType=VARCHAR},</if>
+			<if test="catId != null"> CAT_ID = #{catId, jdbcType=VARCHAR},</if>
+			<if test="prefix == null or prefix == ''">
+				<if test="fldTypCd != null"> FLD_TYP_CD = #{fldTypCd, jdbcType=VARCHAR},</if>
+				<if test="fldGrpId != null"> FLD_GRP_ID = #{fldGrpId, jdbcType=VARCHAR},</if>
+			</if>			
+			<if test="fldPid != null"> FLD_PID = #{fldPid, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null"> USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="prefix != null and prefix != ''">
+				<if test="storId != null"> STOR_ID = #{storId, jdbcType=VARCHAR},</if>
+			</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = NOW(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="fldId != null and fldId !=''"> AND FLD_ID = #{fldId, jdbcType=VARCHAR}</if>
+			<if test="prefix == null or prefix == ''">
+				<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="prefix != null and prefix != ''">
+				<if test="regrUid != null and regrUid !=''"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteDmFldB" parameterType="DmFldBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmFldBDao.deleteDmFldB */
+		DELETE FROM DM_${prefix}FLD_B
+		<where>
+			<if test="fldId != null and fldId !=''"> AND FLD_ID = #{fldId, jdbcType=VARCHAR}</if>
+			<if test="prefix == null or prefix == ''">
+				<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			</if>
+			<if test="prefix != null and prefix != ''">
+				<if test="regrUid != null and regrUid !=''"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			</if>
+		</where>
+	</delete>
+
+</mapper>

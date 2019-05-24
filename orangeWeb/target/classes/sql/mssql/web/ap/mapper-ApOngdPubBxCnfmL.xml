@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGD_PUB_BX_CNFM_L[진행문서공람게시확인내역] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngdPubBxCnfmLDao">
+
+	<resultMap id="apOngdPubBxCnfmLMap" type="ApOngdPubBxCnfmLVo">
+		<id property="pubBxDeptId" column="PUB_BX_DEPT_ID" /><!-- 공람게시부서ID -->
+		<id property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<result property="deptId" column="DEPT_ID" /><!-- 부서ID -->
+		<result property="deptNm" column="DEPT_NM" /><!-- 부서명 -->
+		<result property="positCd" column="POSIT_CD" /><!-- 직위코드 -->
+		<result property="positNm" column="POSIT_NM" /><!-- 직위명 -->
+		<result property="vwDt" column="VW_DT" /><!-- 조회일시 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngdPubBxCnfmL" resultMap="apOngdPubBxCnfmLMap" parameterType="ApOngdPubBxCnfmLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPubBxCnfmLDao.selectApOngdPubBxCnfmL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.PUB_BX_DEPT_ID DESC, N.APV_NO DESC, N.USER_UID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.PUB_BX_DEPT_ID,
+			T.APV_NO,
+			T.USER_UID,
+			T.USER_NM,
+			T.DEPT_ID,
+			T.DEPT_NM,
+			T.POSIT_CD,
+			T.POSIT_NM,
+			CONVERT(VARCHAR(19), T.VW_DT, 120) VW_DT,
+		</trim>
+		FROM AP_${storage}_PUB_BX_CNFM_L T
+		<where>
+			<if test="pubBxDeptId != null">AND T.PUB_BX_DEPT_ID = #{pubBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.PUB_BX_DEPT_ID, T.APV_NO, T.USER_UID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countApOngdPubBxCnfmL" resultType="Integer" parameterType="ApOngdPubBxCnfmLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPubBxCnfmLDao.countApOngdPubBxCnfmL */
+		SELECT COUNT(*) CNT
+		FROM AP_${storage}_PUB_BX_CNFM_L T
+		<where>
+			<if test="pubBxDeptId != null">AND T.PUB_BX_DEPT_ID = #{pubBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngdPubBxCnfmL" parameterType="ApOngdPubBxCnfmLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPubBxCnfmLDao.insertApOngdPubBxCnfmL */
+		INSERT INTO AP_${storage}_PUB_BX_CNFM_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			PUB_BX_DEPT_ID,
+			APV_NO,
+			USER_UID,
+			USER_NM,
+			DEPT_ID,
+			DEPT_NM,
+			POSIT_CD,
+			POSIT_NM,
+			VW_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{pubBxDeptId, jdbcType=VARCHAR},
+			#{apvNo, jdbcType=BIGINT},
+			#{userUid, jdbcType=VARCHAR},
+			#{userNm, jdbcType=NVARCHAR},
+			#{deptId, jdbcType=VARCHAR},
+			#{deptNm, jdbcType=NVARCHAR},
+			#{positCd, jdbcType=VARCHAR},
+			#{positNm, jdbcType=NVARCHAR},
+			<if test="vwDt == 'sysdate'">GETDATE(),</if><if test="vwDt == null or vwDt == ''">NULL,</if>
+			<if test="vwDt != null and vwDt != '' and vwDt != 'sysdate'">CONVERT(DATETIME, #{vwDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+
+	<update id="updateApOngdPubBxCnfmL" parameterType="ApOngdPubBxCnfmLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPubBxCnfmLDao.updateApOngdPubBxCnfmL */
+		UPDATE AP_${storage}_PUB_BX_CNFM_L
+		<set>
+			<if test="pubBxDeptId != null">PUB_BX_DEPT_ID = #{pubBxDeptId, jdbcType=VARCHAR},</if>
+			<if test="apvNo != null">APV_NO = #{apvNo, jdbcType=BIGINT},</if>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="userNm != null">USER_NM = #{userNm, jdbcType=NVARCHAR},</if>
+			<if test="deptId != null">DEPT_ID = #{deptId, jdbcType=VARCHAR},</if>
+			<if test="deptNm != null">DEPT_NM = #{deptNm, jdbcType=NVARCHAR},</if>
+			<if test="positCd != null">POSIT_CD = #{positCd, jdbcType=VARCHAR},</if>
+			<if test="positNm != null">POSIT_NM = #{positNm, jdbcType=NVARCHAR},</if>
+			<if test="vwDt != null">
+				<if test="vwDt == 'sysdate'">VW_DT = GETDATE(),</if>
+				<if test="vwDt == ''">VW_DT = NULL,</if>
+				<if test="vwDt != '' and vwDt != 'sysdate'">VW_DT = CONVERT(DATETIME, #{vwDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="pubBxDeptId != null">AND PUB_BX_DEPT_ID = #{pubBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngdPubBxCnfmL" parameterType="ApOngdPubBxCnfmLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdPubBxCnfmLDao.deleteApOngdPubBxCnfmL */
+		DELETE FROM AP_${storage}_PUB_BX_CNFM_L
+		<where>
+			<if test="pubBxDeptId != null">AND PUB_BX_DEPT_ID = #{pubBxDeptId, jdbcType=VARCHAR}</if>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

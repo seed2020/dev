@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 저장소 테이블 생성 -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmxTableORACLEDao">
+
+	<!-- 문서목록 -->
+	<update id="createDmDocL" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmDocL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_DOC_L(
+	DOC_ID 					NUMBER           NOT NULL,
+	DOC_GRP_ID 			NUMBER           NOT NULL,
+	DFT_YN 					CHAR         (1) NOT NULL,
+	SUBJ 					NVARCHAR2         (240),
+	CONT 					NCLOB,
+	REGR_UID		VARCHAR2	(30)	NULL,
+	REG_DT		DATE		NULL,
+	MODR_UID		VARCHAR2	(30)	NULL,
+	MOD_DT		DATE		NULL,
+    <foreach item="colmVo" index="index" collection="colmVoList" separator=",">
+		${colmVo.itemNm} ${colmVo.dataTyp} <if test="colmVo.colmLen != null and colmVo.colmLen != ''">(${colmVo.colmLen})</if>
+	</foreach>
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_DOC_L ON DM_${tblNm}_DOC_L
+(
+    DOC_ID ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_DOC_L ADD 
+(CONSTRAINT PK_DM_${tblNm}_DOC_L PRIMARY KEY (DOC_ID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_DOC_L IS '문서목록'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.DOC_ID IS '문서ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.DOC_GRP_ID IS '문서그룹ID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.DFT_YN IS '기본여부'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.SUBJ IS '제목'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.CONT IS '내용'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.REGR_UID IS '등록자UID'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.REG_DT IS '등록일시'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.MODR_UID IS '수정자UID'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN DM_${tblNm}_DOC_L.MOD_DT IS '수정일시'</if>
+	</update>
+	<update id="indexDmDocL" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.indexDmDocL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_DM_${tblNm}_DOC_L1 ON DM_${tblNm}_DOC_L (DOC_GRP_ID, DFT_YN, SUBJ, REGR_UID, MODR_UID, DOC_ID)</if>
+	</update>
+
+	<!-- 문서상세 -->
+	<update id="createDmDocD" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmDocD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_DOC_D(
+	DOC_GRP_ID 				NUMBER 		NOT NULL,
+	SUB_YN 						CHAR			(1) NOT NULL,
+	SUB_DOC_GRP_ID 			NUMBER,
+	DOC_PID 						NUMBER,
+	SORT_ORDR 					INT 				NOT NULL,
+	SORT_DPTH 					INT 				NOT NULL,
+	STAT_CD 						VARCHAR2		(30) NOT NULL,
+	FLD_ID 						VARCHAR2		(30) NOT NULL,
+	DOC_NO 						NVARCHAR2		(400),
+	KEEP_PRD_DT 				DATE,
+	OWNR_UID 					VARCHAR2		(30) NOT NULL,
+	DOC_KEEP_PRD_CD 		VARCHAR2		(30),
+	SECUL_CD 					VARCHAR2		(30) NOT NULL,
+	CMPL_DT 						DATE,
+	READ_CNT					INT,
+	REF_TYP 						CHAR			(2),
+	REF_ID 						VARCHAR2		(30),
+	REF_URL 						NVARCHAR2	(1000),
+	ORGN_YN 					CHAR		(1)
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_DOC_D ON DM_${tblNm}_DOC_D
+(
+    DOC_GRP_ID ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_DOC_D ADD 
+(CONSTRAINT PK_DM_${tblNm}_DOC_D PRIMARY KEY (DOC_GRP_ID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_DOC_D IS '문서상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.DOC_GRP_ID IS '문서그룹ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.SUB_YN IS '하위여부'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.SUB_DOC_GRP_ID IS '하위문서그룹ID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.DOC_PID IS '문서부모ID'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.SORT_ORDR IS '정렬순서'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.SORT_DPTH IS '정렬단계'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.STAT_CD IS '상태코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.FLD_ID IS '폴더ID'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.DOC_NO IS '문서번호'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.KEEP_PRD_DT IS '보존기한일시'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.OWNR_UID IS '소유자UID'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.DOC_KEEP_PRD_CD IS '문서보존기간코드'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.SECUL_CD IS '보안등급코드'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.CMPL_DT IS '완료일시'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.READ_CNT IS '조회수'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.REF_TYP IS '참조구분'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.REF_ID IS '참조ID'</if><if
+	test="sqlSeq == 22">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.REF_URL IS '참조URL'</if><if
+	test="sqlSeq == 23">
+COMMENT ON COLUMN DM_${tblNm}_DOC_D.ORGN_YN IS '원본여부'</if>
+	</update>
+<update id="indexDmDocD" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.indexDmDocD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_DM_${tblNm}_DOC_D1 ON DM_${tblNm}_DOC_D (SUB_YN, STAT_CD, FLD_ID, DOC_NO, OWNR_UID, DOC_KEEP_PRD_CD, SECUL_CD, DOC_GRP_ID)</if>
+	</update>
+	<!-- 분류관계 -->
+	<update id="createDmClsR" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmClsR : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_CLS_R(
+	DOC_GRP_ID 			NUMBER		NOT NULL,
+	CLS_ID 					VARCHAR2	(30)	NOT NULL
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_CLS_R ON DM_${tblNm}_CLS_R
+(
+    DOC_GRP_ID ASC,
+    CLS_ID ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_CLS_R ADD 
+(CONSTRAINT PK_DM_${tblNm}_CLS_R PRIMARY KEY (DOC_GRP_ID, CLS_ID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_CLS_R IS '분류관계'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_CLS_R.DOC_GRP_ID IS '문서그룹ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_CLS_R.CLS_ID IS '분류ID'</if>
+	</update>
+
+	<!-- 버전목록 -->
+	<update id="createDmDocVerL" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmDocVerL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_DOC_VER_L(
+    DOC_GRP_ID	NUMBER NOT NULL,
+	DOC_ID		NUMBER NOT NULL,
+	VER_VA		VARCHAR2	(5) NULL
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_DOC_VER_L ON DM_${tblNm}_DOC_VER_L
+(
+    DOC_GRP_ID ASC,
+    DOC_ID ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_DOC_VER_L ADD 
+(CONSTRAINT PK_DM_${tblNm}_DOC_VER_L PRIMARY KEY (DOC_GRP_ID, DOC_ID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_DOC_VER_L IS '버전목록'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_DOC_VER_L.DOC_GRP_ID IS '문서그룹ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_DOC_VER_L.DOC_ID IS '문서ID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN DM_${tblNm}_DOC_VER_L.VER_VA IS '버전값'</if>
+	</update>
+	
+	<!-- 키워드 -->
+	<update id="createDmKwdL" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmKwdL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_KWD_L(
+	DOC_GRP_ID 	NUMBER 	NOT NULL,
+	KWD_NM 		NVARCHAR2	(120) NOT NULL
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_KWD_L ON DM_${tblNm}_KWD_L
+(
+    DOC_GRP_ID ASC,
+    KWD_NM ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_KWD_L ADD 
+(CONSTRAINT PK_DM_${tblNm}_KWD_L PRIMARY KEY (DOC_GRP_ID, KWD_NM))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_KWD_L IS '키워드'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_KWD_L.DOC_GRP_ID IS '문서그룹ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_KWD_L.KWD_NM IS '키워드'</if>
+	</update>
+	
+	<!-- 첨부파일 -->
+	<update id="createDmFileD" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmFileD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_FILE_D(
+	FILE_ID			INT		NOT NULL,
+	DM_REF_ID	INT		NULL,
+	DISP_NM		NVARCHAR2	(240) NULL,
+	DISP_ORDR	INT			NULL,
+	FILE_EXT		VARCHAR2	(30) NULL,
+	FILE_SIZE		INT			NULL,
+	SAVE_PATH	VARCHAR2	(240) NULL,
+	USE_YN		CHAR		(1)			NULL,
+	REGR_UID		VARCHAR2	(30)	NULL,
+	REG_DT		DATE		NULL
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_FILE_D ON DM_${tblNm}_FILE_D
+(
+    FILE_ID ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_FILE_D ADD 
+(CONSTRAINT PK_DM_${tblNm}_FILE_D PRIMARY KEY (FILE_ID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_FILE_D IS '첨부파일상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.FILE_ID IS '파일ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.DM_REF_ID IS '참조ID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.DISP_NM IS '표시이름'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.DISP_ORDR IS '표시순서'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.FILE_EXT IS '파일확장자'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.FILE_SIZE IS '파일크기'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.SAVE_PATH IS '저장경로'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.USE_YN IS '사용여부'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.REGR_UID IS '등록자'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN DM_${tblNm}_FILE_D.REG_DT IS '등록일시'</if>
+	</update>
+	
+	<!-- 작업이력 -->
+	<update id="createDmTaskH" parameterType="DmStorBVo">
+/* com.innobiz.orange.web.dm.dao.DmxTableMSSQLDao.createDmTaskH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE DM_${tblNm}_TASK_H(
+	DOC_GRP_ID	NUMBER		NOT NULL,
+	TASK_DT		DATE	NOT NULL,
+	USER_UID		VARCHAR2	(30) NOT NULL,
+	TASK_CD		VARCHAR2	(30) NOT NULL,
+	NOTE				NVARCHAR2	(2000)
+)
+TABLESPACE TS_GW_DM
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_DM_${tblNm}_TASK_H ON DM_${tblNm}_TASK_H
+(
+    DOC_GRP_ID ASC,
+    TASK_DT ASC,
+    USER_UID ASC,
+    TASK_CD ASC
+)
+TABLESPACE TS_GW_DM
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE DM_${tblNm}_TASK_H ADD 
+(CONSTRAINT PK_DM_${tblNm}_TASK_H PRIMARY KEY (DOC_GRP_ID, TASK_DT, USER_UID, TASK_CD))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE DM_${tblNm}_TASK_H IS '작업이력'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN DM_${tblNm}_TASK_H.DOC_GRP_ID IS '문서그룹ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN DM_${tblNm}_TASK_H.TASK_DT IS '작업일시'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN DM_${tblNm}_TASK_H.USER_UID IS '사용자UID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN DM_${tblNm}_TASK_H.TASK_CD IS '작업코드'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN DM_${tblNm}_TASK_H.NOTE IS '비고'</if>
+	</update>
+
+</mapper>

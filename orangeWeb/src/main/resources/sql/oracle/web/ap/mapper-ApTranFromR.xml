@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_TRAN_FROM_R[이관양식관계] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApTranFromRDao">
+
+	<resultMap id="apTranFromRMap" type="ApTranFromRVo">
+		<id property="tranId" column="TRAN_ID" /><!-- 이관ID -->
+		<id property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApTranFromR" resultMap="apTranFromRMap" parameterType="ApTranFromRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranFromRDao.selectApTranFromR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.TRAN_ID,
+			T.FORM_ID,
+		</trim>
+		FROM AP_TRAN_FROM_R T
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TRAN_ID, T.FORM_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApTranFromR" resultType="Integer" parameterType="ApTranFromRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranFromRDao.countApTranFromR */
+		SELECT COUNT(*) CNT
+		FROM AP_TRAN_FROM_R T
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApTranFromR" parameterType="ApTranFromRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranFromRDao.insertApTranFromR */
+		INSERT INTO AP_TRAN_FROM_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			TRAN_ID,
+			FORM_ID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{tranId, jdbcType=VARCHAR},
+			#{formId, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApTranFromR" parameterType="ApTranFromRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranFromRDao.updateApTranFromR */
+		UPDATE AP_TRAN_FROM_R
+		<set>
+			<if test="tranId != null">TRAN_ID = #{tranId, jdbcType=VARCHAR},</if>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApTranFromR" parameterType="ApTranFromRVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranFromRDao.deleteApTranFromR */
+		DELETE FROM AP_TRAN_FROM_R
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

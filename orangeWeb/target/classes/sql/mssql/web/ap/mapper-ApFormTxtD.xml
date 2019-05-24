@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_FORM_TXT_D[양식텍스트상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApFormTxtDDao">
+
+	<resultMap id="apFormTxtDMap" type="ApFormTxtDVo">
+		<id property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<id property="formTxtTypCd" column="FORM_TXT_TYP_CD" /><!-- 양식텍스트구분코드 -->
+		<result property="txtCont" column="TXT_CONT" /><!-- 텍스트내용 -->
+		<result property="txtFontVa" column="TXT_FONT_VA" /><!-- 텍스트폰트값 -->
+		<result property="txtStylVa" column="TXT_STYL_VA" /><!-- 텍스트스타일값 -->
+		<result property="txtSize" column="TXT_SIZE" /><!-- 텍스트크기 -->
+		<result property="txtColrVa" column="TXT_COLR_VA" /><!-- 텍스트색상값 -->
+		<result property="formTxtTypNm" column="FORM_TXT_TYP_NM" /><!-- 양식텍스트구분명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApFormTxtD" resultMap="apFormTxtDMap" parameterType="ApFormTxtDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormTxtDDao.selectApFormTxtD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'FORM_TXT_TYP_CD' AND CD = M.FORM_TXT_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) FORM_TXT_TYP_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.FORM_ID DESC, N.FORM_TXT_TYP_CD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.FORM_ID,
+			T.FORM_TXT_TYP_CD,
+			T.TXT_CONT,
+			T.TXT_FONT_VA,
+			T.TXT_STYL_VA,
+			T.TXT_SIZE,
+			T.TXT_COLR_VA,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'FORM_TXT_TYP_CD' AND CD = T.FORM_TXT_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) FORM_TXT_TYP_NM,
+			</if>
+		</trim>
+		FROM AP_FORM_TXT_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formTxtTypCd != null">AND T.FORM_TXT_TYP_CD = #{formTxtTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.FORM_ID, T.FORM_TXT_TYP_CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApFormTxtD" resultType="Integer" parameterType="ApFormTxtDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormTxtDDao.countApFormTxtD */
+		SELECT COUNT(*) CNT
+		FROM AP_FORM_TXT_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formTxtTypCd != null">AND T.FORM_TXT_TYP_CD = #{formTxtTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApFormTxtD" parameterType="ApFormTxtDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormTxtDDao.insertApFormTxtD */
+		INSERT INTO AP_FORM_TXT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FORM_ID,
+			FORM_TXT_TYP_CD,
+			TXT_CONT,
+			TXT_FONT_VA,
+			TXT_STYL_VA,
+			TXT_SIZE,
+			TXT_COLR_VA,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{formId, jdbcType=VARCHAR},
+			#{formTxtTypCd, jdbcType=VARCHAR},
+			#{txtCont, jdbcType=NVARCHAR},
+			#{txtFontVa, jdbcType=NVARCHAR},
+			#{txtStylVa, jdbcType=NVARCHAR},
+			#{txtSize, jdbcType=VARCHAR},
+			#{txtColrVa, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApFormTxtD" parameterType="ApFormTxtDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormTxtDDao.updateApFormTxtD */
+		UPDATE AP_FORM_TXT_D
+		<set>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+			<if test="formTxtTypCd != null">FORM_TXT_TYP_CD = #{formTxtTypCd, jdbcType=VARCHAR},</if>
+			<if test="txtCont != null">TXT_CONT = #{txtCont, jdbcType=NVARCHAR},</if>
+			<if test="txtFontVa != null">TXT_FONT_VA = #{txtFontVa, jdbcType=NVARCHAR},</if>
+			<if test="txtStylVa != null">TXT_STYL_VA = #{txtStylVa, jdbcType=NVARCHAR},</if>
+			<if test="txtSize != null">TXT_SIZE = #{txtSize, jdbcType=VARCHAR},</if>
+			<if test="txtColrVa != null">TXT_COLR_VA = #{txtColrVa, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formTxtTypCd != null">AND FORM_TXT_TYP_CD = #{formTxtTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApFormTxtD" parameterType="ApFormTxtDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormTxtDDao.deleteApFormTxtD */
+		DELETE FROM AP_FORM_TXT_D
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formTxtTypCd != null">AND FORM_TXT_TYP_CD = #{formTxtTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

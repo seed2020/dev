@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : OR_USER_B[사용자기본] -->
+<mapper namespace="com.innobiz.orange.web.or.dao.OrUserBDao">
+
+	<resultMap id="orUserBMap" type="OrUserBVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="orgId" column="ORG_ID" /><!-- 조직ID -->
+		<result property="orgRescId" column="ORG_RESC_ID" /><!-- 조직리소스ID -->
+		<result property="deptId" column="DEPT_ID" /><!-- 부서ID -->
+		<result property="deptRescId" column="DEPT_RESC_ID" /><!-- 부서리소스ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="seculCd" column="SECUL_CD" /><!-- 보안등급코드 -->
+		<result property="gradeCd" column="GRADE_CD" /><!-- 직급코드 -->
+		<result property="titleCd" column="TITLE_CD" /><!-- 직책코드 -->
+		<result property="positCd" column="POSIT_CD" /><!-- 직위코드 -->
+		<result property="dutyCd" column="DUTY_CD" /><!-- 직무코드 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="aduTypCd" column="ADU_TYP_CD" /><!-- 겸직구분코드 -->
+		<result property="strtYmd" column="STRT_YMD" /><!-- 시작년월일 -->
+		<result property="endYmd" column="END_YMD" /><!-- 종료년월일 -->
+		<result property="userStatCd" column="USER_STAT_CD" /><!-- 사용자상태코드 -->
+		<result property="endRson" column="END_RSON" /><!-- 종료사유 -->
+		<result property="tichCont" column="TICH_CONT" /><!-- 담당업무내용 -->
+		<result property="signMthdCd" column="SIGN_MTHD_CD" /><!-- 서명방법코드 -->
+		<result property="rid" column="RID" /><!-- 참조ID -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="syncStepCd" column="SYNC_STEP_CD" /><!-- 동기화단계코드 -->
+		<result property="refVa1" column="REF_VA1" /><!-- 참조값1 -->
+		<result property="refVa2" column="REF_VA2" /><!-- 참조값2 -->
+		<result property="refVa3" column="REF_VA3" /><!-- 참조값3 -->
+		<result property="autoApvLnCd" column="AUTO_APV_LN_CD" /><!-- 자동결재선코드 -->
+		<result property="sysUserYn" column="SYS_USER_YN" /><!-- 시스템사용자여부 -->
+		<result property="orgRescNm" column="ORG_RESC_NM" /><!-- 조직리소스명 -->
+		<result property="deptRescNm" column="DEPT_RESC_NM" /><!-- 부서리소스명 -->
+		<result property="seculNm" column="SECUL_NM" /><!-- 보안등급명 -->
+		<result property="gradeNm" column="GRADE_NM" /><!-- 직급명 -->
+		<result property="titleNm" column="TITLE_NM" /><!-- 직책명 -->
+		<result property="positNm" column="POSIT_NM" /><!-- 직위명 -->
+		<result property="dutyNm" column="DUTY_NM" /><!-- 직무명 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="aduTypNm" column="ADU_TYP_NM" /><!-- 겸직구분명 -->
+		<result property="userStatNm" column="USER_STAT_NM" /><!-- 사용자상태명 -->
+		<result property="signMthdNm" column="SIGN_MTHD_NM" /><!-- 서명방법명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="ein" column="EIN" /><!-- 사원번호 -->
+		<result property="lginId" column="LGIN_ID" /><!-- 로그인ID -->
+		<result property="entraYmd" column="ENTRA_YMD" /><!-- 입사년월일 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectOrUserB" resultMap="orUserBMap" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.selectOrUserB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.USER_UID,
+			T.ODUR_UID,
+			T.COMP_ID,
+			T.ORG_ID,
+			T.ORG_RESC_ID,
+			T.DEPT_ID,
+			T.DEPT_RESC_ID,
+			<if test="sortOrdrOpt != null and sortOrdrOpt != ''">${sortOrdrOpt}</if><if test="sortOrdrOpt == null or sortOrdrOpt == ''">SORT_ORDR</if> SORT_ORDR,
+			T.SECUL_CD,
+			T.GRADE_CD,
+			T.TITLE_CD,
+			T.POSIT_CD,
+			T.DUTY_CD,
+			T.USER_NM,
+			T.RESC_ID,
+			T.ADU_TYP_CD,
+			DATE_FORMAT(T.STRT_YMD, '%Y-%m-%d') STRT_YMD,
+			DATE_FORMAT(T.END_YMD, '%Y-%m-%d') END_YMD,
+			T.USER_STAT_CD,
+			T.END_RSON,
+			T.TICH_CONT,
+			T.SIGN_MTHD_CD,
+			T.RID,
+			T.REGR_UID,
+			DATE_FORMAT(T.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT,
+			T.MODR_UID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+			T.SYNC_STEP_CD,
+			T.REF_VA1,
+			T.REF_VA2,
+			T.REF_VA3,
+			T.AUTO_APV_LN_CD,
+			T.SYS_USER_YN,
+			(SELECT EIN FROM OR_ODUR_B O WHERE O.ODUR_UID=T.ODUR_UID) EIN,
+			(SELECT LGIN_ID FROM OR_ODUR_B P WHERE P.ODUR_UID=T.ODUR_UID) LGIN_ID,
+			(SELECT ENTRA_YMD FROM OR_ODUR_B R WHERE R.ODUR_UID=T.ODUR_UID) ENTRA_YMD,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.ORG_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.DEPT_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DEPT_RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'SECUL_CD' AND CD = T.SECUL_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) SECUL_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'GRADE_CD' AND CD = T.GRADE_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) GRADE_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'TITLE_CD' AND CD = T.TITLE_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) TITLE_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'POSIT_CD' AND CD = T.POSIT_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) POSIT_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'DUTY_CD' AND CD = T.DUTY_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DUTY_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ADU_TYP_CD' AND CD = T.ADU_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ADU_TYP_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'USER_STAT_CD' AND CD = T.USER_STAT_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_STAT_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'SIGN_MTHD_CD' AND CD = T.SIGN_MTHD_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) SIGN_MTHD_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM OR_USER_B T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null and odurUid != ''">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="orgId != null and orgId != ''">AND T.ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="deptId != null and deptId != ''">AND T.DEPT_ID = #{deptId, jdbcType=VARCHAR}</if>
+			<if test="seculCd != null and seculCd != ''">AND T.SECUL_CD = #{seculCd, jdbcType=VARCHAR}</if>
+			<if test="gradeCd != null and gradeCd != ''">AND T.GRADE_CD = #{gradeCd, jdbcType=VARCHAR}</if>
+			<if test="titleCd != null and titleCd != ''">AND T.TITLE_CD = #{titleCd, jdbcType=VARCHAR}</if>
+			<if test="positCd != null and positCd != ''">AND T.POSIT_CD = #{positCd, jdbcType=VARCHAR}</if>
+			<if test="dutyCd != null and dutyCd != ''">AND T.DUTY_CD = #{dutyCd, jdbcType=VARCHAR}</if>
+			<if test="aduTypCd != null and aduTypCd != ''">AND T.ADU_TYP_CD = #{aduTypCd, jdbcType=VARCHAR}</if>
+			<if test="userStatCd != null and userStatCd != ''">AND T.USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR}</if>
+			<if test="roleCd != null and roleCd != ''">AND T.USER_UID IN (SELECT USER_UID FROM OR_USER_ROLE_R WHERE ROLE_CD = #{roleCd, jdbcType=VARCHAR})</if>
+			<if test="userUidList != null">AND T.USER_UID IN ( <foreach collection="userUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="orgIdList != null">AND T.ORG_ID IN ( <foreach collection="orgIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="compIdList != null">AND T.COMP_ID IN ( <foreach collection="compIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="userStatCdList != null">AND T.USER_STAT_CD IN ( <foreach collection="userStatCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="rescNm != null and rescNm != ''">AND T.RESC_ID IN (SELECT RESC_ID FROM OR_RESC_B WHERE LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND RESC_VA LIKE CONCAT('%', #{rescNm, jdbcType=VARCHAR}, '%'))</if>
+			<if test="ein != null and ein != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE EIN LIKE CONCAT('%', #{ein, jdbcType=VARCHAR}, '%'))</if>
+			<if test="lginId != null and lginId != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE LGIN_ID LIKE CONCAT('%', #{lginId, jdbcType=VARCHAR}, '%'))</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countOrUserB" resultType="Integer" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.countOrUserB */
+		SELECT COUNT(*) CNT
+		FROM OR_USER_B T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null and odurUid != ''">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="orgId != null and orgId != ''">AND T.ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="deptId != null and deptId != ''">AND T.DEPT_ID = #{deptId, jdbcType=VARCHAR}</if>
+			<if test="seculCd != null and seculCd != ''">AND T.SECUL_CD = #{seculCd, jdbcType=VARCHAR}</if>
+			<if test="gradeCd != null and gradeCd != ''">AND T.GRADE_CD = #{gradeCd, jdbcType=VARCHAR}</if>
+			<if test="titleCd != null and titleCd != ''">AND T.TITLE_CD = #{titleCd, jdbcType=VARCHAR}</if>
+			<if test="positCd != null and positCd != ''">AND T.POSIT_CD = #{positCd, jdbcType=VARCHAR}</if>
+			<if test="dutyCd != null and dutyCd != ''">AND T.DUTY_CD = #{dutyCd, jdbcType=VARCHAR}</if>
+			<if test="aduTypCd != null and aduTypCd != ''">AND T.ADU_TYP_CD = #{aduTypCd, jdbcType=VARCHAR}</if>
+			<if test="userStatCd != null and userStatCd != ''">AND T.USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR}</if>
+			<if test="roleCd != null and roleCd != ''">AND T.USER_UID IN (SELECT USER_UID FROM OR_USER_ROLE_R WHERE ROLE_CD = #{roleCd, jdbcType=VARCHAR})</if>
+			<if test="userUidList != null">AND T.USER_UID IN ( <foreach collection="userUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="orgIdList != null">AND T.ORG_ID IN ( <foreach collection="orgIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="compIdList != null">AND T.COMP_ID IN ( <foreach collection="compIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="userStatCdList != null">AND T.USER_STAT_CD IN ( <foreach collection="userStatCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="rescNm != null and rescNm != ''">AND T.RESC_ID IN (SELECT RESC_ID FROM OR_RESC_B WHERE LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND RESC_VA LIKE CONCAT('%', #{rescNm, jdbcType=VARCHAR}, '%'))</if>
+			<if test="ein != null and ein != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE EIN LIKE CONCAT('%', #{ein, jdbcType=VARCHAR}, '%'))</if>
+			<if test="lginId != null and lginId != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE LGIN_ID LIKE CONCAT('%', #{lginId, jdbcType=VARCHAR}, '%'))</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertOrUserB" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.insertOrUserB */
+		INSERT INTO OR_USER_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			ODUR_UID,
+			COMP_ID,
+			ORG_ID,
+			ORG_RESC_ID,
+			DEPT_ID,
+			DEPT_RESC_ID,
+			SORT_ORDR,
+			SECUL_CD,
+			GRADE_CD,
+			TITLE_CD,
+			POSIT_CD,
+			DUTY_CD,
+			USER_NM,
+			RESC_ID,
+			ADU_TYP_CD,
+			STRT_YMD,
+			END_YMD,
+			USER_STAT_CD,
+			END_RSON,
+			TICH_CONT,
+			SIGN_MTHD_CD,
+			RID,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+			SYNC_STEP_CD,
+			REF_VA1,
+			REF_VA2,
+			REF_VA3,
+			AUTO_APV_LN_CD,
+			SYS_USER_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR},
+			#{odurUid, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{orgId, jdbcType=VARCHAR},
+			#{orgRescId, jdbcType=VARCHAR},
+			#{deptId, jdbcType=VARCHAR},
+			#{deptRescId, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT IFNULL(MAX(P.SORT_ORDR),0)+1 FROM OR_USER_B P WHERE P.ORG_ID = #{orgId, jdbcType=VARCHAR}),</if>
+			#{seculCd, jdbcType=VARCHAR},
+			#{gradeCd, jdbcType=VARCHAR},
+			#{titleCd, jdbcType=VARCHAR},
+			#{positCd, jdbcType=VARCHAR},
+			#{dutyCd, jdbcType=VARCHAR},
+			#{userNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{aduTypCd, jdbcType=VARCHAR},
+			<if test="strtYmd == 'sysdate'">NOW(),</if><if test="strtYmd == null or strtYmd == ''">NULL,</if>
+			<if test="strtYmd != null and strtYmd != '' and strtYmd != 'sysdate'">STR_TO_DATE(#{strtYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="endYmd == 'sysdate'">NOW(),</if><if test="endYmd == null or endYmd == ''">NULL,</if>
+			<if test="endYmd != null and endYmd != '' and endYmd != 'sysdate'">STR_TO_DATE(#{endYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{userStatCd, jdbcType=VARCHAR},
+			#{endRson, jdbcType=NVARCHAR},
+			#{tichCont, jdbcType=NVARCHAR},
+			#{signMthdCd, jdbcType=VARCHAR},
+			#{rid, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{syncStepCd, jdbcType=VARCHAR},
+			#{refVa1, jdbcType=NVARCHAR},
+			#{refVa2, jdbcType=NVARCHAR},
+			#{refVa3, jdbcType=NVARCHAR},
+			#{autoApvLnCd, jdbcType=VARCHAR},
+			#{sysUserYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateOrUserB" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.updateOrUserB */
+		UPDATE OR_USER_B
+		<set>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="orgId != null">ORG_ID = #{orgId, jdbcType=VARCHAR},</if>
+			<if test="orgRescId != null">ORG_RESC_ID = #{orgRescId, jdbcType=VARCHAR},</if>
+			<if test="deptId != null">DEPT_ID = #{deptId, jdbcType=VARCHAR},</if>
+			<if test="deptRescId != null">DEPT_RESC_ID = #{deptRescId, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="seculCd != null">SECUL_CD = #{seculCd, jdbcType=VARCHAR},</if>
+			<if test="gradeCd != null">GRADE_CD = #{gradeCd, jdbcType=VARCHAR},</if>
+			<if test="titleCd != null">TITLE_CD = #{titleCd, jdbcType=VARCHAR},</if>
+			<if test="positCd != null">POSIT_CD = #{positCd, jdbcType=VARCHAR},</if>
+			<if test="dutyCd != null">DUTY_CD = #{dutyCd, jdbcType=VARCHAR},</if>
+			<if test="userNm != null">USER_NM = #{userNm, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="aduTypCd != null">ADU_TYP_CD = #{aduTypCd, jdbcType=VARCHAR},</if>
+			<if test="strtYmd != null">
+				<if test="strtYmd == 'sysdate'">STRT_YMD = NOW(),</if>
+				<if test="strtYmd == ''">STRT_YMD = NULL,</if>
+				<if test="strtYmd != '' and strtYmd != 'sysdate'">STRT_YMD = STR_TO_DATE(#{strtYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="endYmd != null">
+				<if test="endYmd == 'sysdate'">END_YMD = NOW(),</if>
+				<if test="endYmd == ''">END_YMD = NULL,</if>
+				<if test="endYmd != '' and endYmd != 'sysdate'">END_YMD = STR_TO_DATE(#{endYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="userStatCd != null">USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR},</if>
+			<if test="endRson != null">END_RSON = #{endRson, jdbcType=NVARCHAR},</if>
+			<if test="tichCont != null">TICH_CONT = #{tichCont, jdbcType=NVARCHAR},</if>
+			<if test="signMthdCd != null">SIGN_MTHD_CD = #{signMthdCd, jdbcType=VARCHAR},</if>
+			<if test="rid != null">RID = #{rid, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = NOW(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="syncStepCd != null">SYNC_STEP_CD = #{syncStepCd, jdbcType=VARCHAR},</if>
+			<if test="refVa1 != null">REF_VA1 = #{refVa1, jdbcType=NVARCHAR},</if>
+			<if test="refVa2 != null">REF_VA2 = #{refVa2, jdbcType=NVARCHAR},</if>
+			<if test="refVa3 != null">REF_VA3 = #{refVa3, jdbcType=NVARCHAR},</if>
+			<if test="autoApvLnCd != null">AUTO_APV_LN_CD = #{autoApvLnCd, jdbcType=VARCHAR},</if>
+			<if test="sysUserYn != null">SYS_USER_YN = #{sysUserYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="orgIdList != null">AND ORG_ID IN ( <foreach collection="orgIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteOrUserB" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.deleteOrUserB */
+		DELETE FROM OR_USER_B
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND COMP_ID = #{compId, jdbcType=VARCHAR} AND ODUR_UID != 'U0000001'</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+	
+	<select id="selectOrUserBByEntraYmd" resultMap="orUserBMap" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.selectOrUserBByEntraYmd */
+		SELECT O.ODUR_UID, DATE_FORMAT(O.ENTRA_YMD, '%Y-%m-%d %H:%i:%s') ENTRA_YMD
+		FROM OR_USER_B U, OR_ODUR_B O
+		WHERE U.COMP_ID = #{compId, jdbcType=VARCHAR} AND U.USER_STAT_CD = '02' AND U.ADU_TYP_CD = '01' AND U.ODUR_UID = O.ODUR_UID
+		<if test="minEntraYmd != null and minEntraYmd != ''"><![CDATA[AND O.ENTRA_YMD >= STR_TO_DATE(#{minEntraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+		<if test="maxEntraYmd != null and maxEntraYmd != ''"><![CDATA[AND O.ENTRA_YMD < STR_TO_DATE(#{maxEntraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+	</select>
+
+	<select id="selectOrUserBForAnbList" resultMap="orUserBMap" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.selectOrUserBForAnbList */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.USER_UID,
+			T.ODUR_UID,
+			T.COMP_ID,
+			T.USER_STAT_CD,
+			DATE_FORMAT(O.ENTRA_YMD, '%Y-%m-%d') ENTRA_YMD,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.ORG_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'USER_STAT_CD' AND CD = T.USER_STAT_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_STAT_NM,
+		</trim>
+		FROM OR_USER_B T, OR_ODUR_B O
+		<where>
+			T.ODUR_UID = O.ODUR_UID
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null and odurUid != ''">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="aduTypCd != null and aduTypCd != ''">AND T.ADU_TYP_CD = #{aduTypCd, jdbcType=VARCHAR}</if>
+			<if test="userStatCd != null and userStatCd != ''">AND T.USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR}</if>
+			<if test="userUidList != null">AND T.USER_UID IN ( <foreach collection="userUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="orgIdList != null">AND T.ORG_ID IN ( <foreach collection="orgIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="rescNm != null and rescNm != ''">AND T.RESC_ID IN (SELECT RESC_ID FROM OR_RESC_B WHERE LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND RESC_VA LIKE CONCAT('%', #{rescNm, jdbcType=VARCHAR}, '%'))</if>
+			<if test="ein != null and ein != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE EIN LIKE CONCAT('%', #{ein, jdbcType=VARCHAR}, '%'))</if>
+			<if test="lginId != null and lginId != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE LGIN_ID LIKE CONCAT('%', #{lginId, jdbcType=VARCHAR}, '%'))</if>
+			<if test="minEntraYmd != null and minEntraYmd != ''"><![CDATA[AND O.ENTRA_YMD >= STR_TO_DATE(#{minEntraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="maxEntraYmd != null and maxEntraYmd != ''"><![CDATA[AND O.ENTRA_YMD < STR_TO_DATE(#{maxEntraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<select id="countOrUserBForAnbList" resultType="Integer" parameterType="OrUserBVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserBDao.countOrUserBForAnbList */
+		SELECT COUNT(*) CNT
+		FROM OR_USER_B T, OR_ODUR_B O
+		<where>
+			T.ODUR_UID = O.ODUR_UID
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null and odurUid != ''">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="aduTypCd != null and aduTypCd != ''">AND T.ADU_TYP_CD = #{aduTypCd, jdbcType=VARCHAR}</if>
+			<if test="userStatCd != null and userStatCd != ''">AND T.USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR}</if>
+			<if test="userUidList != null">AND T.USER_UID IN ( <foreach collection="userUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="orgIdList != null">AND T.ORG_ID IN ( <foreach collection="orgIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="rescNm != null and rescNm != ''">AND T.RESC_ID IN (SELECT RESC_ID FROM OR_RESC_B WHERE LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND RESC_VA LIKE CONCAT('%', #{rescNm, jdbcType=VARCHAR}, '%'))</if>
+			<if test="ein != null and ein != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE EIN LIKE CONCAT('%', #{ein, jdbcType=VARCHAR}, '%'))</if>
+			<if test="lginId != null and lginId != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_ODUR_B WHERE LGIN_ID LIKE CONCAT('%', #{lginId, jdbcType=VARCHAR}, '%'))</if>
+			<if test="minEntraYmd != null and minEntraYmd != ''"><![CDATA[AND O.ENTRA_YMD >= STR_TO_DATE(#{minEntraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="maxEntraYmd != null and maxEntraYmd != ''"><![CDATA[AND O.ENTRA_YMD < STR_TO_DATE(#{maxEntraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+</mapper>

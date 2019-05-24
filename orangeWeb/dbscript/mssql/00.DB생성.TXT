@@ -1,0 +1,7 @@
+
+다음 DB를 MSSQL 관리툴 이용 생성
+
+1. GW_[고객코드]
+2. MAIL_[고객코드]
+3. GW_PUSH
+4. GW_SEARCH - 지금 사용 안함

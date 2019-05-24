@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_TRAN_PROC_L[이관진행내역] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApTranProcLDao">
+
+	<resultMap id="apTranProcLMap" type="ApTranProcLVo">
+		<id property="tranId" column="TRAN_ID" /><!-- 이관ID -->
+		<id property="seq" column="SEQ" /><!-- 순번 -->
+		<result property="tranCont" column="TRAN_CONT" /><!-- 이관내용 -->
+		<result property="allCnt" column="ALL_CNT" /><!-- 전체건수 -->
+		<result property="procCnt" column="PROC_CNT" /><!-- 진행건수 -->
+		<result property="strtDt" column="STRT_DT" /><!-- 시작일시 -->
+		<result property="endDt" column="END_DT" /><!-- 종류일시 -->
+		<result property="errCont" column="ERR_CONT" /><!-- 오류내용 -->
+		<result property="errYn" column="ERR_YN" /><!-- 오류여부 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApTranProcL" resultMap="apTranProcLMap" parameterType="ApTranProcLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranProcLDao.selectApTranProcL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.TRAN_ID,
+			T.SEQ,
+			T.TRAN_CONT,
+			T.ALL_CNT,
+			T.PROC_CNT,
+			TO_CHAR(T.STRT_DT, 'YYYY-MM-DD HH24:MI:SS') STRT_DT,
+			TO_CHAR(T.END_DT, 'YYYY-MM-DD HH24:MI:SS') END_DT,
+			T.ERR_CONT,
+			T.ERR_YN,
+		</trim>
+		FROM AP_TRAN_PROC_L T
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="strtSeq != null and strtSeq != ''"><![CDATA[AND T.SEQ >= #{strtSeq, jdbcType=NUMERIC}]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TRAN_ID, T.SEQ</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApTranProcL" resultType="Integer" parameterType="ApTranProcLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranProcLDao.countApTranProcL */
+		SELECT COUNT(*) CNT
+		FROM AP_TRAN_PROC_L T
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="strtSeq != null and strtSeq != ''"><![CDATA[AND T.SEQ >= #{strtSeq, jdbcType=NUMERIC}]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApTranProcL" parameterType="ApTranProcLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranProcLDao.insertApTranProcL */
+		INSERT INTO AP_TRAN_PROC_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			TRAN_ID,
+			SEQ,
+			TRAN_CONT,
+			ALL_CNT,
+			PROC_CNT,
+			STRT_DT,
+			END_DT,
+			ERR_CONT,
+			ERR_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{tranId, jdbcType=VARCHAR},
+			<if test="seq != null and seq != ''">#{seq, jdbcType=INTEGER},</if>
+			<if test="seq == null or seq == ''">(SELECT NVL(MAX(SEQ),0)+1 FROM AP_TRAN_PROC_L WHERE TRAN_ID = #{tranId, jdbcType=VARCHAR}),</if>
+			#{tranCont, jdbcType=NVARCHAR},
+			<if test="allCnt == ''">NULL</if><if test="allCnt != ''">#{allCnt, jdbcType=BIGINT}</if>,
+			<if test="procCnt == ''">NULL</if><if test="procCnt != ''">#{procCnt, jdbcType=BIGINT}</if>,
+			<if test="strtDt == 'sysdate'">SYSDATE,</if><if test="strtDt == null or strtDt == ''">NULL,</if>
+			<if test="strtDt != null and strtDt != '' and strtDt != 'sysdate'">TO_DATE(#{strtDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="endDt == 'sysdate'">SYSDATE,</if><if test="endDt == null or endDt == ''">NULL,</if>
+			<if test="endDt != null and endDt != '' and endDt != 'sysdate'">TO_DATE(#{endDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{errCont, jdbcType=NVARCHAR},
+			#{errYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApTranProcL" parameterType="ApTranProcLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranProcLDao.updateApTranProcL */
+		UPDATE AP_TRAN_PROC_L
+		<set>
+			<if test="tranId != null">TRAN_ID = #{tranId, jdbcType=VARCHAR},</if>
+			<if test="seq != null">SEQ = #{seq, jdbcType=INTEGER},</if>
+			<if test="tranCont != null">TRAN_CONT = #{tranCont, jdbcType=NVARCHAR},</if>
+			<if test="allCnt != null">ALL_CNT = <if test="allCnt == ''">NULL</if><if test="allCnt != ''">#{allCnt, jdbcType=BIGINT}</if>,</if>
+			<if test="procCnt != null">PROC_CNT = <if test="procCnt == ''">NULL</if><if test="procCnt != ''">#{procCnt, jdbcType=BIGINT}</if>,</if>
+			<if test="strtDt != null">
+				<if test="strtDt == 'sysdate'">STRT_DT = SYSDATE,</if>
+				<if test="strtDt == ''">STRT_DT = NULL,</if>
+				<if test="strtDt != '' and strtDt != 'sysdate'">STRT_DT = TO_DATE(#{strtDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="endDt != null">
+				<if test="endDt == 'sysdate'">END_DT = SYSDATE,</if>
+				<if test="endDt == ''">END_DT = NULL,</if>
+				<if test="endDt != '' and endDt != 'sysdate'">END_DT = TO_DATE(#{endDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="errCont != null">ERR_CONT = #{errCont, jdbcType=NVARCHAR},</if>
+			<if test="errYn != null">ERR_YN = #{errYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApTranProcL" parameterType="ApTranProcLVo" >
+		/* com.innobiz.orange.web.ap.dao.ApTranProcLDao.deleteApTranProcL */
+		DELETE FROM AP_TRAN_PROC_L
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

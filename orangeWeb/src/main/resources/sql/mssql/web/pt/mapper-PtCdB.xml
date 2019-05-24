@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_CD_B[코드기본] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtCdBDao">
+
+	<resultMap id="ptCdBMap" type="PtCdBVo">
+		<id property="clsCd" column="CLS_CD" /><!-- 분류코드 -->
+		<id property="cd" column="CD" /><!-- 코드 -->
+		<result property="cdVa" column="CD_VA" /><!-- 코드값 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="compIds" column="COMP_IDS" /><!-- 회사ID목록 -->
+		<result property="refVa1" column="REF_VA1" /><!-- 참조값1 -->
+		<result property="refVa2" column="REF_VA2" /><!-- 참조값2 -->
+		<result property="cdDesc" column="CD_DESC" /><!-- 코드설명 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="fldYn" column="FLD_YN" /><!-- 폴더여부 -->
+		<result property="sysCdYn" column="SYS_CD_YN" /><!-- 시스템코드여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtCdB" resultMap="ptCdBMap" parameterType="PtCdBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCdBDao.selectPtCdB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = M.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CLS_CD DESC, N.CD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.CLS_CD,
+			T.CD,
+			T.CD_VA,
+			T.RESC_ID,
+			T.COMP_IDS,
+			T.REF_VA1,
+			T.REF_VA2,
+			T.CD_DESC,
+			T.SORT_ORDR,
+			T.USE_YN,
+			T.FLD_YN,
+			T.SYS_CD_YN,
+			T.REGR_UID,
+			CONVERT(VARCHAR(19), T.REG_DT, 120) REG_DT,
+			T.MODR_UID,
+			CONVERT(VARCHAR(19), T.MOD_DT, 120) MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM PT_CD_B T
+		<where>
+			<if test="clsCd != null">AND T.CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND T.CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="refVa1 != null and refVa1 != ''">AND T.REF_VA1 = #{refVa1, jdbcType=NVARCHAR}</if>
+			<if test="refVa2 != null and refVa2 != ''">AND T.REF_VA2 = #{refVa2, jdbcType=NVARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="fldYn != null and fldYn != ''">AND T.FLD_YN = #{fldYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.CLS_CD, T.CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countPtCdB" resultType="Integer" parameterType="PtCdBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCdBDao.countPtCdB */
+		SELECT COUNT(*) CNT
+		FROM PT_CD_B T
+		<where>
+			<if test="clsCd != null">AND T.CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND T.CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="refVa1 != null and refVa1 != ''">AND T.REF_VA1 = #{refVa1, jdbcType=NVARCHAR}</if>
+			<if test="refVa2 != null and refVa2 != ''">AND T.REF_VA2 = #{refVa2, jdbcType=NVARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="fldYn != null and fldYn != ''">AND T.FLD_YN = #{fldYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtCdB" parameterType="PtCdBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCdBDao.insertPtCdB */
+		INSERT INTO PT_CD_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CLS_CD,
+			CD,
+			CD_VA,
+			RESC_ID,
+			COMP_IDS,
+			REF_VA1,
+			REF_VA2,
+			CD_DESC,
+			SORT_ORDR,
+			USE_YN,
+			FLD_YN,
+			SYS_CD_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{clsCd, jdbcType=VARCHAR},
+			#{cd, jdbcType=VARCHAR},
+			#{cdVa, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{compIds, jdbcType=VARCHAR},
+			#{refVa1, jdbcType=NVARCHAR},
+			#{refVa2, jdbcType=NVARCHAR},
+			#{cdDesc, jdbcType=NVARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT ISNULL(MAX(SORT_ORDR),0)+1 FROM PT_CD_B WHERE CLS_CD = #{clsCd, jdbcType=VARCHAR}),</if>
+			#{useYn, jdbcType=VARCHAR},
+			#{fldYn, jdbcType=VARCHAR},
+			#{sysCdYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">GETDATE(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">GETDATE(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtCdB" parameterType="PtCdBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCdBDao.updatePtCdB */
+		UPDATE PT_CD_B
+		<set>
+			<if test="clsCd != null">CLS_CD = #{clsCd, jdbcType=VARCHAR},</if>
+			<if test="cd != null">CD = #{cd, jdbcType=VARCHAR},</if>
+			<if test="cdVa != null">CD_VA = #{cdVa, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="compIds != null">COMP_IDS = #{compIds, jdbcType=VARCHAR},</if>
+			<if test="refVa1 != null">REF_VA1 = #{refVa1, jdbcType=NVARCHAR},</if>
+			<if test="refVa2 != null">REF_VA2 = #{refVa2, jdbcType=NVARCHAR},</if>
+			<if test="cdDesc != null">CD_DESC = #{cdDesc, jdbcType=NVARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null">USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="fldYn != null">FLD_YN = #{fldYn, jdbcType=VARCHAR},</if>
+			<if test="sysCdYn != null">SYS_CD_YN = #{sysCdYn, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = GETDATE(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = GETDATE(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="clsCd != null">AND CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtCdB" parameterType="PtCdBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCdBDao.deletePtCdB */
+		DELETE FROM PT_CD_B
+		<where>
+			<if test="clsCd != null">AND CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+	<resultMap id="ptRescBMap" type="PtRescBVo">
+		<id property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<id property="langTypCd" column="LANG_TYP_CD" /><!-- 언어구분코드 -->
+		<result property="rescVa" column="RESC_VA" /><!-- 리소스값 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<!-- [코드 목록의 리소스 조회] - 전체의 코드 리소스 조회 목적 -->
+	<select id="selectPtCdRescB" resultMap="ptRescBMap" parameterType="PtCdBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCdBDao.selectPtCdRescB */
+		SELECT
+			R.RESC_ID,
+			R.LANG_TYP_CD,
+			R.RESC_VA
+		FROM PT_CD_B T, PT_RESC_B R
+		WHERE T.RESC_ID = R.RESC_ID
+			<if test="clsCd != null"> AND T.CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null"> AND T.CD = #{cd, jdbcType=VARCHAR}</if>
+	</select>
+
+</mapper>

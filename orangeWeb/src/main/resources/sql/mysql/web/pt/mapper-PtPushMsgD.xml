@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_PUSH_MSG_D[푸쉬메시지상세] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtPushMsgDDao">
+
+	<resultMap id="ptPushMsgDMap" type="PtPushMsgDVo">
+		<id property="pushMsgId" column="PUSH_MSG_ID" /><!-- 푸쉬메시지ID -->
+		<result property="mdId" column="MD_ID" /><!-- 모듈ID -->
+		<result property="mdRid" column="MD_RID" /><!-- 모듈참조ID -->
+		<result property="pushSubj" column="PUSH_SUBJ" /><!-- 푸쉬제목 -->
+		<result property="webUrl" column="WEB_URL" /><!-- 웹URL -->
+		<result property="webAuthUrl" column="WEB_AUTH_URL" /><!-- 웹권한URL -->
+		<result property="mobUrl" column="MOB_URL" /><!-- 모바일URL -->
+		<result property="mobAuthUrl" column="MOB_AUTH_URL" /><!-- 모방일권한URL -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="langTypCd" column="LANG_TYP_CD" /><!-- 언어구분코드 -->
+		<result property="isuDt" column="ISU_DT" /><!-- 발행일시 -->
+		<result property="valdLginCnt" column="VALD_LGIN_CNT" /><!-- 유효로그인수 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtPushMsgD" resultMap="ptPushMsgDMap" parameterType="PtPushMsgDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtPushMsgDDao.selectPtPushMsgD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.PUSH_MSG_ID,
+			T.MD_ID,
+			T.MD_RID,
+			T.PUSH_SUBJ,
+			T.WEB_URL,
+			T.WEB_AUTH_URL,
+			T.MOB_URL,
+			T.MOB_AUTH_URL,
+			T.USER_UID,
+			T.LANG_TYP_CD,
+			DATE_FORMAT(T.ISU_DT, '%Y-%m-%d %H:%i:%s') ISU_DT,
+			T.VALD_LGIN_CNT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			</if>
+		</trim>
+		FROM PT_PUSH_MSG_D T
+		<where>
+			<if test="pushMsgId != null">AND T.PUSH_MSG_ID = #{pushMsgId, jdbcType=VARCHAR}</if>
+			<if test="mdId != null and mdId != ''">AND T.MD_ID = #{mdId, jdbcType=VARCHAR}</if>
+			<if test="mdRid != null and mdRid != ''">AND T.MD_RID = #{mdRid, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="minIsuDt != null and minIsuDt != ''">AND <![CDATA[ISU_DT > STR_TO_DATE(#{minIsuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="maxIsuDt != null and maxIsuDt != ''">AND <![CDATA[ISU_DT <= STR_TO_DATE(#{maxIsuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="userUidList != null">AND T.USER_UID IN ( <foreach collection="userUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.PUSH_MSG_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countPtPushMsgD" resultType="Integer" parameterType="PtPushMsgDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtPushMsgDDao.countPtPushMsgD */
+		SELECT COUNT(*) CNT
+		FROM PT_PUSH_MSG_D T
+		<where>
+			<if test="pushMsgId != null">AND T.PUSH_MSG_ID = #{pushMsgId, jdbcType=VARCHAR}</if>
+			<if test="mdId != null and mdId != ''">AND T.MD_ID = #{mdId, jdbcType=VARCHAR}</if>
+			<if test="mdRid != null and mdRid != ''">AND T.MD_RID = #{mdRid, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="minIsuDt != null and minIsuDt != ''">AND <![CDATA[ISU_DT > STR_TO_DATE(#{minIsuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="maxIsuDt != null and maxIsuDt != ''">AND <![CDATA[ISU_DT <= STR_TO_DATE(#{maxIsuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="userUidList != null">AND T.USER_UID IN ( <foreach collection="userUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtPushMsgD" parameterType="PtPushMsgDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtPushMsgDDao.insertPtPushMsgD */
+		INSERT INTO PT_PUSH_MSG_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			PUSH_MSG_ID,
+			MD_ID,
+			MD_RID,
+			PUSH_SUBJ,
+			WEB_URL,
+			WEB_AUTH_URL,
+			MOB_URL,
+			MOB_AUTH_URL,
+			USER_UID,
+			LANG_TYP_CD,
+			ISU_DT,
+			VALD_LGIN_CNT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{pushMsgId, jdbcType=VARCHAR},
+			#{mdId, jdbcType=VARCHAR},
+			#{mdRid, jdbcType=VARCHAR},
+			#{pushSubj, jdbcType=NVARCHAR},
+			#{webUrl, jdbcType=NVARCHAR},
+			#{webAuthUrl, jdbcType=NVARCHAR},
+			#{mobUrl, jdbcType=NVARCHAR},
+			#{mobAuthUrl, jdbcType=NVARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+			#{langTypCd, jdbcType=VARCHAR},
+			<if test="isuDt == 'sysdate'">NOW(),</if><if test="isuDt == null or isuDt == ''">NULL,</if>
+			<if test="isuDt != null and isuDt != '' and isuDt != 'sysdate'">STR_TO_DATE(#{isuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="valdLginCnt == ''">NULL</if><if test="valdLginCnt != ''">#{valdLginCnt, jdbcType=INTEGER}</if>,
+		</trim>
+	</insert>
+
+	<update id="updatePtPushMsgD" parameterType="PtPushMsgDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtPushMsgDDao.updatePtPushMsgD */
+		UPDATE PT_PUSH_MSG_D
+		<set>
+			<if test="pushMsgId != null">PUSH_MSG_ID = #{pushMsgId, jdbcType=VARCHAR},</if>
+			<if test="mdId != null">MD_ID = #{mdId, jdbcType=VARCHAR},</if>
+			<if test="mdRid != null">MD_RID = #{mdRid, jdbcType=VARCHAR},</if>
+			<if test="pushSubj != null">PUSH_SUBJ = #{pushSubj, jdbcType=NVARCHAR},</if>
+			<if test="webUrl != null">WEB_URL = #{webUrl, jdbcType=NVARCHAR},</if>
+			<if test="webAuthUrl != null">WEB_AUTH_URL = #{webAuthUrl, jdbcType=NVARCHAR},</if>
+			<if test="mobUrl != null">MOB_URL = #{mobUrl, jdbcType=NVARCHAR},</if>
+			<if test="mobAuthUrl != null">MOB_AUTH_URL = #{mobAuthUrl, jdbcType=NVARCHAR},</if>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="langTypCd != null">LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR},</if>
+			<if test="isuDt != null">
+				<if test="isuDt == 'sysdate'">ISU_DT = NOW(),</if>
+				<if test="isuDt == ''">ISU_DT = NULL,</if>
+				<if test="isuDt != '' and isuDt != 'sysdate'">ISU_DT = STR_TO_DATE(#{isuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="valdLginCnt != null">VALD_LGIN_CNT = <if test="valdLginCnt == ''">NULL</if><if test="valdLginCnt != ''">#{valdLginCnt, jdbcType=INTEGER}</if>,</if>
+		</set>
+		<where>
+			<if test="pushMsgId != null">AND PUSH_MSG_ID = #{pushMsgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtPushMsgD" parameterType="PtPushMsgDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtPushMsgDDao.deletePtPushMsgD */
+		DELETE FROM PT_PUSH_MSG_D
+		<where>
+			<if test="pushMsgId != null">AND PUSH_MSG_ID = #{pushMsgId, jdbcType=VARCHAR}</if>
+			<if test="minIsuDt != null and minIsuDt != ''">AND <![CDATA[ISU_DT > STR_TO_DATE(#{minIsuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="maxIsuDt != null and maxIsuDt != ''">AND <![CDATA[ISU_DT <= STR_TO_DATE(#{maxIsuDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

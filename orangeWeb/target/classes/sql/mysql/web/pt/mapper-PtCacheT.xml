@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_CACHE_T[캐쉬임시] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtCacheTDao">
+
+	<resultMap id="ptCacheTMap" type="PtCacheTVo">
+		<id property="cacheCatId" column="CACHE_CAT_ID" /><!-- 캐쉬유형ID -->
+		<id property="langTypCd" column="LANG_TYP_CD" /><!-- 언어구분코드 -->
+		<id property="cacheId" column="CACHE_ID" /><!-- 캐쉬ID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtCacheT" resultMap="ptCacheTMap" parameterType="PtCacheTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCacheTDao.selectPtCacheT */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.CACHE_CAT_ID,
+			T.LANG_TYP_CD,
+			T.CACHE_ID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+		</trim>
+		FROM PT_CACHE_T T
+		<where>
+			<if test="cacheCatId != null">AND T.CACHE_CAT_ID = #{cacheCatId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null">AND T.LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+			<if test="cacheId != null">AND T.CACHE_ID = #{cacheId, jdbcType=VARCHAR}</if>
+			<if test="modDt != null and modDt != ''">AND MOD_DT <![CDATA[>]]> STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.CACHE_CAT_ID, T.LANG_TYP_CD, T.CACHE_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countPtCacheT" resultType="Integer" parameterType="PtCacheTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCacheTDao.countPtCacheT */
+		SELECT COUNT(*) CNT
+		FROM PT_CACHE_T T
+		<where>
+			<if test="cacheCatId != null">AND T.CACHE_CAT_ID = #{cacheCatId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null">AND T.LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+			<if test="cacheId != null">AND T.CACHE_ID = #{cacheId, jdbcType=VARCHAR}</if>
+			<if test="modDt != null and modDt != ''">AND MOD_DT <![CDATA[>]]> STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtCacheT" parameterType="PtCacheTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCacheTDao.insertPtCacheT */
+		INSERT INTO PT_CACHE_T
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CACHE_CAT_ID,
+			LANG_TYP_CD,
+			CACHE_ID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{cacheCatId, jdbcType=VARCHAR},
+			#{langTypCd, jdbcType=VARCHAR},
+			#{cacheId, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtCacheT" parameterType="PtCacheTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCacheTDao.updatePtCacheT */
+		UPDATE PT_CACHE_T
+		<set>
+			<if test="cacheCatId != null">CACHE_CAT_ID = #{cacheCatId, jdbcType=VARCHAR},</if>
+			<if test="langTypCd != null">LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR},</if>
+			<if test="cacheId != null">CACHE_ID = #{cacheId, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="cacheCatId != null">AND CACHE_CAT_ID = #{cacheCatId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null">AND LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+			<if test="cacheId != null">AND CACHE_ID = #{cacheId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtCacheT" parameterType="PtCacheTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCacheTDao.deletePtCacheT */
+		DELETE FROM PT_CACHE_T
+		<where>
+			<if test="cacheCatId != null">AND CACHE_CAT_ID = #{cacheCatId, jdbcType=VARCHAR}</if>
+			<if test="langTypCd != null">AND LANG_TYP_CD = #{langTypCd, jdbcType=VARCHAR}</if>
+			<if test="cacheId != null">AND CACHE_ID = #{cacheId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

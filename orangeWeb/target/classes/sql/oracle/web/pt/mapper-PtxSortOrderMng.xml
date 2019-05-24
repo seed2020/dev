@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 순서 변경 공통 -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtxSortOrdrMngDao">
+
+	<!-- 정렬순서 변경 : lessThen 과 moreThen 사이의 정렬순서를 chnVa(+1 or -1) 만큼 변경함 -->
+	<update id="updateSortOrdr" parameterType="PtxSortOrdrChnVo" >
+		/* com.innobiz.orange.web.pt.dao.PtxSortOrdrMngDao.updateSortOrdr */
+		UPDATE ${tabId}
+		SET SORT_ORDR = SORT_ORDR + #{chnVa, jdbcType=INTEGER}
+		<where>
+			<if test="compId != null">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="pkCol != null and pk != null">AND ${pkCol} = #{pk, jdbcType=VARCHAR}</if>
+			<if test="pkCol2 != null and pk2 != null">AND ${pkCol2} = #{pk2, jdbcType=VARCHAR}</if>
+			<if test="lessThen != null">AND SORT_ORDR <![CDATA[<=]]> #{lessThen, jdbcType=INTEGER}</if>
+			<if test="moreThen != null">AND SORT_ORDR <![CDATA[>=]]> #{moreThen, jdbcType=INTEGER}</if>
+		</where>
+	</update>
+	
+	<!-- 최대 정렬순서 조회 -->
+	<select id="selectMaxSortOrdr" resultType="int" parameterType="PtxSortOrdrChnVo" >
+		/* com.innobiz.orange.web.pt.dao.PtxSortOrdrMngDao.selectMaxSortOrdr */
+		SELECT NVL(MAX(SORT_ORDR), 0) FROM ${tabId}
+		<where>
+			<if test="compId != null">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="pkCol != null and pk != null">AND ${pkCol} = #{pk, jdbcType=VARCHAR}</if>
+			<if test="pkCol2 != null and pk2 != null">AND ${pkCol2} = #{pk2, jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 저장소 테이블 생성 -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao">
+
+	<!-- 진행문서결재라인상세 -->
+	<update id="createApOngdApvLnD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdApvLnD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_APV_LN_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    APV_LN_HST_NO                    INT NOT NULL COMMENT '결재라인이력번호',
+    APV_LN_PNO                       INT NOT NULL COMMENT '결재라인부모번호',
+    APV_LN_NO                        INT NOT NULL COMMENT '결재라인번호',
+    DBL_APV_TYP_CD                   VARCHAR (30) COMMENT '이중결재구분코드',
+    APVR_ROLE_CD                     VARCHAR (30) NOT NULL COMMENT '결재자역할코드',
+    APV_STAT_CD                      VARCHAR (30) NOT NULL COMMENT '결재상태코드',
+    ABS_RSON_CD                      VARCHAR (30) COMMENT '부재사유코드',
+    ABS_RSON_NM                      VARCHAR (120) COMMENT '부재사유명',
+    APVR_DEPT_YN                     CHAR (1) NOT NULL COMMENT '결재자부서여부',
+    PICH_APNT_YN                     CHAR (1) COMMENT '담당자지정여부',
+    PRED_YN                          CHAR (1) COMMENT '전결여부',
+    AGNT_UID                         VARCHAR (30) COMMENT '대결자UID',
+    APVR_UID                         VARCHAR (30) COMMENT '결재자UID',
+    APVR_NM                          VARCHAR (120) COMMENT '결재자명',
+    APVR_POSIT_CD                    VARCHAR (30) COMMENT '결재자직위코드',
+    APVR_POSIT_NM                    VARCHAR (120) COMMENT '결재자직위명',
+    APVR_TITLE_CD                    VARCHAR (30) COMMENT '결재자직책코드',
+    APVR_TITLE_NM                    VARCHAR (120) COMMENT '결재자직책명',
+    APV_DEPT_ID                      VARCHAR (30) COMMENT '결재부서ID',
+    APV_DEPT_NM                      VARCHAR (120) COMMENT '결재부서명',
+    APV_DEPT_ABBR_NM                 VARCHAR (120) COMMENT '결재부서약어명',
+    POSIT_DISP_VA                    VARCHAR (120) COMMENT '직위표시값',
+    SIGN_DISP_VA                     VARCHAR (120) COMMENT '서명표시값',
+    DT_DISP_VA                       VARCHAR (120) COMMENT '일시표시값',
+    SIGN_IMG_PATH                    VARCHAR (240) COMMENT '서명이미지경로',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    APV_DT                           DATETIME COMMENT '결재일시',
+    PREV_APVR_APV_DT                 DATETIME COMMENT '이전결재자결재일시',
+    APV_OPIN_CONT                    VARCHAR (2000) COMMENT '결재의견내용',
+    APV_OPIN_DISP_YN                 CHAR (1) COMMENT '결재의견표시여부',
+    PREV_BODY_HST_NO                 INT COMMENT '이전본문이력번호',
+    HOLD_BODY_HST_NO                 INT COMMENT '보류본문이력번호',
+    PREV_APV_LN_HST_NO               INT COMMENT '이전결재라인이력번호',
+    HOLD_APV_LN_HST_NO               INT COMMENT '보류결재라인이력번호',
+    PREV_ATT_HST_NO                  INT COMMENT '이전첨부이력번호',
+    HOLD_ATT_HST_NO                  INT COMMENT '보류첨부이력번호',
+    PREV_RECV_DEPT_HST_NO            INT COMMENT '이전수신처이력번호',
+    HOLD_RECV_DEPT_HST_NO            INT COMMENT '보류수신처이력번호',
+    PREV_REF_DOC_HST_NO              INT COMMENT '이전참조문서이력번호',
+    HOLD_REF_DOC_HST_NO              INT COMMENT '보류참조문서이력번호',
+    FIXD_APVR_YN                     CHAR (1) COMMENT '고정결재자여부',
+    PRIMARY KEY (APV_NO, APV_LN_PNO, APV_LN_NO)
+)
+COMMENT = '진행문서결재라인상세'</if>
+	</update>
+	<update id="indexApOngdApvLnD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdApvLnD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_APV_LN_D1 ON AP_${storId}_APV_LN_D (APVR_UID, APV_STAT_CD, APVR_ROLE_CD, APV_NO)</if><if
+	test="sqlSeq == 2">
+CREATE INDEX IDX_AP_${storId}_APV_LN_D2 ON AP_${storId}_APV_LN_D (APV_DEPT_ID, APV_STAT_CD, APVR_ROLE_CD, APV_NO)</if>
+	</update>
+
+	<!-- 진행문서결재라인이행 -->
+	<update id="createApOngdApvLnE" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdApvLnE : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_APV_LN_E (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    APV_LN_HST_NO                    INT NOT NULL COMMENT '결재라인이력번호',
+    APV_LN_PNO                       INT NOT NULL COMMENT '결재라인부모번호',
+    APV_LN_NO                        INT NOT NULL COMMENT '결재라인번호',
+    DBL_APV_TYP_CD                   VARCHAR (30) COMMENT '이중결재구분코드',
+    APVR_ROLE_CD                     VARCHAR (30) NOT NULL COMMENT '결재자역할코드',
+    APV_STAT_CD                      VARCHAR (30) NOT NULL COMMENT '결재상태코드',
+    ABS_RSON_CD                      VARCHAR (30) COMMENT '부재사유코드',
+    ABS_RSON_NM                      VARCHAR (120) COMMENT '부재사유명',
+    APVR_DEPT_YN                     CHAR (1) NOT NULL COMMENT '결재자부서여부',
+    PICH_APNT_YN                     CHAR (1) COMMENT '담당자지정여부',
+    PRED_YN                          CHAR (1) COMMENT '전결여부',
+    AGNT_UID                         VARCHAR (30) COMMENT '대결자UID',
+    APVR_UID                         VARCHAR (30) COMMENT '결재자UID',
+    APVR_NM                          VARCHAR (120) COMMENT '결재자명',
+    APVR_POSIT_CD                    VARCHAR (30) COMMENT '결재자직위코드',
+    APVR_POSIT_NM                    VARCHAR (120) COMMENT '결재자직위명',
+    APVR_TITLE_CD                    VARCHAR (30) COMMENT '결재자직책코드',
+    APVR_TITLE_NM                    VARCHAR (120) COMMENT '결재자직책명',
+    APV_DEPT_ID                      VARCHAR (30) COMMENT '결재부서ID',
+    APV_DEPT_NM                      VARCHAR (120) COMMENT '결재부서명',
+    APV_DEPT_ABBR_NM                 VARCHAR (120) COMMENT '결재부서약어명',
+    POSIT_DISP_VA                    VARCHAR (120) COMMENT '직위표시값',
+    SIGN_DISP_VA                     VARCHAR (120) COMMENT '서명표시값',
+    DT_DISP_VA                       VARCHAR (120) COMMENT '일시표시값',
+    SIGN_IMG_PATH                    VARCHAR (240) COMMENT '서명이미지경로',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    APV_DT                           DATETIME COMMENT '결재일시',
+    PREV_APVR_APV_DT                 DATETIME COMMENT '이전결재자결재일시',
+    APV_OPIN_CONT                    VARCHAR (2000) COMMENT '결재의견내용',
+    APV_OPIN_DISP_YN                 CHAR (1) COMMENT '결재의견표시여부',
+    PREV_BODY_HST_NO                 INT COMMENT '이전본문이력번호',
+    HOLD_BODY_HST_NO                 INT COMMENT '보류본문이력번호',
+    PREV_APV_LN_HST_NO               INT COMMENT '이전결재라인이력번호',
+    HOLD_APV_LN_HST_NO               INT COMMENT '보류결재라인이력번호',
+    PREV_ATT_HST_NO                  INT COMMENT '이전첨부이력번호',
+    HOLD_ATT_HST_NO                  INT COMMENT '보류첨부이력번호',
+    PREV_RECV_DEPT_HST_NO            INT COMMENT '이전수신처이력번호',
+    HOLD_RECV_DEPT_HST_NO            INT COMMENT '보류수신처이력번호',
+    PREV_REF_DOC_HST_NO              INT COMMENT '이전참조문서이력번호',
+    HOLD_REF_DOC_HST_NO              INT COMMENT '보류참조문서이력번호',
+    FIXD_APVR_YN                     CHAR (1) COMMENT '고정결재자여부',
+    PRIMARY KEY (APV_NO, APV_LN_PNO, APV_LN_NO)
+)
+COMMENT = '진행문서결재라인이행'</if>
+	</update>
+
+	<!-- 진행문서결재라인이력 -->
+	<update id="createApOngdApvLnH" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdApvLnH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_APV_LN_H (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    APV_LN_HST_NO                    INT NOT NULL COMMENT '결재라인이력번호',
+    APV_LN_PNO                       INT NOT NULL COMMENT '결재라인부모번호',
+    APV_LN_NO                        INT NOT NULL COMMENT '결재라인번호',
+    DBL_APV_TYP_CD                   VARCHAR (30) COMMENT '이중결재구분코드',
+    APVR_ROLE_CD                     VARCHAR (30) NOT NULL COMMENT '결재자역할코드',
+    APV_STAT_CD                      VARCHAR (30) NOT NULL COMMENT '결재상태코드',
+    ABS_RSON_CD                      VARCHAR (30) COMMENT '부재사유코드',
+    ABS_RSON_NM                      VARCHAR (120) COMMENT '부재사유명',
+    APVR_DEPT_YN                     CHAR (1) NOT NULL COMMENT '결재자부서여부',
+    PICH_APNT_YN                     CHAR (1) COMMENT '담당자지정여부',
+    AGNT_UID                         VARCHAR (30) COMMENT '대결자UID',
+    PRED_YN                          CHAR (1) COMMENT '전결여부',
+    APVR_UID                         VARCHAR (30) COMMENT '결재자UID',
+    APVR_NM                          VARCHAR (120) COMMENT '결재자명',
+    APVR_POSIT_CD                    VARCHAR (30) COMMENT '결재자직위코드',
+    APVR_POSIT_NM                    VARCHAR (120) COMMENT '결재자직위명',
+    APVR_TITLE_CD                    VARCHAR (30) COMMENT '결재자직책코드',
+    APVR_TITLE_NM                    VARCHAR (120) COMMENT '결재자직책명',
+    APV_DEPT_ID                      VARCHAR (30) COMMENT '결재부서ID',
+    APV_DEPT_NM                      VARCHAR (120) COMMENT '결재부서명',
+    APV_DEPT_ABBR_NM                 VARCHAR (120) COMMENT '결재부서약어명',
+    POSIT_DISP_VA                    VARCHAR (120) COMMENT '직위표시값',
+    SIGN_DISP_VA                     VARCHAR (120) COMMENT '서명표시값',
+    DT_DISP_VA                       VARCHAR (120) COMMENT '일시표시값',
+    SIGN_IMG_PATH                    VARCHAR (240) COMMENT '서명이미지경로',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    APV_DT                           DATETIME COMMENT '결재일시',
+    PREV_APVR_APV_DT                 DATETIME COMMENT '이전결재자결재일시',
+    APV_OPIN_CONT                    VARCHAR (2000) COMMENT '결재의견내용',
+    APV_OPIN_DISP_YN                 CHAR (1) COMMENT '결재의견표시여부',
+    PREV_BODY_HST_NO                 INT COMMENT '이전본문이력번호',
+    HOLD_BODY_HST_NO                 INT COMMENT '보류본문이력번호',
+    PREV_APV_LN_HST_NO               INT COMMENT '이전결재라인이력번호',
+    HOLD_APV_LN_HST_NO               INT COMMENT '보류결재라인이력번호',
+    PREV_ATT_HST_NO                  INT COMMENT '이전첨부이력번호',
+    HOLD_ATT_HST_NO                  INT COMMENT '보류첨부이력번호',
+    PREV_RECV_DEPT_HST_NO            INT COMMENT '이전수신처이력번호',
+    HOLD_RECV_DEPT_HST_NO            INT COMMENT '보류수신처이력번호',
+    PREV_REF_DOC_HST_NO              INT COMMENT '이전참조문서이력번호',
+    HOLD_REF_DOC_HST_NO              INT COMMENT '보류참조문서이력번호',
+    FIXD_APVR_YN                     CHAR (1) COMMENT '고정결재자여부',
+    PRIMARY KEY (APV_NO, APV_LN_HST_NO, APV_LN_PNO, APV_LN_NO)
+)
+COMMENT = '진행문서결재라인이력'</if>
+	</update>
+	<update id="indexApOngdApvLnH" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdApvLnH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_APV_LN_H1 ON AP_${storId}_APV_LN_H (APV_NO, APV_LN_PNO, APV_LN_HST_NO)</if>
+	</update>
+
+	<!-- 진행문서첨부파일내역 -->
+	<update id="createApOngdAttFileL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdAttFileL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_ATT_FILE_L (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    ATT_HST_NO                       INT NOT NULL COMMENT '첨부이력번호',
+    ATT_SEQ                          INT NOT NULL COMMENT '첨부일련번호',
+    ATT_DISP_NM                      VARCHAR (240) NOT NULL COMMENT '첨부표시명',
+    FILE_EXT                         VARCHAR (30) COMMENT '파일확장자',
+    FILE_KB                          INT COMMENT '파일K바이트',
+    FILE_PATH                        VARCHAR (240) COMMENT '파일경로',
+    MODR_UID                         VARCHAR (30) COMMENT '수정자UID',
+    MOD_DT                           DATETIME COMMENT '수정일시',
+    PRIMARY KEY (APV_NO, ATT_HST_NO, ATT_SEQ)
+)
+COMMENT = '진행문서첨부파일내역'</if>
+	</update>
+
+	<!-- 진행문서기본 -->
+	<update id="createApOngdB" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdB : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_B (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    DOC_NO                           VARCHAR (60) COMMENT '문서번호',
+    COMP_ID                          VARCHAR (3) NOT NULL COMMENT '회사ID',
+    DOC_SUBJ                         VARCHAR (400) COMMENT '문서제목',
+    ATT_FILE_YN                      CHAR (1) NOT NULL COMMENT '첨부파일여부',
+    FORM_ID                          VARCHAR (30) NOT NULL COMMENT '양식ID',
+    FORM_SEQ                         INT NOT NULL COMMENT '양식일련번호',
+    FORM_APV_LN_TYP_CD               VARCHAR (30) NOT NULL COMMENT '양식결재라인구분코드',
+    FORM_NM                          VARCHAR (240) COMMENT '양식명',
+    BODY_HGHT_PX                     INT COMMENT '본문높이픽셀',
+    FORM_WDTH_TYP_CD                 VARCHAR (30) COMMENT '양식넓이구분코드',
+    DOC_LANG_TYP_CD                  VARCHAR (30) NOT NULL COMMENT '문서언어구분코드',
+    DOC_STAT_CD                      VARCHAR (30) NOT NULL COMMENT '문서상태코드',
+    DOC_PROS_STAT_CD                 VARCHAR (30) NOT NULL COMMENT '문서승인상태코드',
+    DOC_KEEP_PRD_CD                  VARCHAR (30) COMMENT '문서보존기간코드',
+    DOC_TYP_CD                       VARCHAR (30) NOT NULL COMMENT '문서구분코드',
+    SECUL_CD                         VARCHAR (30) COMMENT '보안등급코드',
+    UGNT_DOC_YN                      CHAR (1) COMMENT '긴급문서여부',
+    ALL_READ_YN                      CHAR (1) COMMENT '전체열람여부',
+    REG_REC_LST_REG_YN               CHAR (1) COMMENT '등록대장등록여부',
+    REG_REC_LST_REG_SKED_YMD         DATETIME COMMENT '등록대장등록예정년월일',
+    SECU_DOC_YN                      CHAR (1) COMMENT '보안문서여부',
+    DOC_PW_ENC                       VARCHAR (240) COMMENT '문서비밀번호암호값',
+    SENDR_NM_RESC_ID                 VARCHAR (50) COMMENT '발신명의리소스ID',
+    SENDR_NM_RESC_NM                 VARCHAR (400) COMMENT '발신명의리소스명',
+    OFSE_PATH                        VARCHAR (240) COMMENT '관인경로',
+    OFSE_HGHT_PX                     INT COMMENT '관인높이픽셀',
+    CLS_INFO_ID                      VARCHAR (30) COMMENT '분류정보ID',
+    PSN_CLS_INFO_ID                  VARCHAR (30) COMMENT '개인분류정보ID',
+    APV_LN_TYP_CD                    VARCHAR (30) NOT NULL COMMENT '결재라인구분코드',
+    BODY_HST_NO                      INT NOT NULL COMMENT '본문이력번호',
+    ATT_HST_NO                       INT NOT NULL COMMENT '첨부이력번호',
+    RECV_DEPT_HST_NO                 INT NOT NULL COMMENT '수신처이력번호',
+    REF_DOC_HST_NO                   INT NOT NULL COMMENT '참조문서이력번호',
+    MAK_DT                           DATETIME COMMENT '기안일시',
+    MAKR_UID                         VARCHAR (30) COMMENT '기안자UID',
+    MAKR_NM                          VARCHAR (120) COMMENT '기안자명',
+    MAK_DEPT_ID                      VARCHAR (30) COMMENT '기안부서ID',
+    MAK_DEPT_NM                      VARCHAR (120) COMMENT '기안부서명',
+    CUR_APVR_ID                      VARCHAR (30) COMMENT '현재결재자ID',
+    CUR_APVR_NM                      VARCHAR (120) COMMENT '현재결재자명',
+    CUR_APVR_DEPT_YN                 CHAR (1) COMMENT '현재결재자부서여부',
+    CMPL_DT                          DATETIME COMMENT '완결일시',
+    CMPLR_UID                        VARCHAR (30) COMMENT '완결자UID',
+    CMPLR_NM                         VARCHAR (120) COMMENT '완결자명',
+    ENFC_SCOP_CD                     VARCHAR (30) COMMENT '시행범위코드',
+    ENFC_DT                          DATETIME COMMENT '시행일시',
+    RECV_DOC_NO                      VARCHAR (60) COMMENT '접수문서번호',
+    RECV_DT                          DATETIME COMMENT '접수일시',
+    ENFC_DOC_KEEP_PRD_CD             VARCHAR (30) COMMENT '시행문서보존기간코드',
+    ENFC_STAT_CD                     VARCHAR (30) COMMENT '시행상태코드',
+    SEND_INST_ID                     VARCHAR (30) COMMENT '발송기관ID',
+    SEND_INST_NM                     VARCHAR (120) COMMENT '발송기관명',
+    REC_LST_TYP_CD                   VARCHAR (30) COMMENT '대장구분코드',
+    REC_LST_DEPT_ID                  VARCHAR (30) COMMENT '대장부서ID',
+    ORGN_APV_NO                      BIGINT COMMENT '원본결재번호',
+    TRX_APV_NO                       BIGINT COMMENT '변환결재번호',
+    INTG_TYP_CD                      VARCHAR (30) COMMENT '연계구분코드',
+    INTG_NO                          BIGINT COMMENT '연계번호',
+    SENDR_NM_ORG_ID                  VARCHAR (30) COMMENT '발신명의조직ID',
+    SEND_WITH_REF_DOC_YN             CHAR (1) COMMENT '참조문서포함발송여부',
+    FOOTER_VA                        VARCHAR (400) COMMENT '바닥글값',
+    XML_TYP_ID                       VARCHAR (30) COMMENT 'XML구분ID',
+    PRIMARY KEY (APV_NO)
+)
+COMMENT = '진행문서기본'</if>
+	</update>
+	<update id="indexApOngdB" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdB : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_B1 ON AP_${storId}_B (REC_LST_DEPT_ID, REC_LST_TYP_CD, ALL_READ_YN)</if><if
+	test="sqlSeq == 2">
+CREATE INDEX IDX_AP_${storId}_B2 ON AP_${storId}_B (CLS_INFO_ID, REC_LST_TYP_CD, REC_LST_DEPT_ID)</if><if
+	test="sqlSeq == 3">
+CREATE INDEX IDX_AP_${storId}_B3 ON AP_${storId}_B (DOC_PROS_STAT_CD, APV_NO)</if><if
+	test="sqlSeq == 4">
+CREATE INDEX IDX_AP_${storId}_B4 ON AP_${storId}_B (ENFC_STAT_CD, APV_NO)</if><if
+	test="sqlSeq == 5">
+CREATE INDEX IDX_AP_${storId}_B5 ON AP_${storId}_B (ORGN_APV_NO, APV_NO)</if><if
+	test="sqlSeq == 6">
+CREATE INDEX IDX_AP_${storId}_B6 ON AP_${storId}_B (REG_REC_LST_REG_SKED_YMD, REG_REC_LST_REG_YN)</if><if
+	test="sqlSeq == 7">
+CREATE INDEX IDX_AP_${storId}_B7 ON AP_${storId}_B (PSN_CLS_INFO_ID)</if>
+	</update>
+
+	<!-- 진행문서본문내역 -->
+	<update id="createApOngdBodyL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdBodyL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_BODY_L (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    BODY_HST_NO                      INT NOT NULL COMMENT '본문이력번호',
+    BODY_HTML                        LONGTEXT NOT NULL COMMENT '본문HTML',
+    MODR_UID                         VARCHAR (30) COMMENT '수정자UID',
+    MOD_DT                           DATETIME COMMENT '수정일시',
+    PRIMARY KEY (APV_NO, BODY_HST_NO)
+)
+COMMENT = '진행문서본문내역'</if>
+	</update>
+
+	<!-- 진행문서ERP양식상세 -->
+	<update id="createApOngdErpFormD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdErpFormD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_ERP_FORM_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    ERP_VA_TYP_CD                    VARCHAR (30) NOT NULL COMMENT 'ERP값구분코드',
+    ERP_VA                           LONGTEXT COMMENT 'ERP값',
+    PRIMARY KEY (APV_NO, ERP_VA_TYP_CD)
+)
+COMMENT = '진행문서ERP양식상세'</if>
+	</update>
+
+	<!-- 진행문서확장상세 -->
+	<update id="createApOngdExD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdExD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_EX_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    EX_ID                            VARCHAR (30) NOT NULL COMMENT '확장ID',
+    EX_VA                            VARCHAR (2000) COMMENT '확장값',
+    PRIMARY KEY (APV_NO, EX_ID)
+)
+COMMENT = '진행문서확장상세'</if>
+	</update>
+
+	<!-- 진행문서외부문서상세 -->
+	<update id="createApOngdExtnDocD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdExtnDocD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_EXTN_DOC_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    EXTN_DOC_TYP_CD                  VARCHAR (30) COMMENT '외부문서구분코드',
+    EXTN_DOC_CONT_TYP_CD             VARCHAR (30) COMMENT '외부문서컨텐츠구분코드',
+    PICH_UID                         VARCHAR (30) COMMENT '담당자UID',
+    PICH_NM                          VARCHAR (120) COMMENT '담당자명',
+    MAK_YY                           INT COMMENT '생산년도',
+    SENDR_NM                         VARCHAR (240) COMMENT '발신자명',
+    PAGE_CNT                         INT COMMENT '페이지수',
+    MAK_ZONE_NM                      VARCHAR (240) COMMENT '생산지역명',
+    ORGN_APV_NO                      BIGINT COMMENT '원본결재번호',
+    REG_SEQ                          INT COMMENT '등록일련번호',
+    PRIMARY KEY (APV_NO)
+)
+COMMENT = '진행문서외부문서상세'</if>
+	</update>
+	<update id="indexApOngdExtnDocD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdExtnDocD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_EXTN_DOC_D1 ON AP_${storId}_EXTN_DOC_D (ORGN_APV_NO)</if>
+	</update>
+
+	<!-- 진행문서보류의견상세 -->
+	<update id="createApOngdHoldOpinD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdHoldOpinD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_HOLD_OPIN_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    APVR_UID                         VARCHAR (30) NOT NULL COMMENT '결재자UID',
+    APV_OPIN_CONT                    VARCHAR (2000) COMMENT '결재의견내용',
+    APV_OPIN_DISP_YN                 CHAR (1) COMMENT '결재의견표시여부',
+    PRIMARY KEY (APV_NO, APVR_UID)
+)
+COMMENT = '진행문서보류의견상세'</if>
+	</update>
+
+	<!-- 진행문서담당자상세 -->
+	<update id="createApOngdPichD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdPichD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_PICH_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    PICH_TYP_CD                      VARCHAR (30) NOT NULL COMMENT '담당자구분코드',
+    PICH_UID                         VARCHAR (30) COMMENT '담당자UID',
+    PICH_DEPT_ID                     VARCHAR (30) COMMENT '담당자부서ID',
+    PICH_NM                          VARCHAR (120) COMMENT '담당자명',
+    PICH_DEPT_NM                     VARCHAR (120) COMMENT '담당자부서명',
+    PICH_OPIN_CONT                   VARCHAR (800) COMMENT '담당자의견내용',
+    HDL_STAT_CD                      VARCHAR (30) NOT NULL COMMENT '처리상태코드',
+    HDL_DT                           DATETIME COMMENT '처리일시',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    PREV_APVR_APV_DT                 DATETIME COMMENT '이전결재자결재일시',
+    PRIMARY KEY (APV_NO, PICH_TYP_CD)
+)
+COMMENT = '진행문서담당자상세'</if>
+	</update>
+	<update id="indexApOngdPichD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdPichD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_PICH_D1 ON AP_${storId}_PICH_D (PICH_TYP_CD, PICH_UID, HDL_STAT_CD, APV_NO)</if><if
+	test="sqlSeq == 2">
+CREATE INDEX IDX_AP_${storId}_PICH_D2 ON AP_${storId}_PICH_D (PICH_TYP_CD, PICH_DEPT_ID, HDL_STAT_CD, APV_NO)</if>
+	</update>
+
+	<!-- 진행문서공람게시확인내역 -->
+	<update id="createApOngdPubBxCnfmL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdPubBxCnfmL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_PUB_BX_CNFM_L (
+    PUB_BX_DEPT_ID                   VARCHAR (30) NOT NULL COMMENT '공람게시부서ID',
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    USER_UID                         VARCHAR (30) NOT NULL COMMENT '사용자UID',
+    USER_NM                          VARCHAR (120) COMMENT '사용자명',
+    DEPT_ID                          VARCHAR (30) COMMENT '부서ID',
+    DEPT_NM                          VARCHAR (120) COMMENT '부서명',
+    POSIT_CD                         VARCHAR (30) COMMENT '직위코드',
+    POSIT_NM                         VARCHAR (120) COMMENT '직위명',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    PRIMARY KEY (PUB_BX_DEPT_ID, APV_NO, USER_UID)
+)
+COMMENT = '진행문서공람게시확인내역'</if>
+	</update>
+
+	<!-- 진행문서공람게시상세 -->
+	<update id="createApOngdPubBxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdPubBxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_PUB_BX_D (
+    PUB_BX_DEPT_ID                   VARCHAR (30) NOT NULL COMMENT '공람게시부서ID',
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    PUB_BX_DT                        DATETIME NOT NULL COMMENT '공람게시일시',
+    PUB_BX_END_YMD                   DATETIME COMMENT '공람게시종료년월일',
+    REGR_UID                         VARCHAR (30) COMMENT '등록자UID',
+    REGR_NM                          VARCHAR (120) COMMENT '등록자명',
+    REG_DEPT_ID                      VARCHAR (30) NOT NULL COMMENT '등록부서ID',
+    REG_DEPT_NM                      VARCHAR (120) COMMENT '등록부서명',
+    PRIMARY KEY (PUB_BX_DEPT_ID, APV_NO)
+)
+COMMENT = '진행문서공람게시상세'</if>
+	</update>
+	<update id="indexApOngdPubBxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdPubBxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_PUB_BX_D1 ON AP_${storId}_PUB_BX_D (PUB_BX_DEPT_ID, PUB_BX_END_YMD, APV_NO)</if>
+	</update>
+
+	<!-- 진행문서수신처내역 -->
+	<update id="createApOngdRecvDeptL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdRecvDeptL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_RECV_DEPT_L (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    RECV_DEPT_HST_NO                 INT NOT NULL COMMENT '수신처이력번호',
+    RECV_DEPT_SEQ                    INT NOT NULL COMMENT '수신처일련번호',
+    RECV_DEPT_TYP_CD                 VARCHAR (30) NOT NULL COMMENT '수신처구분코드',
+    RECV_DEPT_ID                     VARCHAR (30) COMMENT '수신처ID',
+    RECV_DEPT_NM                     VARCHAR (400) COMMENT '수신처명',
+    REF_DEPT_ID                      VARCHAR (30) COMMENT '참조처ID',
+    REF_DEPT_NM                      VARCHAR (400) COMMENT '참조처명',
+    MODR_UID                         VARCHAR (30) COMMENT '수정자UID',
+    MOD_DT                           DATETIME COMMENT '수정일시',
+    SEND_YN                          CHAR (1) COMMENT '발송여부',
+    ADD_SEND_YN                      CHAR (1) NOT NULL COMMENT '추가발송여부',
+    PRIMARY KEY (APV_NO, RECV_DEPT_HST_NO, RECV_DEPT_SEQ)
+)
+COMMENT = '진행문서수신처내역'</if>
+	</update>
+
+	<!-- 진행문서참조문서내역 -->
+	<update id="createApOngdRefDocL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdRefDocL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_DOC_L (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    REF_DOC_HST_NO                   INT NOT NULL COMMENT '참조문서이력번호',
+    REF_APV_NO                       BIGINT NOT NULL COMMENT '참조결재번호',
+    SORT_ORDR                        INT NOT NULL COMMENT '정렬순서',
+    MODR_UID                         VARCHAR (30) COMMENT '수정자UID',
+    MOD_DT                           DATETIME COMMENT '수정일시',
+    PRIMARY KEY (APV_NO, REF_DOC_HST_NO, REF_APV_NO)
+)
+COMMENT = '진행문서참조문서내역'</if>
+	</update>
+
+	<!-- 진행문서참조열람상세 -->
+	<update id="createApOngdRefVwD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdRefVwD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_VW_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    REGR_UID                         VARCHAR (30) NOT NULL COMMENT '등록자UID',
+    REF_VWR_UID                      VARCHAR (30) NOT NULL COMMENT '참조열람자UID',
+    SORT_ORDR                        INT NOT NULL COMMENT '정렬순서',
+    REF_VW_STAT_CD                   VARCHAR (30) NOT NULL COMMENT '참조열람상태코드',
+    REF_VWR_NM                       VARCHAR (120) COMMENT '참조열람자명',
+    REF_VWR_POSIT_CD                 VARCHAR (30) COMMENT '참조열람자직위코드',
+    REF_VWR_POSIT_NM                 VARCHAR (120) COMMENT '참조열람자직위명',
+    REF_VWR_TITLE_CD                 VARCHAR (30) COMMENT '참조열람자직책코드',
+    REF_VWR_TITLE_NM                 VARCHAR (120) COMMENT '참조열람자직책명',
+    REF_VWR_DEPT_ID                  VARCHAR (30) COMMENT '참조열람자부서ID',
+    REF_VWR_DEPT_NM                  VARCHAR (120) COMMENT '참조열람자부서명',
+    REF_VW_DT                        DATETIME COMMENT '참조열람일시',
+    REF_VW_OPIN_CONT                 VARCHAR (2000) COMMENT '참조열람의견내용',
+    REG_DT                           DATETIME COMMENT '등록일시',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    PRIMARY KEY (APV_NO, REF_VWR_UID)
+)
+COMMENT = '진행문서참조열람상세'</if>
+	</update>
+	<update id="indexApOngdRefVwD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdRefVwD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_REF_VW_D1 ON AP_${storId}_REF_VW_D (REF_VWR_UID, REF_VW_STAT_CD, APV_NO)</if>
+	</update>
+
+	<!-- 진행문서참조열람이행 -->
+	<update id="createApOngdRefVwE" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdRefVwE : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_VW_E (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    REGR_UID                         VARCHAR (30) NOT NULL COMMENT '등록자UID',
+    REF_VWR_UID                      VARCHAR (30) NOT NULL COMMENT '참조열람자UID',
+    SORT_ORDR                        INT NOT NULL COMMENT '정렬순서',
+    REF_VW_STAT_CD                   VARCHAR (30) NOT NULL COMMENT '참조열람상태코드',
+    REF_VWR_NM                       VARCHAR (120) COMMENT '참조열람자명',
+    REF_VWR_POSIT_CD                 VARCHAR (30) COMMENT '참조열람자직위코드',
+    REF_VWR_POSIT_NM                 VARCHAR (120) COMMENT '참조열람자직위명',
+    REF_VWR_TITLE_CD                 VARCHAR (30) COMMENT '참조열람자직책코드',
+    REF_VWR_TITLE_NM                 VARCHAR (120) COMMENT '참조열람자직책명',
+    REF_VWR_DEPT_ID                  VARCHAR (30) COMMENT '참조열람자부서ID',
+    REF_VWR_DEPT_NM                  VARCHAR (120) COMMENT '참조열람자부서명',
+    REF_VW_DT                        DATETIME COMMENT '참조열람일시',
+    REF_VW_OPIN_CONT                 VARCHAR (2000) COMMENT '참조열람의견내용',
+    REG_DT                           DATETIME COMMENT '등록일시',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    PRIMARY KEY (APV_NO, REF_VWR_UID)
+)
+COMMENT = '진행문서참조열람이행'</if>
+	</update>
+	<update id="indexApOngdRefVwE" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdRefVwE : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_REF_VW_E1 ON AP_${storId}_REF_VW_E (REF_VWR_UID, REF_VW_STAT_CD, APV_NO)</if>
+	</update>
+
+	<!-- 진행문서참조열람이력 -->
+	<update id="createApOngdRefVwH" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdRefVwH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_VW_H (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    REGR_UID                         VARCHAR (30) NOT NULL COMMENT '등록자UID',
+    REF_VWR_UID                      VARCHAR (30) NOT NULL COMMENT '참조열람자UID',
+    SORT_ORDR                        INT NOT NULL COMMENT '정렬순서',
+    REF_VW_STAT_CD                   VARCHAR (30) NOT NULL COMMENT '참조열람상태코드',
+    REF_VWR_NM                       VARCHAR (120) COMMENT '참조열람자명',
+    REF_VWR_POSIT_CD                 VARCHAR (30) COMMENT '참조열람자직위코드',
+    REF_VWR_POSIT_NM                 VARCHAR (120) COMMENT '참조열람자직위명',
+    REF_VWR_TITLE_CD                 VARCHAR (30) COMMENT '참조열람자직책코드',
+    REF_VWR_TITLE_NM                 VARCHAR (120) COMMENT '참조열람자직책명',
+    REF_VWR_DEPT_ID                  VARCHAR (30) COMMENT '참조열람자부서ID',
+    REF_VWR_DEPT_NM                  VARCHAR (120) COMMENT '참조열람자부서명',
+    REF_VW_DT                        DATETIME COMMENT '참조열람일시',
+    REF_VW_OPIN_CONT                 VARCHAR (2000) COMMENT '참조열람의견내용',
+    REG_DT                           DATETIME COMMENT '등록일시',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    PRIMARY KEY (APV_NO, REGR_UID, REF_VWR_UID)
+)
+COMMENT = '진행문서참조열람이력'</if>
+	</update>
+
+	<!-- 진행문서발송상세 -->
+	<update id="createApOngdSendD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdSendD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_SEND_D (
+    APV_NO                           BIGINT NOT NULL COMMENT '결재번호',
+    SEND_SEQ                         INT NOT NULL COMMENT '발송일련번호',
+    RECV_DEPT_ID                     VARCHAR (30) COMMENT '수신처ID',
+    RECV_DEPT_NM                     VARCHAR (400) COMMENT '수신처명',
+    REF_DEPT_NM                      VARCHAR (400) COMMENT '참조처명',
+    RECV_DEPT_TYP_CD                 VARCHAR (30) COMMENT '수신처구분코드',
+    HDL_STAT_CD                      VARCHAR (30) NOT NULL COMMENT '처리상태코드',
+    HDLR_UID                         VARCHAR (30) COMMENT '처리자UID',
+    HDLR_NM                          VARCHAR (120) COMMENT '처리자명',
+    HDLR_OPIN_CONT                   VARCHAR (800) COMMENT '처리자의견내용',
+    HDL_DT                           DATETIME COMMENT '처리일시',
+    VW_DT                            DATETIME COMMENT '조회일시',
+    PREV_APVR_APV_DT                 DATETIME COMMENT '이전결재자결재일시',
+    PRIMARY KEY (APV_NO, SEND_SEQ)
+)
+COMMENT = '진행문서발송상세'</if>
+	</update>
+	<update id="indexApOngdSendD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdSendD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_SEND_D1 ON AP_${storId}_SEND_D (RECV_DEPT_ID, HDL_STAT_CD, APV_NO)</if>
+	</update>
+
+	<!-- 진행문서변환상세 -->
+	<update id="createApOngdTrxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.createApOngdTrxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_TRX_D (
+    TRX_APV_NO                       BIGINT NOT NULL COMMENT '변환결재번호',
+    ORGN_APV_NO                      BIGINT NOT NULL COMMENT '원본결재번호',
+    FORM_ID                          VARCHAR (30) NOT NULL COMMENT '양식ID',
+    FORM_SEQ                         INT NOT NULL COMMENT '양식일련번호',
+    BODY_HGHT_PX                     INT COMMENT '본문높이픽셀',
+    FORM_WDTH_TYP_CD                 VARCHAR (30) COMMENT '양식넓이구분코드',
+    FOOTER_VA                        VARCHAR (400) COMMENT '바닥글값',
+    PRIMARY KEY (TRX_APV_NO)
+)
+COMMENT = '진행문서변환상세'</if>
+	</update>
+	<update id="indexApOngdTrxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableMYSQLDao.indexApOngdTrxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_TRX_D1 ON AP_${storId}_TRX_D (ORGN_APV_NO, TRX_APV_NO)</if>
+	</update>
+</mapper>

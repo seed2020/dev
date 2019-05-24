@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : OR_ODUR_B[원직자기본] -->
+<mapper namespace="com.innobiz.orange.web.or.dao.OrOdurBDao">
+
+	<resultMap id="orOdurBMap" type="OrOdurBVo">
+		<id property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<result property="lginId" column="LGIN_ID" /><!-- 로그인ID -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="rid" column="RID" /><!-- 참조ID -->
+		<result property="ein" column="EIN" /><!-- 사원번호 -->
+		<result property="userStatCd" column="USER_STAT_CD" /><!-- 사용자상태코드 -->
+		<result property="userDesc" column="USER_DESC" /><!-- 사용자설명 -->
+		<result property="entraYmd" column="ENTRA_YMD" /><!-- 입사년월일 -->
+		<result property="resigYmd" column="RESIG_YMD" /><!-- 퇴사년월일 -->
+		<result property="genCd" column="GEN_CD" /><!-- 성별코드 -->
+		<result property="apvPwTypCd" column="APV_PW_TYP_CD" /><!-- 결재비밀번호구분코드 -->
+		<result property="syncStepCd" column="SYNC_STEP_CD" /><!-- 동기화단계코드 -->
+		<result property="refVa1" column="REF_VA1" /><!-- 참조값1 -->
+		<result property="refVa2" column="REF_VA2" /><!-- 참조값2 -->
+		<result property="refVa3" column="REF_VA3" /><!-- 참조값3 -->
+		<result property="sysUserYn" column="SYS_USER_YN" /><!-- 시스템사용자여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="userStatNm" column="USER_STAT_NM" /><!-- 사용자상태명 -->
+		<result property="genNm" column="GEN_NM" /><!-- 성별명 -->
+		<result property="apvPwTypNm" column="APV_PW_TYP_NM" /><!-- 결재비밀번호구분명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectOrOdurB" resultMap="orOdurBMap" parameterType="OrOdurBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOdurBDao.selectOrOdurB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = M.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'USER_STAT_CD' AND CD = M.USER_STAT_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_STAT_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'GEN_CD' AND CD = M.GEN_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) GEN_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'PW_TYP_CD' AND CD = M.APV_PW_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) APV_PW_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.ODUR_UID,
+			T.LGIN_ID,
+			T.USER_NM,
+			T.RESC_ID,
+			T.RID,
+			T.EIN,
+			T.USER_STAT_CD,
+			T.USER_DESC,
+			DATE_FORMAT(T.ENTRA_YMD, '%Y-%m-%d') ENTRA_YMD,
+			DATE_FORMAT(T.RESIG_YMD, '%Y-%m-%d') RESIG_YMD,
+			T.GEN_CD,
+			T.APV_PW_TYP_CD,
+			T.SYNC_STEP_CD,
+			T.REF_VA1,
+			T.REF_VA2,
+			T.REF_VA3,
+			T.SYS_USER_YN,
+			T.REGR_UID,
+			DATE_FORMAT(T.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT,
+			T.MODR_UID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'USER_STAT_CD' AND CD = T.USER_STAT_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_STAT_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'GEN_CD' AND CD = T.GEN_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) GEN_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'PW_TYP_CD' AND CD = T.APV_PW_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) APV_PW_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM OR_ODUR_B T
+		<where>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="lginId != null and lginId != ''">AND T.LGIN_ID = #{lginId, jdbcType=VARCHAR}</if>
+			<if test="rid != null and rid != ''">AND T.RID = #{rid, jdbcType=VARCHAR}</if>
+			<if test="ein != null and ein != ''">AND T.EIN = #{ein, jdbcType=VARCHAR}</if>
+			<if test="userStatCd != null and userStatCd != ''">AND T.USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR}</if>
+			<if test="refVa1 != null and refVa1 != ''">AND T.REF_VA1 = #{refVa1, jdbcType=NVARCHAR}</if>
+			<if test="refVa2 != null and refVa2 != ''">AND T.REF_VA2 = #{refVa2, jdbcType=NVARCHAR}</if>
+			<if test="refVa3 != null and refVa3 != ''">AND T.REF_VA3 = #{refVa3, jdbcType=NVARCHAR}</if>
+			<if test="userUid != null and userUid != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_USER_B WHERE USER_UID = #{userUid, jdbcType=VARCHAR})</if>
+			<if test="orgId != null and orgId != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_USER_B WHERE ORG_ID = #{orgId, jdbcType=VARCHAR})</if>
+			<if test="odurUidList != null">AND T.ODUR_UID IN ( <foreach collection="odurUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="lginIdList != null">AND T.LGIN_ID IN ( <foreach collection="lginIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.ODUR_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countOrOdurB" resultType="Integer" parameterType="OrOdurBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOdurBDao.countOrOdurB */
+		SELECT COUNT(*) CNT
+		FROM OR_ODUR_B T
+		<where>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="lginId != null and lginId != ''">AND T.LGIN_ID = #{lginId, jdbcType=VARCHAR}</if>
+			<if test="rid != null and rid != ''">AND T.RID = #{rid, jdbcType=VARCHAR}</if>
+			<if test="ein != null and ein != ''">AND T.EIN = #{ein, jdbcType=VARCHAR}</if>
+			<if test="userStatCd != null and userStatCd != ''">AND T.USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR}</if>
+			<if test="refVa1 != null and refVa1 != ''">AND T.REF_VA1 = #{refVa1, jdbcType=NVARCHAR}</if>
+			<if test="refVa2 != null and refVa2 != ''">AND T.REF_VA2 = #{refVa2, jdbcType=NVARCHAR}</if>
+			<if test="refVa3 != null and refVa3 != ''">AND T.REF_VA3 = #{refVa3, jdbcType=NVARCHAR}</if>
+			<if test="userUid != null and userUid != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_USER_B WHERE USER_UID = #{userUid, jdbcType=VARCHAR})</if>
+			<if test="orgId != null and orgId != ''">AND T.ODUR_UID IN (SELECT ODUR_UID FROM OR_USER_B WHERE ORG_ID = #{orgId, jdbcType=VARCHAR})</if>
+			<if test="odurUidList != null">AND T.ODUR_UID IN ( <foreach collection="odurUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="lginIdList != null">AND T.LGIN_ID IN ( <foreach collection="lginIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertOrOdurB" parameterType="OrOdurBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOdurBDao.insertOrOdurB */
+		INSERT INTO OR_ODUR_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ODUR_UID,
+			LGIN_ID,
+			USER_NM,
+			RESC_ID,
+			RID,
+			EIN,
+			USER_STAT_CD,
+			USER_DESC,
+			ENTRA_YMD,
+			RESIG_YMD,
+			GEN_CD,
+			APV_PW_TYP_CD,
+			SYNC_STEP_CD,
+			REF_VA1,
+			REF_VA2,
+			REF_VA3,
+			SYS_USER_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{odurUid, jdbcType=VARCHAR},
+			#{lginId, jdbcType=VARCHAR},
+			#{userNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{rid, jdbcType=VARCHAR},
+			#{ein, jdbcType=VARCHAR},
+			#{userStatCd, jdbcType=VARCHAR},
+			#{userDesc, jdbcType=NVARCHAR},
+			<if test="entraYmd == 'sysdate'">NOW(),</if><if test="entraYmd == null or entraYmd == ''">NULL,</if>
+			<if test="entraYmd != null and entraYmd != '' and entraYmd != 'sysdate'">STR_TO_DATE(#{entraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="resigYmd == 'sysdate'">NOW(),</if><if test="resigYmd == null or resigYmd == ''">NULL,</if>
+			<if test="resigYmd != null and resigYmd != '' and resigYmd != 'sysdate'">STR_TO_DATE(#{resigYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{genCd, jdbcType=VARCHAR},
+			#{apvPwTypCd, jdbcType=VARCHAR},
+			#{syncStepCd, jdbcType=VARCHAR},
+			#{refVa1, jdbcType=NVARCHAR},
+			#{refVa2, jdbcType=NVARCHAR},
+			#{refVa3, jdbcType=NVARCHAR},
+			#{sysUserYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateOrOdurB" parameterType="OrOdurBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOdurBDao.updateOrOdurB */
+		UPDATE OR_ODUR_B
+		<set>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="lginId != null">LGIN_ID = #{lginId, jdbcType=VARCHAR},</if>
+			<if test="userNm != null">USER_NM = #{userNm, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="rid != null">RID = #{rid, jdbcType=VARCHAR},</if>
+			<if test="ein != null">EIN = #{ein, jdbcType=VARCHAR},</if>
+			<if test="userStatCd != null">USER_STAT_CD = #{userStatCd, jdbcType=VARCHAR},</if>
+			<if test="userDesc != null">USER_DESC = #{userDesc, jdbcType=NVARCHAR},</if>
+			<if test="entraYmd != null">
+				<if test="entraYmd == 'sysdate'">ENTRA_YMD = NOW(),</if>
+				<if test="entraYmd == ''">ENTRA_YMD = NULL,</if>
+				<if test="entraYmd != '' and entraYmd != 'sysdate'">ENTRA_YMD = STR_TO_DATE(#{entraYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="resigYmd != null">
+				<if test="resigYmd == 'sysdate'">RESIG_YMD = NOW(),</if>
+				<if test="resigYmd == ''">RESIG_YMD = NULL,</if>
+				<if test="resigYmd != '' and resigYmd != 'sysdate'">RESIG_YMD = STR_TO_DATE(#{resigYmd, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="genCd != null">GEN_CD = #{genCd, jdbcType=VARCHAR},</if>
+			<if test="apvPwTypCd != null">APV_PW_TYP_CD = #{apvPwTypCd, jdbcType=VARCHAR},</if>
+			<if test="syncStepCd != null">SYNC_STEP_CD = #{syncStepCd, jdbcType=VARCHAR},</if>
+			<if test="refVa1 != null">REF_VA1 = #{refVa1, jdbcType=NVARCHAR},</if>
+			<if test="refVa2 != null">REF_VA2 = #{refVa2, jdbcType=NVARCHAR},</if>
+			<if test="refVa3 != null">REF_VA3 = #{refVa3, jdbcType=NVARCHAR},</if>
+			<if test="sysUserYn != null">SYS_USER_YN = #{sysUserYn, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = NOW(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteOrOdurB" parameterType="OrOdurBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOdurBDao.deleteOrOdurB */
+		DELETE FROM OR_ODUR_B
+		<where>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND ODUR_UID IN (SELECT ODUR_UID FROM OR_USER_B WHERE COMP_ID = #{compId, jdbcType=VARCHAR} AND ADU_TYP_CD = '01' AND ODUR_UID != 'U0000001')</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

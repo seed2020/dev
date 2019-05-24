@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_FORM_XML_D[양식XML상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApFormXmlDDao">
+
+	<resultMap id="apFormXmlDMap" type="ApFormXmlDVo">
+		<id property="formId" column="FORM_ID" /><!-- 양식ID -->
+		<id property="formXmlCd" column="FORM_XML_CD" /><!-- 양식XML코드 -->
+		<result property="formXmlCont" column="FORM_XML_CONT" jdbcType="CLOB" javaType="java.lang.String" /><!-- 양식XML내용 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApFormXmlD" resultMap="apFormXmlDMap" parameterType="ApFormXmlDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormXmlDDao.selectApFormXmlD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.FORM_ID,
+			T.FORM_XML_CD,
+			T.FORM_XML_CONT,
+		</trim>
+		FROM AP_FORM_XML_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formXmlCd != null">AND T.FORM_XML_CD = #{formXmlCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.FORM_ID, T.FORM_XML_CD</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApFormXmlD" resultType="Integer" parameterType="ApFormXmlDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormXmlDDao.countApFormXmlD */
+		SELECT COUNT(*) CNT
+		FROM AP_FORM_XML_D T
+		<where>
+			<if test="formId != null">AND T.FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formXmlCd != null">AND T.FORM_XML_CD = #{formXmlCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApFormXmlD" parameterType="ApFormXmlDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormXmlDDao.insertApFormXmlD */
+		INSERT INTO AP_FORM_XML_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FORM_ID,
+			FORM_XML_CD,
+			FORM_XML_CONT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{formId, jdbcType=VARCHAR},
+			#{formXmlCd, jdbcType=VARCHAR},
+			#{formXmlCont, jdbcType=CLOB},
+		</trim>
+	</insert>
+
+	<update id="updateApFormXmlD" parameterType="ApFormXmlDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormXmlDDao.updateApFormXmlD */
+		UPDATE AP_FORM_XML_D
+		<set>
+			<if test="formId != null">FORM_ID = #{formId, jdbcType=VARCHAR},</if>
+			<if test="formXmlCd != null">FORM_XML_CD = #{formXmlCd, jdbcType=VARCHAR},</if>
+			<if test="formXmlCont != null">FORM_XML_CONT = #{formXmlCont, jdbcType=CLOB},</if>
+		</set>
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formXmlCd != null">AND FORM_XML_CD = #{formXmlCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApFormXmlD" parameterType="ApFormXmlDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApFormXmlDDao.deleteApFormXmlD */
+		DELETE FROM AP_FORM_XML_D
+		<where>
+			<if test="formId != null">AND FORM_ID = #{formId, jdbcType=VARCHAR}</if>
+			<if test="formXmlCd != null">AND FORM_XML_CD = #{formXmlCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

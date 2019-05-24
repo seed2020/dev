@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WD_ANB_MOD_L[연차차감내역] -->
+<mapper namespace="com.innobiz.orange.web.wd.dao.WdAnbModLDao">
+
+	<resultMap id="wdAnbModLMap" type="WdAnbModLVo">
+		<id property="year" column="YEAR" /><!-- 기준년도 -->
+		<id property="anbTypCd" column="ANB_TYP_CD" /><!-- 연차구분코드 -->
+		<id property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<id property="seq" column="SEQ" /><!-- 일련번호 -->
+		<result property="modTypCd" column="MOD_TYP_CD" /><!-- 차감구분코드 -->
+		<result property="modCnt" column="MOD_CNT" /><!-- 차감수 -->
+		<result property="useYmd" column="USE_YMD" /><!-- 사용년월일 -->
+		<result property="month" column="MONTH" /><!-- 월 -->
+		<result property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<result property="rson" column="RSON" /><!-- 근거 -->
+		<result property="modUid" column="MOD_UID" /><!-- 차감자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 차감일시 -->
+		<result property="note" column="NOTE" /><!-- 비고 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWdAnbModL" resultMap="wdAnbModLMap" parameterType="WdAnbModLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbModLDao.selectWdAnbModL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.YEAR,
+			T.ANB_TYP_CD,
+			T.ODUR_UID,
+			T.SEQ,
+			T.MOD_TYP_CD,
+			T.MOD_CNT,
+			TO_CHAR(T.USE_YMD, 'YYYY-MM-DD') USE_YMD,
+			T.MONTH,
+			T.APV_NO,
+			T.RSON,
+			T.MOD_UID,
+			TO_CHAR(T.MOD_DT, 'YYYY-MM-DD HH24:MI:SS') MOD_DT,
+			T.NOTE,
+		</trim>
+		FROM WD_ANB_MOD_L T
+		<where>
+			<if test="year != null">AND T.YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND T.ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="modTypCd != null and modTypCd != ''">AND T.MOD_TYP_CD = #{modTypCd, jdbcType=VARCHAR}</if>
+			<if test="month != null and month != ''">AND T.MONTH = #{month, jdbcType=INTEGER}</if>
+			<if test="apvNo != null and apvNo != ''">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="modTypCdList != null">AND T.MOD_TYP_CD IN ( <foreach collection="modTypCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.YEAR, T.ANB_TYP_CD, T.ODUR_UID, T.SEQ</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countWdAnbModL" resultType="Integer" parameterType="WdAnbModLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbModLDao.countWdAnbModL */
+		SELECT COUNT(*) CNT
+		FROM WD_ANB_MOD_L T
+		<where>
+			<if test="year != null">AND T.YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND T.ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="modTypCd != null and modTypCd != ''">AND T.MOD_TYP_CD = #{modTypCd, jdbcType=VARCHAR}</if>
+			<if test="month != null and month != ''">AND T.MONTH = #{month, jdbcType=INTEGER}</if>
+			<if test="apvNo != null and apvNo != ''">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="modTypCdList != null">AND T.MOD_TYP_CD IN ( <foreach collection="modTypCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWdAnbModL" parameterType="WdAnbModLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbModLDao.insertWdAnbModL */
+		INSERT INTO WD_ANB_MOD_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			YEAR,
+			ANB_TYP_CD,
+			ODUR_UID,
+			SEQ,
+			MOD_TYP_CD,
+			MOD_CNT,
+			USE_YMD,
+			MONTH,
+			APV_NO,
+			RSON,
+			MOD_UID,
+			MOD_DT,
+			NOTE,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{year, jdbcType=INTEGER},
+			#{anbTypCd, jdbcType=VARCHAR},
+			#{odurUid, jdbcType=VARCHAR},
+			<if test="seq != null and seq != ''">#{seq, jdbcType=INTEGER},</if>
+			<if test="seq == null or seq == ''">(SELECT NVL(MAX(SEQ),0)+1 FROM WD_ANB_MOD_L WHERE YEAR = #{year, jdbcType=VARCHAR} AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR} AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}),</if>
+			#{modTypCd, jdbcType=VARCHAR},
+			<if test="modCnt == ''">NULL</if><if test="modCnt != ''">#{modCnt, jdbcType=NUMERIC}</if>,
+			<if test="useYmd == 'sysdate'">SYSDATE,</if><if test="useYmd == null or useYmd == ''">NULL,</if>
+			<if test="useYmd != null and useYmd != '' and useYmd != 'sysdate'">TO_DATE(#{useYmd, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="month == ''">NULL</if><if test="month != ''">#{month, jdbcType=INTEGER}</if>,
+			<if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,
+			#{rson, jdbcType=VARCHAR},
+			#{modUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{note, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateWdAnbModL" parameterType="WdAnbModLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbModLDao.updateWdAnbModL */
+		UPDATE WD_ANB_MOD_L
+		<set>
+			<if test="year != null">YEAR = #{year, jdbcType=INTEGER},</if>
+			<if test="anbTypCd != null">ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR},</if>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="seq != null">SEQ = #{seq, jdbcType=INTEGER},</if>
+			<if test="modTypCd != null">MOD_TYP_CD = #{modTypCd, jdbcType=VARCHAR},</if>
+			<if test="modCnt != null">MOD_CNT = <if test="modCnt == ''">NULL</if><if test="modCnt != ''">#{modCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="useYmd != null">
+				<if test="useYmd == 'sysdate'">USE_YMD = SYSDATE,</if>
+				<if test="useYmd == ''">USE_YMD = NULL,</if>
+				<if test="useYmd != '' and useYmd != 'sysdate'">USE_YMD = TO_DATE(#{useYmd, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="month != null">MONTH = <if test="month == ''">NULL</if><if test="month != ''">#{month, jdbcType=INTEGER}</if>,</if>
+			<if test="apvNo != null">APV_NO = <if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,</if>
+			<if test="rson != null">RSON = #{rson, jdbcType=VARCHAR},</if>
+			<if test="modUid != null">MOD_UID = #{modUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="note != null">NOTE = #{note, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWdAnbModL" parameterType="WdAnbModLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbModLDao.deleteWdAnbModL */
+		DELETE FROM WD_ANB_MOD_L
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="modTypCd != null and modTypCd != ''">AND MOD_TYP_CD = #{modTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : OR_USER_LGIN_H[사용자기본] -->
+<mapper namespace="com.innobiz.orange.web.or.dao.OrUserLginHDao">
+
+	<resultMap id="orUserLginHMap" type="OrUserLginHVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="sessionId" column="SESSION_ID" /><!-- 세션ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<result property="orgRescNm" column="ORG_RESC_NM" /><!-- 조직리소스명 -->
+		<result property="deptRescNm" column="DEPT_RESC_NM" /><!-- 부서리소스명 -->
+		<result property="gradeNm" column="GRADE_NM" /><!-- 직급명 -->
+		<result property="titleNm" column="TITLE_NM" /><!-- 직책명 -->
+		<result property="positNm" column="POSIT_NM" /><!-- 직위명 -->
+		<result property="dutyNm" column="DUTY_NM" /><!-- 직무명 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="aduTypNm" column="ADU_TYP_NM" /><!-- 겸직구분명 -->
+		<result property="lginDt" column="LGIN_DT" /><!-- 로그인일시 -->
+		<result property="lgotDt" column="LGOT_DT" /><!-- 로그아웃일시 -->
+		<result property="accsIp" column="ACCS_IP" /><!-- 접속IP -->
+	</resultMap>
+	
+	
+	<sql id="selectOrUserLginHWhere">
+		<where>
+			<if test="userUid != null"> AND L.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="sessionId != null"> AND L.SESSION_ID = #{sessionId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="schUserUid != null and schUserUid != ''"> AND L.USER_UID = #{schUserUid, jdbcType=VARCHAR}</if>
+			<if test="'lginDt'.equals(durCat) and durStrtDt != null and durStrtDt != ''"><![CDATA[ AND CONVERT(VARCHAR(10), L.LGIN_DT, 120)  >= #{durStrtDt, jdbcType=VARCHAR}]]></if>
+			<if test="'lginDt'.equals(durCat) and durEndDt != null and durEndDt != ''"><![CDATA[ AND CONVERT(VARCHAR(10), L.LGIN_DT, 120) <= #{durEndDt, jdbcType=VARCHAR}]]></if>
+			<if test="'lgotDt'.equals(durCat) and durStrtDt != null and durStrtDt != ''"><![CDATA[ AND CONVERT(VARCHAR(10), L.LGOT_DT, 120)  >= #{durStrtDt, jdbcType=VARCHAR}]]></if>
+			<if test="'lgotDt'.equals(durCat) and durEndDt != null and durEndDt != ''"><![CDATA[ AND CONVERT(VARCHAR(10), L.LGOT_DT, 120) <= #{durEndDt, jdbcType=VARCHAR}]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+
+	<select id="selectOrUserLginH" resultMap="orUserLginHMap" parameterType="OrUserLginHVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserLginHDao.selectOrUserLginH */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.LGIN_DT DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			L.USER_UID,
+			L.SESSION_ID,
+			T.COMP_ID,
+			T.USER_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.ORG_RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.DEPT_RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DEPT_RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'GRADE_CD' AND CD = T.GRADE_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) GRADE_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'TITLE_CD' AND CD = T.TITLE_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) TITLE_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'POSIT_CD' AND CD = T.POSIT_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) POSIT_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'DUTY_CD' AND CD = T.DUTY_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DUTY_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ADU_TYP_CD' AND CD = T.ADU_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ADU_TYP_NM,
+			L.LGIN_DT , L.LGOT_DT , L.ACCS_IP ,
+		</trim>
+		FROM OR_USER_LGIN_H L INNER JOIN OR_USER_B T ON L.USER_UID = T.USER_UID 
+		<include refid="selectOrUserLginHWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY L.LGIN_DT DESC</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countOrUserLginH" resultType="Integer" parameterType="OrUserLginHVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserLginHDao.countOrUserLginH */
+		SELECT COUNT(*) CNT
+		FROM OR_USER_LGIN_H L INNER JOIN OR_USER_B T ON L.USER_UID = T.USER_UID 
+		<include refid="selectOrUserLginHWhere"/>
+	</select>
+
+	<insert id="insertOrUserLginH" parameterType="OrUserLginHVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserLginHDao.insertOrUserLginH */
+		INSERT INTO OR_USER_LGIN_H
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID, SESSION_ID, COMP_ID,
+			LGIN_DT, ACCS_IP, DEVI_NM,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR}, #{sessionId, jdbcType=VARCHAR}, #{compId, jdbcType=VARCHAR},
+			CONVERT(DATETIME, #{lginDt, jdbcType=VARCHAR}, 120), #{accsIp, jdbcType=VARCHAR}, #{deviNm, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateOrUserLginH" parameterType="OrUserLginHVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserLginHDao.updateOrUserLginH */
+		UPDATE OR_USER_LGIN_H SET LGOT_DT = CONVERT(DATETIME, #{lgotDt, jdbcType=VARCHAR}, 120)
+		<where>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="sessionId != null"> AND SESSION_ID = #{sessionId, jdbcType=VARCHAR}</if>
+			<if test="lginDt != null"> AND LGIN_DT = CONVERT(DATETIME, #{lginDt, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteOrUserLginH" parameterType="OrUserLginHVo" >
+		/* com.innobiz.orange.web.or.dao.OrUserLginHDao.deleteOrUserLginH */
+		DELETE FROM OR_USER_LGIN_H
+		<where>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="sessionId != null"> AND SESSION_ID = #{sessionId, jdbcType=VARCHAR}</if>
+			<if test="compId != null"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="'lginDt'.equals(durCat) and durEndDt != null and durEndDt != ''"><![CDATA[ AND CONVERT(VARCHAR(10), LGIN_DT, 120) <= #{durEndDt, jdbcType=VARCHAR}]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

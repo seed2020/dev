@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WP_MP_B[인력기본] -->
+<mapper namespace="com.innobiz.orange.web.wp.dao.WpMpBDao">
+
+	<resultMap id="wpMpBMap" type="WpMpBVo">
+		<id property="mpId" column="MP_ID" /><!-- 인력ID -->
+		<result property="mpNm" column="MP_NM" /><!-- 인력명 -->
+		<result property="mpGrade" column="MP_GRADE" /><!-- 인력직급 -->
+		<result property="mpPhone" column="MP_PHONE" /><!-- 인력전화번호 -->
+		<result property="mpEmail" column="MP_EMAIL" /><!-- 인력이메일 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일 -->
+		<result property="regUid" column="REG_UID" /><!-- 등록자UID -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWpMpB" resultMap="wpMpBMap" parameterType="WpMpBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpMpBDao.selectWpMpB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.MP_ID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.MP_ID,
+			T.MP_NM,
+			T.MP_GRADE,
+			T.MP_PHONE,
+			T.MP_EMAIL,
+			CONVERT(VARCHAR(19), T.REG_DT, 120) REG_DT,
+			T.REG_UID,
+		</trim>
+		FROM WP_MP_B T
+		<where>
+			<if test="mpId != null">AND T.MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="mpNm != null and mpNm != ''">AND T.MP_NM LIKE '%' + #{mpNm, jdbcType=VARCHAR} + '%'</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.MP_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWpMpB" resultType="Integer" parameterType="WpMpBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpMpBDao.countWpMpB */
+		SELECT COUNT(*) CNT
+		FROM WP_MP_B T
+		<where>
+			<if test="mpId != null">AND T.MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="mpNm != null and mpNm != ''">AND T.MP_NM LIKE '%' + #{mpNm, jdbcType=VARCHAR} + '%'</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWpMpB" parameterType="WpMpBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpMpBDao.insertWpMpB */
+		INSERT INTO WP_MP_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			MP_ID,
+			MP_NM,
+			MP_GRADE,
+			MP_PHONE,
+			MP_EMAIL,
+			REG_DT,
+			REG_UID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{mpId, jdbcType=VARCHAR},
+			#{mpNm, jdbcType=VARCHAR},
+			#{mpGrade, jdbcType=VARCHAR},
+			#{mpPhone, jdbcType=VARCHAR},
+			#{mpEmail, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			#{regUid, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateWpMpB" parameterType="WpMpBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpMpBDao.updateWpMpB */
+		UPDATE WP_MP_B
+		<set>
+			<if test="mpId != null">MP_ID = #{mpId, jdbcType=VARCHAR},</if>
+			<if test="mpNm != null">MP_NM = #{mpNm, jdbcType=VARCHAR},</if>
+			<if test="mpGrade != null">MP_GRADE = #{mpGrade, jdbcType=VARCHAR},</if>
+			<if test="mpPhone != null">MP_PHONE = #{mpPhone, jdbcType=VARCHAR},</if>
+			<if test="mpEmail != null">MP_EMAIL = #{mpEmail, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = GETDATE(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="regUid != null">REG_UID = #{regUid, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="mpId != null">AND MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWpMpB" parameterType="WpMpBVo" >
+		/* com.innobiz.orange.web.wp.dao.WpMpBDao.deleteWpMpB */
+		DELETE FROM WP_MP_B
+		<where>
+			<if test="mpId != null">AND MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

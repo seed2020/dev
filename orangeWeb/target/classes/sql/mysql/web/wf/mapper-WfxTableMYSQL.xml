@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 저장소 테이블 생성 -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfxTableDao">
+
+	<!-- 기본테이블 -->
+	<update id="createWfWorksL" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_L(
+WORK_NO INT NOT NULL COMMENT '업무번호',
+COMP_ID VARCHAR(3) NOT NULL COMMENT '회사ID',
+FORM_NO INT NOT NULL COMMENT '양식번호',
+GEN_ID VARCHAR(30) COMMENT '생성ID',
+JSON_VA LONGTEXT COMMENT 'JSON값',
+LOUT_VA LONGTEXT COMMENT '레이아웃값 ',
+ATTR_VA LONGTEXT COMMENT '속성값',
+MOB_LOUT_VA LONGTEXT COMMENT '모바일레이아웃값',
+MOB_TAB_VA LONGTEXT COMMENT '모바일탭값',
+STAT_CD CHAR(1) NOT NULL COMMENT '상태코드',
+REGR_UID VARCHAR(30) NOT NULL COMMENT '등록자',
+REG_DT DATETIME COMMENT '등록일시',
+MODR_UID VARCHAR(30) COMMENT '수정자UID',
+MOD_DT DATETIME COMMENT '수정일시',
+PRIMARY KEY (WORK_NO)
+)
+COMMENT = '생성테이블목록';</if>
+	</update><!-- 코드테이블 -->
+	<update id="createWfWorksCodeL" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksCodeL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_CODE_L(
+WORK_NO INT NOT NULL COMMENT '업무번호',
+TYP_CD VARCHAR(30) NOT NULL COMMENT '구분코드',
+COLM_NM VARCHAR(120) NOT NULL COMMENT '컬럼명',
+CD_VA VARCHAR(30) NOT NULL COMMENT '코드값',
+SORT_ORDR INT NOT NULL COMMENT '정렬순서'
+)
+COMMENT = '생성테이블코드목록';</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_WFG_${formId}_WORKS_CODE_L ON WFG_${formId}_WORKS_CODE_L
+(
+WORK_NO ASC,
+TYP_CD ASC,
+COLM_NM ASC,
+CD_VA ASC
+)</if><if
+	test="sqlSeq == 3">
+ALTER TABLE WFG_${formId}_WORKS_CODE_L ADD
+(CONSTRAINT PK_WFG_${formId}_WORKS_CODE_L PRIMARY KEY (WORK_NO, TYP_CD, COLM_NM, CD_VA));</if>
+	</update><!-- 목록 테이블 -->
+	<update id="createWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_D(
+	WORK_NO INT NOT NULL COMMENT '업무번호',
+	COMP_ID VARCHAR(3) NOT NULL COMMENT '회사ID',
+	FORM_NO INT NOT NULL COMMENT '양식번호',
+	GEN_ID VARCHAR(30) COMMENT '생성ID',
+	<foreach item="colmVo" index="index" collection="colmVoList">
+		${colmVo.colmDbNm} ${colmVo.dataTyp} <if test="colmVo.dataLen != null and colmVo.dataLen != ''">(${colmVo.dataLen})</if>,
+	</foreach>
+	READ_CNT INT COMMENT '조회수',
+	REGR_UID VARCHAR(30) NOT NULL COMMENT '등록자',
+	REG_DT DATETIME COMMENT '등록일시',
+	MODR_UID VARCHAR(30) COMMENT '수정자UID',
+	MOD_DT DATETIME COMMENT '수정일시',
+	PRIMARY KEY (WORK_NO)
+)
+COMMENT = '생성테이블상세';</if>
+	</update><!-- 조회이력 -->
+	<update id="createWfWorksReadH" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksReadH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_READ_H(
+WORK_NO INT NOT NULL COMMENT '업무번호',
+USER_UID VARCHAR(30) NOT NULL COMMENT '사용자UID',
+REG_DT DATETIME NOT NULL COMMENT '등록일시'
+)
+COMMENT = '조회이력';</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_WFG_${formId}_WORKS_READ_H ON WFG_${formId}_WORKS_READ_H
+(
+WORK_NO ASC,
+USER_UID ASC
+)</if><if
+	test="sqlSeq == 3">
+ALTER TABLE WFG_${formId}_WORKS_READ_H ADD
+(CONSTRAINT PK_WFG_${formId}_WORKS_READ_H PRIMARY KEY (WORK_NO, USER_UID));</if>
+	</update><!-- 파일 테이블 -->
+	<update id="createWfWorksFileD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksFileD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_FILE_D(
+FILE_ID INT NOT NULL COMMENT '파일ID',
+REF_ID INT COMMENT '참조ID',
+DISP_NM VARCHAR(240) COMMENT '표시이름',
+DISP_ORDR INT COMMENT '표시순서',
+FILE_EXT VARCHAR(30) COMMENT '파일확장자',
+FILE_SIZE INT COMMENT '파일크기',
+SAVE_PATH VARCHAR(240) COMMENT '저장경로',
+USE_YN CHAR(1) COMMENT '사용여부',
+REGR_UID VARCHAR(30) COMMENT '등록자',
+REG_DT DATETIME COMMENT '등록일시'
+)
+COMMENT = '생성테이블첨부파일';</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_WFG_${formId}_WORKS_FILE_D ON WFG_${formId}_WORKS_FILE_D
+(
+FILE_ID ASC
+)</if><if
+	test="sqlSeq == 3">
+ALTER TABLE WFG_${formId}_WORKS_FILE_D ADD
+(CONSTRAINT PK_WFG_${formId}_WORKS_FILE_D PRIMARY KEY (FILE_ID));</if>
+	</update><!-- 이미지 테이블 -->
+	<update id="createWfWorksImgD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.createWfWorksImgD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_IMG_D(
+IMG_NO INT NOT NULL COMMENT '이미지번호',
+WORK_NO INT NOT NULL COMMENT '업무번호',
+COLM_NM VARCHAR(120) NOT NULL COMMENT '컬럼명',
+IMG_PATH VARCHAR(240) NOT NULL COMMENT '이미지경로',
+IMG_WDTH INT NOT NULL COMMENT '가로길이',
+IMG_HGHT INT NOT NULL COMMENT '세로길이',
+MODR_UID VARCHAR(30) COMMENT '수정자',
+MOD_DT DATETIME COMMENT '수정일시'
+)
+COMMENT = '생성테이블이미지';</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_WFG_${formId}_WORKS_IMG_D ON WFG_${formId}_WORKS_IMG_D
+(
+IMG_NO ASC
+);</if><if
+	test="sqlSeq == 3">
+ALTER TABLE WFG_${formId}_WORKS_IMG_D ADD
+(CONSTRAINT PK_WFG_${formId}_WORKS_IMG_D PRIMARY KEY (IMG_NO));</if>
+	</update>
+	<update id="indexWfWorksL" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.indexWfWorksL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_WFG_${formId}_WORKS_L ON WFG_${formId}_WORKS_L
+(
+WORK_NO ASC
+)</if>
+	</update>
+	<update id="indexWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.indexWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_WFG_${formId}_WORKS_D ON WFG_${formId}_WORKS_D
+(
+WORK_NO ASC
+)</if>
+	</update>
+	<update id="backupWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.backupWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE WFG_${formId}_WORKS_D_BAK AS SELECT * FROM WFG_${formId}_WORKS_D;	
+</if><if
+	test="sqlSeq == 2">DROP TABLE WFG_${formId}_WORKS_D</if>
+</update><update id="insertWfWorksD" parameterType="WfFormGenLVo">
+/* com.innobiz.orange.web.wf.dao.WfxTableDao.insertWfWorksD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+INSERT INTO WFG_${formId}_WORKS_D(WORK_NO
+      ,COMP_ID
+      ,FORM_NO
+      ,GEN_ID
+      <foreach item="colmVo" index="index" collection="colmVoList">
+	    ,${colmVo.colmDbNm}
+	   </foreach>
+	  ,READ_CNT 
+      ,REGR_UID
+      ,REG_DT
+      ,MODR_UID
+      ,MOD_DT)
+SELECT WORK_NO
+      ,COMP_ID
+      ,FORM_NO
+      ,GEN_ID
+      <foreach item="colmVo" index="index" collection="mergeColmVoList">
+	    ,${colmVo.colmDbNm}
+	   </foreach>
+	  ,READ_CNT
+      ,REGR_UID
+      ,REG_DT
+      ,MODR_UID
+      ,MOD_DT
+FROM WFG_${formId}_WORKS_D_BAK</if><if
+	test="sqlSeq == 2">DROP TABLE WFG_${formId}_WORKS_D_BAK</if>
+</update>
+<update id="dropWfWorksL" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksL */
+DROP TABLE WFG_${formId}_WORKS_L
+	</update><update id="dropWfWorksCodeL" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksCodeL */
+DROP TABLE WFG_${formId}_WORKS_CODE_L
+	</update><update id="dropWfWorksFileD" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksFileD */
+DROP TABLE WFG_${formId}_WORKS_FILE_D
+	</update><update id="dropWfWorksImgD" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksImgD */
+DROP TABLE WFG_${formId}_WORKS_IMG_D
+	</update><update id="dropWfWorksReadH" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksImgD */
+DROP TABLE WFG_${formId}_WORKS_READ_H
+	</update><update id="dropWfWorksD" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksD */
+DROP TABLE WFG_${formId}_WORKS_D
+	</update><update id="dropWfWorksDBak" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.dropWfWorksDBak */
+DROP TABLE WFG_${formId}_WORKS_D_BAK
+	</update><update id="insertCmSeq" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.insertCmSeq */
+INSERT INTO CM_SEQ_B VALUES ('WFG_${formId}_WORKS_L', '1')
+	</update><update id="deleteCmSeq" parameterType="WfFormGenLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTableDao.deleteCmSeq */
+DELETE FROM CM_SEQ_B WHERE SEQ_ID = 'WFG_${formId}_WORKS_L'
+	</update>
+	
+</mapper>

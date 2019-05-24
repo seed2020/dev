@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : OR_ORG_B[조직기본] -->
+<mapper namespace="com.innobiz.orange.web.or.dao.OrOrgBDao">
+
+	<resultMap id="orOrgBMap" type="OrOrgBVo">
+		<id property="orgId" column="ORG_ID" /><!-- 조직ID -->
+		<result property="orgNm" column="ORG_NM" /><!-- 조직명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="orgPid" column="ORG_PID" /><!-- 조직부모ID -->
+		<result property="deptId" column="DEPT_ID" /><!-- 부서ID -->
+		<result property="deptRescId" column="DEPT_RESC_ID" /><!-- 부서리소스ID -->
+		<result property="rid" column="RID" /><!-- 참조ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="orgTypCd" column="ORG_TYP_CD" /><!-- 조직구분코드 -->
+		<result property="syncStepCd" column="SYNC_STEP_CD" /><!-- 동기화단계코드 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="sysOrgYn" column="SYS_ORG_YN" /><!-- 시스템조직여부 -->
+		<result property="orgAbbrRescId" column="ORG_ABBR_RESC_ID" /><!-- 조직약어리소스ID -->
+		<result property="refVa1" column="REF_VA1" /><!-- 참조값1 -->
+		<result property="refVa2" column="REF_VA2" /><!-- 참조값2 -->
+		<result property="refVa3" column="REF_VA3" /><!-- 참조값3 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="deptRescNm" column="DEPT_RESC_NM" /><!-- 부서리소스명 -->
+		<result property="orgTypNm" column="ORG_TYP_NM" /><!-- 조직구분명 -->
+		<result property="orgAbbrRescNm" column="ORG_ABBR_RESC_NM" /><!-- 조직약어리소스명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectOrOrgB" resultMap="orOrgBMap" parameterType="OrOrgBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgBDao.selectOrOrgB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = M.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = M.DEPT_RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DEPT_RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ORG_TYP_CD' AND CD = M.ORG_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = M.ORG_ABBR_RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_ABBR_RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.ORG_ID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.ORG_ID,
+			T.ORG_NM,
+			T.RESC_ID,
+			T.COMP_ID,
+			T.ORG_PID,
+			T.DEPT_ID,
+			T.DEPT_RESC_ID,
+			T.RID,
+			T.SORT_ORDR,
+			T.ORG_TYP_CD,
+			T.SYNC_STEP_CD,
+			T.USE_YN,
+			T.SYS_ORG_YN,
+			T.ORG_ABBR_RESC_ID,
+			T.REF_VA1,
+			T.REF_VA2,
+			T.REF_VA3,
+			T.REGR_UID,
+			CONVERT(VARCHAR(19), T.REG_DT, 120) REG_DT,
+			T.MODR_UID,
+			CONVERT(VARCHAR(19), T.MOD_DT, 120) MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.DEPT_RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DEPT_RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ORG_TYP_CD' AND CD = T.ORG_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.ORG_ABBR_RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ORG_ABBR_RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM OR_ORG_B T
+		<where>
+			<if test="orgId != null">AND T.ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="orgPid != null and orgPid != ''">AND T.ORG_PID = #{orgPid, jdbcType=VARCHAR}</if>
+			<if test="rid != null and rid != ''">AND T.RID = #{rid, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="sysOrgYn != null and sysOrgYn != ''">AND T.SYS_ORG_YN = #{sysOrgYn, jdbcType=VARCHAR}</if>
+			<if test="compIdList != null">AND T.COMP_ID IN ( <foreach collection="compIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="foreignCompId != null and foreignCompId != ''">AND T.COMP_ID != #{foreignCompId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.ORG_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countOrOrgB" resultType="Integer" parameterType="OrOrgBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgBDao.countOrOrgB */
+		SELECT COUNT(*) CNT
+		FROM OR_ORG_B T
+		<where>
+			<if test="orgId != null">AND T.ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="orgPid != null and orgPid != ''">AND T.ORG_PID = #{orgPid, jdbcType=VARCHAR}</if>
+			<if test="rid != null and rid != ''">AND T.RID = #{rid, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="sysOrgYn != null and sysOrgYn != ''">AND T.SYS_ORG_YN = #{sysOrgYn, jdbcType=VARCHAR}</if>
+			<if test="compIdList != null">AND T.COMP_ID IN ( <foreach collection="compIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="foreignCompId != null and foreignCompId != ''">AND T.COMP_ID != #{foreignCompId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertOrOrgB" parameterType="OrOrgBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgBDao.insertOrOrgB */
+		INSERT INTO OR_ORG_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ORG_ID,
+			ORG_NM,
+			RESC_ID,
+			COMP_ID,
+			ORG_PID,
+			DEPT_ID,
+			DEPT_RESC_ID,
+			RID,
+			SORT_ORDR,
+			ORG_TYP_CD,
+			SYNC_STEP_CD,
+			USE_YN,
+			SYS_ORG_YN,
+			ORG_ABBR_RESC_ID,
+			REF_VA1,
+			REF_VA2,
+			REF_VA3,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{orgId, jdbcType=VARCHAR},
+			#{orgNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{orgPid, jdbcType=VARCHAR},
+			#{deptId, jdbcType=VARCHAR},
+			#{deptRescId, jdbcType=VARCHAR},
+			#{rid, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT ISNULL(MAX(SORT_ORDR),0)+1 FROM OR_ORG_B WHERE COMP_ID = #{compId, jdbcType=VARCHAR} AND ORG_PID = #{orgPid, jdbcType=VARCHAR}),</if>
+			#{orgTypCd, jdbcType=VARCHAR},
+			#{syncStepCd, jdbcType=VARCHAR},
+			#{useYn, jdbcType=VARCHAR},
+			#{sysOrgYn, jdbcType=VARCHAR},
+			#{orgAbbrRescId, jdbcType=VARCHAR},
+			#{refVa1, jdbcType=NVARCHAR},
+			#{refVa2, jdbcType=NVARCHAR},
+			#{refVa3, jdbcType=NVARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">GETDATE(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">GETDATE(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+
+	<update id="updateOrOrgB" parameterType="OrOrgBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgBDao.updateOrOrgB */
+		UPDATE OR_ORG_B
+		<set>
+			<if test="orgId != null">ORG_ID = #{orgId, jdbcType=VARCHAR},</if>
+			<if test="orgNm != null">ORG_NM = #{orgNm, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="orgPid != null">ORG_PID = #{orgPid, jdbcType=VARCHAR},</if>
+			<if test="deptId != null">DEPT_ID = #{deptId, jdbcType=VARCHAR},</if>
+			<if test="deptRescId != null">DEPT_RESC_ID = #{deptRescId, jdbcType=VARCHAR},</if>
+			<if test="rid != null">RID = #{rid, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="orgTypCd != null">ORG_TYP_CD = #{orgTypCd, jdbcType=VARCHAR},</if>
+			<if test="syncStepCd != null">SYNC_STEP_CD = #{syncStepCd, jdbcType=VARCHAR},</if>
+			<if test="useYn != null">USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="sysOrgYn != null">SYS_ORG_YN = #{sysOrgYn, jdbcType=VARCHAR},</if>
+			<if test="orgAbbrRescId != null">ORG_ABBR_RESC_ID = #{orgAbbrRescId, jdbcType=VARCHAR},</if>
+			<if test="refVa1 != null">REF_VA1 = #{refVa1, jdbcType=NVARCHAR},</if>
+			<if test="refVa2 != null">REF_VA2 = #{refVa2, jdbcType=NVARCHAR},</if>
+			<if test="refVa3 != null">REF_VA3 = #{refVa3, jdbcType=NVARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = GETDATE(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = GETDATE(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="orgId != null">AND ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="orgIdList != null">AND ORG_ID IN ( <foreach collection="orgIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteOrOrgB" parameterType="OrOrgBVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgBDao.deleteOrOrgB */
+		DELETE FROM OR_ORG_B
+		<where>
+			<if test="orgId != null">AND ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

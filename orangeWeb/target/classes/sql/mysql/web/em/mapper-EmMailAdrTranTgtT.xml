@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : EM_MAIL_ADR_TRAN_TGT_T[이관대상임시] -->
+<mapper namespace="com.innobiz.orange.web.em.dao.EmMailAdrTranTgtTDao">
+
+	<resultMap id="emMailAdrTranTgtTMap" type="EmMailAdrTranTgtTVo">
+		<id property="tranId" column="TRAN_ID" /><!-- 이관ID -->
+		<id property="seq" column="SEQ" /><!-- 이관일련번호 -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="userSn" column="USER_SN" /><!-- 사용자번호 -->
+		<result property="fldCnt" column="FLD_CNT" /><!-- 폴더건수 -->
+		<result property="adrCnt" column="ADR_CNT" /><!-- 주소록건수 -->
+		<result property="errYn" column="ERR_YN" /><!-- 오류여부 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectEmMailAdrTranTgtT" resultMap="emMailAdrTranTgtTMap" parameterType="EmMailAdrTranTgtTVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranTgtTDao.selectEmMailAdrTranTgtT */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.TRAN_ID,
+			T.SEQ,
+			T.USER_UID,
+			T.USER_SN,
+			T.FLD_CNT,
+			T.ADR_CNT,
+			T.ERR_YN,
+		</trim>
+		FROM EM_MAIL_ADR_TRAN_TGT_T T
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=BIGINT}</if>
+			<if test="errYn != null">AND T.ERR_YN = #{errYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TRAN_ID, T.SEQ</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countEmMailAdrTranTgtT" resultType="Integer" parameterType="EmMailAdrTranTgtTVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranTgtTDao.countEmMailAdrTranTgtT */
+		SELECT COUNT(*) CNT
+		FROM EM_MAIL_ADR_TRAN_TGT_T T
+		<where>
+			<if test="tranId != null">AND T.TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=BIGINT}</if>
+			<if test="errYn != null">AND T.ERR_YN = #{errYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertEmMailAdrTranTgtT" parameterType="EmMailAdrTranTgtTVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranTgtTDao.insertEmMailAdrTranTgtT */
+		INSERT INTO EM_MAIL_ADR_TRAN_TGT_T
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			TRAN_ID,
+			SEQ,
+			USER_UID,
+			USER_SN,
+			FLD_CNT,
+			ADR_CNT,
+			ERR_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{tranId, jdbcType=VARCHAR},
+			#{seq, jdbcType=BIGINT},
+			#{userUid, jdbcType=VARCHAR},
+			#{userSn, jdbcType=VARCHAR},
+			#{fldCnt, jdbcType=INTEGER},
+			#{adrCnt, jdbcType=INTEGER},
+			#{errYn, jdbcType=CHAR},
+		</trim>
+	</insert>
+
+	<update id="updateEmMailAdrTranTgtT" parameterType="EmMailAdrTranTgtTVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranTgtTDao.updateEmMailAdrTranTgtT */
+		UPDATE EM_MAIL_ADR_TRAN_TGT_T
+		<set>			
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="userSn != null">USER_SN = #{userSn, jdbcType=VARCHAR},</if>
+			<if test="fldCnt != null">FLD_CNT = #{fldCnt, jdbcType=INTEGER},</if>
+			<if test="adrCnt != null">ADR_CNT = #{adrCnt, jdbcType=INTEGER},</if>
+			<if test="errYn != null">ERR_YN = #{errYn, jdbcType=CHAR},</if>
+		</set>
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=BIGINT}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteEmMailAdrTranTgtT" parameterType="EmMailAdrTranTgtTVo" >
+		/* com.innobiz.orange.web.em.dao.EmMailAdrTranTgtTDao.deleteEmMailAdrTranTgtT */
+		DELETE FROM EM_MAIL_ADR_TRAN_TGT_T
+		<where>
+			<if test="tranId != null">AND TRAN_ID = #{tranId, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=BIGINT}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

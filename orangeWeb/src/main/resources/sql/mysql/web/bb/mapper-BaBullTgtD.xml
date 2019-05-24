@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_BULL_TGT_D[게시대상] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaBullTgtDDao">
+
+	<resultMap id="baBullTgtDMap" type="BaBullTgtDVo">
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<id property="tgtId" column="TGT_ID" /><!-- 대상ID -->
+		<id property="tgtTyp" column="TGT_TYP" /><!-- 대상구분 -->
+		<id property="withSubYn" column="WITH_SUB_YN" /><!-- 하위포함여부 -->
+	</resultMap>
+
+	<select id="selectBaBullTgtD" resultMap="baBullTgtDMap" parameterType="BaBullTgtDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaBullTgtDDao.selectBaBullTgtD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.BULL_ID,
+			T.TGT_ID,
+			T.TGT_TYP,
+			T.WITH_SUB_YN,
+		</trim>
+		FROM BA_BULL_TGT_D T
+		<where>
+			<if test="bullId != null"> AND T.BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="tgtTyp != null"> AND T.TGT_TYP = #{tgtTyp, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.TGT_ID DESC</if>
+	</select>
+
+	<insert id="insertBaBullTgtD" parameterType="BaBullTgtDVo">
+		/* com.innobiz.orange.web.bb.dao.BaBullTgtDDao.insertBaBullTgtD */
+		INSERT INTO BA_BULL_TGT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			BULL_ID,
+			TGT_ID,
+			TGT_TYP,
+			WITH_SUB_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{bullId, jdbcType=VARCHAR},
+			#{tgtId, jdbcType=VARCHAR},
+			#{tgtTyp, jdbcType=VARCHAR},
+			#{withSubYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateBaBullTgtD" parameterType="BaBullTgtDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaBullTgtDDao.updateBaBullTgtD */
+		UPDATE BA_BULL_TGT_D
+		<set>
+			<if test="newBullId != null"> BULL_ID = #{newBullId, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=INTEGER}
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteBaBullTgtD" parameterType="BaBullTgtDVo">
+		/* com.innobiz.orange.web.bb.dao.BaBullTgtDDao.deleteBaBullTgtD */
+		DELETE FROM BA_BULL_TGT_D
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=INTEGER}
+			<if test="tgtId != null"> AND TGT_ID = #{tgtId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_USER_GRP_B[사용자그룹] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcUserGrpBDao">
+
+	<resultMap id="wcUserGrpBMap" type="WcUserGrpBVo">
+		<id property="userGrpId" column="USER_GRP_ID" /><!-- 사용자그룹ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWcUserGrpBWhere">
+		<where>
+			<if test="userGrpId != null and userGrpId != ''"> AND T.USER_GRP_ID = #{userGrpId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="modrUid != null and modrUid !=''"> AND T.MODR_UID = #{modrUid, jdbcType=VARCHAR}</if>
+			<if test="schWord != null and schWord !=''"> AND R.RESC_VA like '%' || #{schWord, jdbcType=VARCHAR} || '%'</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcUserGrpB" resultMap="wcUserGrpBMap" parameterType="WcUserGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcUserGrpBDao.selectWcUserGrpB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.USER_GRP_ID,	
+			T.COMP_ID,
+			(SELECT RESC_VA FROM WC_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) AS RESC_NM,
+			T.RESC_ID,
+			T.SORT_ORDR,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM WC_USER_GRP_B T
+		<if test="schWord != null and schWord != ''">
+			LEFT JOIN WC_RESC_B R ON T.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectWcUserGrpBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.USER_GRP_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcUserGrpB" resultType="Integer" parameterType="WcUserGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcUserGrpBDao.countWcUserGrpB */
+		SELECT COUNT(*) CNT
+		FROM WC_USER_GRP_B T
+		<if test="schWord != null and schWord != ''">
+			LEFT JOIN WC_RESC_B R ON T.RESC_ID = R.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectWcUserGrpBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWcUserGrpB" parameterType="WcUserGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcUserGrpBDao.insertWcUserGrpB */
+		INSERT INTO WC_USER_GRP_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_GRP_ID,
+			COMP_ID,
+			USER_GRP_NM,
+			RESC_ID,
+			SORT_ORDR,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userGrpId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{userGrpNm, jdbcType=VARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWcUserGrpB" parameterType="WcUserGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcUserGrpBDao.updateWcUserGrpB */
+		UPDATE WC_USER_GRP_B
+		<set>
+			<if test="userGrpNm != null"> USER_GRP_NM = #{userGrpNm, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="userGrpId != null and userGrpId != ''"> AND USER_GRP_ID = #{userGrpId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="modrUid != null and modrUid !=''"> AND MODR_UID = #{modrUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWcUserGrpB" parameterType="WcUserGrpBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcUserGrpBDao.deleteWcUserGrpB */
+		DELETE FROM WC_USER_GRP_B
+		<where>
+			<if test="userGrpId != null and userGrpId != ''"> AND USER_GRP_ID = #{userGrpId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="modrUid != null and modrUid !=''"> AND MODR_UID = #{modrUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WO_ONEC_CD_D[원카드코드상세] -->
+<mapper namespace="com.innobiz.orange.web.wo.dao.WoOnecCdDDao">
+
+	<resultMap id="woOnecCdDMap" type="WoOnecCdDVo">
+		<id property="clsCd" column="CLS_CD" /><!-- 분류코드 -->
+		<id property="cd" column="CD" /><!-- 코드 -->
+		<result property="cdVa" column="CD_VA" /><!-- 코드값 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="note" column="NOTE" /><!-- 비고 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWoOnecCdD" resultMap="woOnecCdDMap" parameterType="WoOnecCdDVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecCdDDao.selectWoOnecCdD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CLS_CD DESC, N.CD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.CLS_CD,
+			T.CD,
+			T.CD_VA,
+			T.SORT_ORDR,
+			T.USE_YN,
+			T.NOTE,
+		</trim>
+		FROM WO_ONEC_CD_D T
+		<where>
+			<if test="clsCd != null">AND T.CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND T.CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.CLS_CD, T.CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWoOnecCdD" resultType="Integer" parameterType="WoOnecCdDVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecCdDDao.countWoOnecCdD */
+		SELECT COUNT(*) CNT
+		FROM WO_ONEC_CD_D T
+		<where>
+			<if test="clsCd != null">AND T.CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND T.CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWoOnecCdD" parameterType="WoOnecCdDVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecCdDDao.insertWoOnecCdD */
+		INSERT INTO WO_ONEC_CD_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CLS_CD,
+			CD,
+			CD_VA,
+			SORT_ORDR,
+			USE_YN,
+			NOTE,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{clsCd, jdbcType=VARCHAR},
+			#{cd, jdbcType=VARCHAR},
+			#{cdVa, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT ISNULL(MAX(SORT_ORDR),0)+1 FROM WO_ONEC_CD_D),</if>
+			#{useYn, jdbcType=VARCHAR},
+			#{note, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateWoOnecCdD" parameterType="WoOnecCdDVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecCdDDao.updateWoOnecCdD */
+		UPDATE WO_ONEC_CD_D
+		<set>
+			<if test="clsCd != null">CLS_CD = #{clsCd, jdbcType=VARCHAR},</if>
+			<if test="cd != null">CD = #{cd, jdbcType=VARCHAR},</if>
+			<if test="cdVa != null">CD_VA = #{cdVa, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = <if test="sortOrdr == ''">NULL</if><if test="sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER}</if>,</if>
+			<if test="useYn != null">USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="note != null">NOTE = #{note, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="clsCd != null">AND CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWoOnecCdD" parameterType="WoOnecCdDVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecCdDDao.deleteWoOnecCdD */
+		DELETE FROM WO_ONEC_CD_D
+		<where>
+			<if test="clsCd != null">AND CLS_CD = #{clsCd, jdbcType=VARCHAR}</if>
+			<if test="cd != null">AND CD = #{cd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

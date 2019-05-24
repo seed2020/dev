@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ERP_INTG_FILE_D[ERP연계파일상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApErpIntgFileDDao">
+
+	<resultMap id="apErpIntgFileDMap" type="ApErpIntgFileDVo">
+		<id property="intgNo" column="INTG_NO" /><!-- 연계번호 -->
+		<id property="seq" column="SEQ" /><!-- 일련번호 -->
+		<result property="attDispNm" column="ATT_DISP_NM" /><!-- 첨부표시명 -->
+		<result property="fileExt" column="FILE_EXT" /><!-- 파일확장자 -->
+		<result property="fileKb" column="FILE_KB" /><!-- 파일K바이트 -->
+		<result property="fileCont" column="FILE_CONT" jdbcType="BLOB" javaType="[B" /><!-- 파일내용 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApErpIntgFileD" resultMap="apErpIntgFileDMap" parameterType="ApErpIntgFileDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgFileDDao.selectApErpIntgFileD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.INTG_NO,
+			T.SEQ,
+			T.ATT_DISP_NM,
+			T.FILE_EXT,
+			T.FILE_KB,
+			<if test="withLob">T.FILE_CONT,</if>
+		</trim>
+		FROM AP_ERP_INTG_FILE_D T
+		<where>
+			<if test="intgNo != null">AND T.INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.INTG_NO, T.SEQ</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countApErpIntgFileD" resultType="Integer" parameterType="ApErpIntgFileDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgFileDDao.countApErpIntgFileD */
+		SELECT COUNT(*) CNT
+		FROM AP_ERP_INTG_FILE_D T
+		<where>
+			<if test="intgNo != null">AND T.INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApErpIntgFileD" parameterType="ApErpIntgFileDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgFileDDao.insertApErpIntgFileD */
+		INSERT INTO AP_ERP_INTG_FILE_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			INTG_NO,
+			SEQ,
+			ATT_DISP_NM,
+			FILE_EXT,
+			FILE_KB,
+			FILE_CONT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{intgNo, jdbcType=BIGINT},
+			#{seq, jdbcType=INTEGER},
+			#{attDispNm, jdbcType=NVARCHAR},
+			#{fileExt, jdbcType=VARCHAR},
+			<if test="fileKb == ''">NULL</if><if test="fileKb != ''">#{fileKb, jdbcType=INTEGER}</if>,
+			#{fileCont, jdbcType=BLOB},
+		</trim>
+	</insert>
+
+	<update id="updateApErpIntgFileD" parameterType="ApErpIntgFileDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgFileDDao.updateApErpIntgFileD */
+		UPDATE AP_ERP_INTG_FILE_D
+		<set>
+			<if test="intgNo != null">INTG_NO = #{intgNo, jdbcType=BIGINT},</if>
+			<if test="seq != null">SEQ = #{seq, jdbcType=INTEGER},</if>
+			<if test="attDispNm != null">ATT_DISP_NM = #{attDispNm, jdbcType=NVARCHAR},</if>
+			<if test="fileExt != null">FILE_EXT = #{fileExt, jdbcType=VARCHAR},</if>
+			<if test="fileKb != null">FILE_KB = <if test="fileKb == ''">NULL</if><if test="fileKb != ''">#{fileKb, jdbcType=INTEGER}</if>,</if>
+			<if test="fileCont != null">FILE_CONT = #{fileCont, jdbcType=BLOB},</if>
+		</set>
+		<where>
+			<if test="intgNo != null">AND INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApErpIntgFileD" parameterType="ApErpIntgFileDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpIntgFileDDao.deleteApErpIntgFileD */
+		DELETE FROM AP_ERP_INTG_FILE_D
+		<where>
+			<if test="intgNo != null">AND INTG_NO = #{intgNo, jdbcType=BIGINT}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

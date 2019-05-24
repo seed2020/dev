@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WO_ONEC_HIS_L[원카드이력내역] -->
+<mapper namespace="com.innobiz.orange.web.wo.dao.WoOnecHisLDao">
+
+	<resultMap id="woOnecHisLMap" type="WoOnecHisLVo">
+		<id property="onecNo" column="ONEC_NO" /><!-- 원카드번호 -->
+		<id property="hisNo" column="HIS_NO" /><!-- 이력번호 -->
+		<result property="hisRegDt" column="HIS_REG_DT" /><!-- 이력등록일시 -->
+		<result property="hisCont" column="HIS_CONT" /><!-- 이력내용 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWoOnecHisL" resultMap="woOnecHisLMap" parameterType="WoOnecHisLVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecHisLDao.selectWoOnecHisL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.ONEC_NO DESC, N.HIS_NO DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.ONEC_NO,
+			T.HIS_NO,
+			CONVERT(VARCHAR(19), T.HIS_REG_DT, 120) HIS_REG_DT,
+			T.HIS_CONT,
+		</trim>
+		FROM WO_ONEC_HIS_L T
+		<where>
+			<if test="onecNo != null">AND T.ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="hisNo != null">AND T.HIS_NO = #{hisNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.ONEC_NO, T.HIS_NO</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWoOnecHisL" resultType="Integer" parameterType="WoOnecHisLVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecHisLDao.countWoOnecHisL */
+		SELECT COUNT(*) CNT
+		FROM WO_ONEC_HIS_L T
+		<where>
+			<if test="onecNo != null">AND T.ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="hisNo != null">AND T.HIS_NO = #{hisNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWoOnecHisL" parameterType="WoOnecHisLVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecHisLDao.insertWoOnecHisL */
+		INSERT INTO WO_ONEC_HIS_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ONEC_NO,
+			HIS_NO,
+			HIS_REG_DT,
+			HIS_CONT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{onecNo, jdbcType=BIGINT},
+			<if test="hisNo != null and hisNo != ''">#{hisNo, jdbcType=INTEGER},</if>
+			<if test="hisNo == null or hisNo == ''">(SELECT ISNULL(MAX(HIS_NO),0)+1 FROM WO_ONEC_HIS_L WHERE ONEC_NO = #{onecNo, jdbcType=VARCHAR}),</if>
+			<if test="hisRegDt == 'sysdate'">GETDATE(),</if><if test="hisRegDt == null or hisRegDt == ''">NULL,</if>
+			<if test="hisRegDt != null and hisRegDt != '' and hisRegDt != 'sysdate'">CONVERT(DATETIME, #{hisRegDt, jdbcType=VARCHAR}, 120),</if>
+			#{hisCont, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateWoOnecHisL" parameterType="WoOnecHisLVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecHisLDao.updateWoOnecHisL */
+		UPDATE WO_ONEC_HIS_L
+		<set>
+			<if test="onecNo != null">ONEC_NO = #{onecNo, jdbcType=BIGINT},</if>
+			<if test="hisNo != null">HIS_NO = #{hisNo, jdbcType=INTEGER},</if>
+			<if test="hisRegDt != null">
+				<if test="hisRegDt == 'sysdate'">HIS_REG_DT = GETDATE(),</if>
+				<if test="hisRegDt == ''">HIS_REG_DT = NULL,</if>
+				<if test="hisRegDt != '' and hisRegDt != 'sysdate'">HIS_REG_DT = CONVERT(DATETIME, #{hisRegDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="hisCont != null">HIS_CONT = #{hisCont, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="onecNo != null">AND ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="hisNo != null">AND HIS_NO = #{hisNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWoOnecHisL" parameterType="WoOnecHisLVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecHisLDao.deleteWoOnecHisL */
+		DELETE FROM WO_ONEC_HIS_L
+		<where>
+			<if test="onecNo != null">AND ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="hisNo != null">AND HIS_NO = #{hisNo, jdbcType=INTEGER}</if>
+			<if test="minHisNo != null and minHisNo != ''">AND HIS_NO <![CDATA[>]]> #{minHisNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

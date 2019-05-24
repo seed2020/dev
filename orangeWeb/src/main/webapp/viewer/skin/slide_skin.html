@@ -1,0 +1,78 @@
+<div id="wrap">
+	<!-- Header START -->
+	<div id="headerWrap" class="normalScreenOnly">
+		<div id="header" class="headerShadow dk1">
+			<!-- Logo START -->
+			<div id="headLogo"><img src="image/header/logo.png" alt="로고" /></div>
+			<!-- Logo END -->
+			<!-- Title START -->
+			<!-- <div id="headTitle" class="title tx1"><img id="iconImage" src="image/header/icon_format_PPT.png" align="absmiddle" alt="아이콘" /></div> -->
+			<!-- Title END -->
+			<!-- Header right START -->
+			<div id="headRight" class="navigation dk1">
+				<div class="jump withPageOnly">
+					<input id="inputPageNumber" type="text" class="input1 tAr lt1"></input> / <span id="totalPageNumber"></span>
+					<a href="#" id="slideJumpButton"><img src="image/header/btn_jump.png" alt="이동" title="이동"/></a>
+				</div>
+				<div class="gnb">
+					<a id="downloadBtn" href="#"><img src="image/header/navi_download.png" alt="다운로드" title="다운로드"/></a>
+					<a id="printBtn" href="#"><img src="image/header/navi_print.png" alt="인쇄" title="인쇄"/></a>
+					<a id="fullScreenBtn" href="#"><img src="image/header/navi_fullscreen.png" alt="전체화면" title="전체화면"/></a>
+				</div>
+			</div>
+			<!-- Header right END -->
+		</div>
+	</div>
+	<!-- Header END -->
+	<!-- Body START -->
+	<div id="container" height="100%" class="lt1">
+		<!-- Slide START -->
+		<div id="contents" class="contents" style="">
+			<div id="screenOuterDiv" style="">
+				<iframe id="innerWrap" name="innerWrap" class="innerWrap" frameborder="no" style="" scrolling="no" title="content"></iframe>
+			</div>
+			<!-- Right Navigation START -->
+			<div class="pageMove withPageOnly">
+				<a href="#"><img src="image/common/btn_pagePre_default.png" class="navPrev" alt="이전" title="이전"/></a>
+				<a href="#"><img src="image/common/btn_pageNext_default.png" class="navNext" alt="다음" title="다음"/></a>
+			</div>
+			<!-- Right Navigation END -->
+		</div>
+		<!-- Slide END -->
+		<!-- Left thumbnail START -->
+		<div id="thumbnail" class="leftPanel lt2 leftPanelWraper normalScreenOnly">
+			<div id="indexFrame" name="index" frameborder="no" title="index">
+				<div class="leftPanel lt2">
+					<div class="leftPanel round lt2" style="margin:0px 5px; position:relative;">
+						<a href="#" onclick="return false;" title="썸네일">
+							<div class="imgBox">
+								<em class="icon txt" style="position:absolute; z-index:100">
+									1
+								</em>
+								<div onfocus="this.blur();">
+									<div class="frameBox" style="position:relative;overflow:hidden; background-repeat:no-repeat; background-position: center center;">
+										<iframe id="thumb_frame_00000" name="thumbFrame" style="border:1px; position:absolute;left:0;top:0;width:150px;" src="" scrolling="no" frameborder="no" title="썸네일 본문"></iframe>
+										<div style="position:absolute; left:0; top:0; background-color:white; opacity:0; filter:alpha(opacity=0);width:150px;height:112px;"></div>
+									</div>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+			</div>
+			<a href="#" class="closeBtn"><img src="image/common/btn_thumbnail_close.png" alt="목록 닫기" title="목록 닫기"/></a>
+		</div>
+		<!-- Left thumbnail END -->
+		<!-- If you close left thumbnail START -->
+		<div id="leftPanel_hidden" class="normalScreenOnly">
+			<a href="#" class="openThumbnail"><img src="image/common/btn_thumbnail_open.png" alt="목록 열기" title="목록 열기"/></a>
+		</div>
+		<!-- If you close left thumbnail END -->
+		<div class="exitscreen fullScreenOnly">
+			<a id="exitFullScreenBtn" href="#" tabindex="6" title="전체화면닫기">
+				<img src="image/common/btn_fullscreen_close.png" alt="전체화면닫기" />
+			</a>
+		</div>
+	</div>
+	<!--Body END -->
+</div>

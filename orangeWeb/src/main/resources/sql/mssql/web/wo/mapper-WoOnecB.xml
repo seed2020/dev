@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WO_ONEC_B[원카드기본] -->
+<mapper namespace="com.innobiz.orange.web.wo.dao.WoOnecBDao">
+
+	<resultMap id="woOnecBMap" type="WoOnecBVo">
+		<id property="onecNo" column="ONEC_NO" /><!-- 원카드번호 -->
+		<result property="ver" column="VER" /><!-- 버전 -->
+		<result property="onecTypCd" column="ONEC_TYP_CD" /><!-- 원카드구분코드 -->
+		<result property="freqCd" column="FREQ_CD" /><!-- 주기코드 -->
+		<result property="itemNm" column="ITEM_NM" /><!-- 품목명 -->
+		<result property="issDt" column="ISS_DT" /><!-- 최초작성일 -->
+		<result property="revsDt" column="REVS_DT" /><!-- 개정일 -->
+		<result property="dueDt" column="DUE_DT" /><!-- 개발완료일 -->
+		<result property="holdrUid" column="HOLDR_UID" /><!-- 홀더UID -->
+		<result property="brndNm" column="BRND_NM" /><!-- 브랜드명 -->
+		<result property="catCd" column="CAT_CD" /><!-- 카테고리코드 -->
+		<result property="orgnCd" column="ORGN_CD" /><!-- 출처코드 -->
+		<result property="mketSitu" column="MKET_SITU" /><!-- 시장상황 -->
+		<result property="custAnal" column="CUST_ANAL" /><!-- 고객분석 -->
+		<result property="cmptrAnal" column="CMPTR_ANAL" /><!-- 경쟁사분석 -->
+		<result property="bmItem" column="BM_ITEM" /><!-- 벤치마크품목 -->
+		<result property="bmRetPrc" column="BM_RET_PRC" /><!-- 벤치마크소비자가 -->
+		<result property="bmSalsPrc" column="BM_SALS_PRC" /><!-- 벤치마크판매가 -->
+		<result property="bmSp" column="BM_SP" /><!-- 벤치마크SP -->
+		<result property="bmSpecSize" column="BM_SPEC_SIZE" /><!-- 베치마크스펙사이즈 -->
+		<result property="diff" column="DIFF" /><!-- 차이점 -->
+		<result property="spec" column="SPEC" /><!-- 상세 -->
+		<result property="tgtCust" column="TGT_CUST" /><!-- 대상고객 -->
+		<result property="pack" column="PACK" /><!-- 포장 -->
+		<result property="storgCd" column="STORG_CD" /><!-- 저장형태코드 -->
+		<result property="posMyX" column="POS_MY_X" /><!-- 포지션자사X -->
+		<result property="posMyY" column="POS_MY_Y" /><!-- 포지션자사Y -->
+		<result property="posOthrX" column="POS_OTHR_X" /><!-- 포지션타사X -->
+		<result property="posOthrY" column="POS_OTHR_Y" /><!-- 포지션타사Y -->
+		<result property="posTgtPrc" column="POS_TGT_PRC" /><!-- 포지션목표가 -->
+		<result property="posCost" column="POS_COST" /><!-- 포지션원가 -->
+		<result property="posSp" column="POS_SP" /><!-- 포지션SP -->
+		<result property="posRemk" column="POS_REMK" /><!-- 포지션비고 -->
+		<result property="taApvYn" column="TA_APV_YN" /><!-- TA승인여부 -->
+		<result property="sf3mVo" column="SF_3M_VO" /><!-- 판매예측3개월볼륨 -->
+		<result property="sf6mVo" column="SF_6M_VO" /><!-- 판매예측6개월볼륨 -->
+		<result property="sf1yVo" column="SF_1Y_VO" /><!-- 판매예측1년볼륨 -->
+		<result property="sf2yVo" column="SF_2Y_VO" /><!-- 판매예측2년볼륨 -->
+		<result property="sf3yVo" column="SF_3Y_VO" /><!-- 판매예측3년볼륨 -->
+		<result property="sf3mSail" column="SF_3M_SAIL" /><!-- 판매예측3개월판매 -->
+		<result property="sf6mSail" column="SF_6M_SAIL" /><!-- 판매예측6개월판매 -->
+		<result property="sf1ySail" column="SF_1Y_SAIL" /><!-- 판매예측1년월판매 -->
+		<result property="sf2ySail" column="SF_2Y_SAIL" /><!-- 판매예측2년판매 -->
+		<result property="sf3ySail" column="SF_3Y_SAIL" /><!-- 판매예측3년판매 -->
+		<result property="sfRemk" column="SF_REMK" /><!-- 판매예측비고 -->
+		<result property="promPlan" column="PROM_PLAN" /><!-- 프로모션계획 -->
+		<result property="sailPerfm" column="SAIL_PERFM" /><!-- 판매활동 -->
+		<result property="note" column="NOTE" /><!-- 비고 -->
+		<result property="deptId" column="DEPT_ID" /><!-- 부서ID -->
+		<result property="apvdHisNo" column="APVD_HIS_NO" /><!-- 승인된이력번호 -->
+		<result property="curVer" column="CUR_VER" /><!-- 현재버전 -->
+		<result property="statCd" column="STAT_CD" /><!-- 상태코드 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<result property="apvAskDt" column="APV_ASK_DT" /><!-- 결재요청일시 -->
+		<result property="apvCmplDt" column="APV_CMPL_DT" /><!-- 결재완료일시 -->
+		<result property="holdrNm" column="HOLDR_NM" /><!-- 홀더U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWoOnecB" resultMap="woOnecBMap" parameterType="WoOnecBVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecBDao.selectWoOnecB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.HOLDR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) HOLDR_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.ONEC_NO DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.ONEC_NO,
+			T.VER,
+			T.ONEC_TYP_CD,
+			T.FREQ_CD,
+			T.ITEM_NM,
+			CONVERT(VARCHAR(19), T.ISS_DT, 120) ISS_DT,
+			CONVERT(VARCHAR(19), T.REVS_DT, 120) REVS_DT,
+			CONVERT(VARCHAR(19), T.DUE_DT, 120) DUE_DT,
+			T.HOLDR_UID,
+			T.BRND_NM,
+			T.CAT_CD,
+			T.ORGN_CD,
+			T.MKET_SITU,
+			T.CUST_ANAL,
+			T.CMPTR_ANAL,
+			T.BM_ITEM,
+			T.BM_RET_PRC,
+			T.BM_SALS_PRC,
+			T.BM_SP,
+			T.BM_SPEC_SIZE,
+			T.DIFF,
+			T.SPEC,
+			T.TGT_CUST,
+			T.PACK,
+			T.STORG_CD,
+			T.POS_MY_X,
+			T.POS_MY_Y,
+			T.POS_OTHR_X,
+			T.POS_OTHR_Y,
+			T.POS_TGT_PRC,
+			T.POS_COST,
+			T.POS_SP,
+			T.POS_REMK,
+			T.TA_APV_YN,
+			T.SF_3M_VO,
+			T.SF_6M_VO,
+			T.SF_1Y_VO,
+			T.SF_2Y_VO,
+			T.SF_3Y_VO,
+			T.SF_3M_SAIL,
+			T.SF_6M_SAIL,
+			T.SF_1Y_SAIL,
+			T.SF_2Y_SAIL,
+			T.SF_3Y_SAIL,
+			T.SF_REMK,
+			T.PROM_PLAN,
+			T.SAIL_PERFM,
+			T.NOTE,
+			T.DEPT_ID,
+			T.APVD_HIS_NO,
+			T.CUR_VER,
+			T.STAT_CD,
+			CONVERT(VARCHAR(19), T.REG_DT, 120) REG_DT,
+			T.APV_NO,
+			CONVERT(VARCHAR(19), T.APV_ASK_DT, 120) APV_ASK_DT,
+			CONVERT(VARCHAR(19), T.APV_CMPL_DT, 120) APV_CMPL_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.HOLDR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) HOLDR_NM,
+			</if>
+		</trim>
+		FROM WO_ONEC_${tableType} T
+		<where>
+			<if test="onecNo != null">AND T.ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND T.VER = #{ver, jdbcType=INTEGER}</if>
+			<if test="onecTypCd != null and onecTypCd != ''">AND T.ONEC_TYP_CD = #{onecTypCd, jdbcType=VARCHAR}</if>
+			<if test="itemNm != null and itemNm != ''">AND T.ITEM_NM LIKE '%' + #{itemNm, jdbcType=VARCHAR} + '%'</if>
+			<if test="holdrUid != null and holdrUid != ''">AND T.HOLDR_UID = #{holdrUid, jdbcType=VARCHAR}</if>
+			<if test="statCd != null and statCd != ''">AND T.STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''">AND T.ONEC_NO IN (SELECT ONEC_NO FROM WO_ONEC_AUTH_D WHERE USER_UID = #{userUid, jdbcType=VARCHAR})</if>
+			<if test="statCdList != null">AND T.STAT_CD IN ( <foreach collection="statCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="quarterDt != null and quarterDt != ''">AND (FREQ_CD = 'monthly' OR (FREQ_CD = 'quaterly' AND REVS_DT <![CDATA[<]]> CONVERT(DATETIME, #{quarterDt, jdbcType=VARCHAR}, 120)) OR (FREQ_CD = 'half' AND REVS_DT <![CDATA[<]]> CONVERT(DATETIME, #{halfDt, jdbcType=VARCHAR}, 120)) OR (FREQ_CD = 'yearly' AND REVS_DT <![CDATA[<]]> CONVERT(DATETIME, #{yearDt, jdbcType=VARCHAR}, 120)))</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.ONEC_NO</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">M.ONEC_NO DESC</if>
+		</if>
+	</select>
+
+	<select id="countWoOnecB" resultType="Integer" parameterType="WoOnecBVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecBDao.countWoOnecB */
+		SELECT COUNT(*) CNT
+		FROM WO_ONEC_${tableType} T
+		<where>
+			<if test="onecNo != null">AND T.ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND T.VER = #{ver, jdbcType=INTEGER}</if>
+			<if test="onecTypCd != null and onecTypCd != ''">AND T.ONEC_TYP_CD = #{onecTypCd, jdbcType=VARCHAR}</if>
+			<if test="itemNm != null and itemNm != ''">AND T.ITEM_NM LIKE '%' + #{itemNm, jdbcType=VARCHAR} + '%'</if>
+			<if test="holdrUid != null and holdrUid != ''">AND T.HOLDR_UID = #{holdrUid, jdbcType=VARCHAR}</if>
+			<if test="statCd != null and statCd != ''">AND T.STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''">AND T.ONEC_NO IN (SELECT ONEC_NO FROM WO_ONEC_AUTH_D WHERE USER_UID = #{userUid, jdbcType=VARCHAR})</if>
+			<if test="statCdList != null">AND T.STAT_CD IN ( <foreach collection="statCdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="quarterDt != null and quarterDt != ''">AND (FREQ_CD = 'monthly' OR (FREQ_CD = 'quaterly' AND REVS_DT <![CDATA[<]]> CONVERT(DATETIME, #{quarterDt, jdbcType=VARCHAR}, 120)) OR (FREQ_CD = 'half' AND REVS_DT <![CDATA[<]]> CONVERT(DATETIME, #{halfDt, jdbcType=VARCHAR}, 120)) OR (FREQ_CD = 'yearly' AND REVS_DT <![CDATA[<]]> CONVERT(DATETIME, #{yearDt, jdbcType=VARCHAR}, 120)))</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWoOnecB" parameterType="WoOnecBVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecBDao.insertWoOnecB */
+		INSERT INTO WO_ONEC_${tableType}
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ONEC_NO,
+			VER,
+			ONEC_TYP_CD,
+			FREQ_CD,
+			ITEM_NM,
+			ISS_DT,
+			REVS_DT,
+			DUE_DT,
+			HOLDR_UID,
+			BRND_NM,
+			CAT_CD,
+			ORGN_CD,
+			MKET_SITU,
+			CUST_ANAL,
+			CMPTR_ANAL,
+			BM_ITEM,
+			BM_RET_PRC,
+			BM_SALS_PRC,
+			BM_SP,
+			BM_SPEC_SIZE,
+			DIFF,
+			SPEC,
+			TGT_CUST,
+			PACK,
+			STORG_CD,
+			POS_MY_X,
+			POS_MY_Y,
+			POS_OTHR_X,
+			POS_OTHR_Y,
+			POS_TGT_PRC,
+			POS_COST,
+			POS_SP,
+			POS_REMK,
+			TA_APV_YN,
+			SF_3M_VO,
+			SF_6M_VO,
+			SF_1Y_VO,
+			SF_2Y_VO,
+			SF_3Y_VO,
+			SF_3M_SAIL,
+			SF_6M_SAIL,
+			SF_1Y_SAIL,
+			SF_2Y_SAIL,
+			SF_3Y_SAIL,
+			SF_REMK,
+			PROM_PLAN,
+			SAIL_PERFM,
+			NOTE,
+			DEPT_ID,
+			APVD_HIS_NO,
+			CUR_VER,
+			STAT_CD,
+			REG_DT,
+			APV_NO,
+			APV_ASK_DT,
+			APV_CMPL_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{onecNo, jdbcType=BIGINT},
+			#{ver, jdbcType=INTEGER},
+			#{onecTypCd, jdbcType=VARCHAR},
+			#{freqCd, jdbcType=VARCHAR},
+			#{itemNm, jdbcType=VARCHAR},
+			<if test="issDt == 'sysdate'">GETDATE(),</if><if test="issDt == null or issDt == ''">NULL,</if>
+			<if test="issDt != null and issDt != '' and issDt != 'sysdate'">CONVERT(DATETIME, #{issDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="revsDt == 'sysdate'">GETDATE(),</if><if test="revsDt == null or revsDt == ''">NULL,</if>
+			<if test="revsDt != null and revsDt != '' and revsDt != 'sysdate'">CONVERT(DATETIME, #{revsDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="dueDt == 'sysdate'">GETDATE(),</if><if test="dueDt == null or dueDt == ''">NULL,</if>
+			<if test="dueDt != null and dueDt != '' and dueDt != 'sysdate'">CONVERT(DATETIME, #{dueDt, jdbcType=VARCHAR}, 120),</if>
+			#{holdrUid, jdbcType=VARCHAR},
+			#{brndNm, jdbcType=VARCHAR},
+			#{catCd, jdbcType=VARCHAR},
+			#{orgnCd, jdbcType=VARCHAR},
+			#{mketSitu, jdbcType=VARCHAR},
+			#{custAnal, jdbcType=VARCHAR},
+			#{cmptrAnal, jdbcType=VARCHAR},
+			#{bmItem, jdbcType=VARCHAR},
+			<if test="bmRetPrc == ''">NULL</if><if test="bmRetPrc != ''">#{bmRetPrc, jdbcType=INTEGER}</if>,
+			<if test="bmSalsPrc == ''">NULL</if><if test="bmSalsPrc != ''">#{bmSalsPrc, jdbcType=INTEGER}</if>,
+			<if test="bmSp == ''">NULL</if><if test="bmSp != ''">#{bmSp, jdbcType=NUMERIC}</if>,
+			#{bmSpecSize, jdbcType=VARCHAR},
+			#{diff, jdbcType=VARCHAR},
+			#{spec, jdbcType=VARCHAR},
+			#{tgtCust, jdbcType=VARCHAR},
+			#{pack, jdbcType=VARCHAR},
+			#{storgCd, jdbcType=VARCHAR},
+			<if test="posMyX == ''">NULL</if><if test="posMyX != ''">#{posMyX, jdbcType=INTEGER}</if>,
+			<if test="posMyY == ''">NULL</if><if test="posMyY != ''">#{posMyY, jdbcType=INTEGER}</if>,
+			<if test="posOthrX == ''">NULL</if><if test="posOthrX != ''">#{posOthrX, jdbcType=INTEGER}</if>,
+			<if test="posOthrY == ''">NULL</if><if test="posOthrY != ''">#{posOthrY, jdbcType=INTEGER}</if>,
+			<if test="posTgtPrc == ''">NULL</if><if test="posTgtPrc != ''">#{posTgtPrc, jdbcType=INTEGER}</if>,
+			<if test="posCost == ''">NULL</if><if test="posCost != ''">#{posCost, jdbcType=INTEGER}</if>,
+			<if test="posSp == ''">NULL</if><if test="posSp != ''">#{posSp, jdbcType=NUMERIC}</if>,
+			#{posRemk, jdbcType=VARCHAR},
+			#{taApvYn, jdbcType=VARCHAR},
+			<if test="sf3mVo == ''">NULL</if><if test="sf3mVo != ''">#{sf3mVo, jdbcType=INTEGER}</if>,
+			<if test="sf6mVo == ''">NULL</if><if test="sf6mVo != ''">#{sf6mVo, jdbcType=INTEGER}</if>,
+			<if test="sf1yVo == ''">NULL</if><if test="sf1yVo != ''">#{sf1yVo, jdbcType=INTEGER}</if>,
+			<if test="sf2yVo == ''">NULL</if><if test="sf2yVo != ''">#{sf2yVo, jdbcType=INTEGER}</if>,
+			<if test="sf3yVo == ''">NULL</if><if test="sf3yVo != ''">#{sf3yVo, jdbcType=INTEGER}</if>,
+			<if test="sf3mSail == ''">NULL</if><if test="sf3mSail != ''">#{sf3mSail, jdbcType=INTEGER}</if>,
+			<if test="sf6mSail == ''">NULL</if><if test="sf6mSail != ''">#{sf6mSail, jdbcType=INTEGER}</if>,
+			<if test="sf1ySail == ''">NULL</if><if test="sf1ySail != ''">#{sf1ySail, jdbcType=INTEGER}</if>,
+			<if test="sf2ySail == ''">NULL</if><if test="sf2ySail != ''">#{sf2ySail, jdbcType=INTEGER}</if>,
+			<if test="sf3ySail == ''">NULL</if><if test="sf3ySail != ''">#{sf3ySail, jdbcType=INTEGER}</if>,
+			#{sfRemk, jdbcType=VARCHAR},
+			#{promPlan, jdbcType=VARCHAR},
+			#{sailPerfm, jdbcType=VARCHAR},
+			#{note, jdbcType=VARCHAR},
+			#{deptId, jdbcType=VARCHAR},
+			<if test="apvdHisNo == ''">NULL</if><if test="apvdHisNo != ''">#{apvdHisNo, jdbcType=INTEGER}</if>,
+			<if test="curVer == ''">NULL</if><if test="curVer != ''">#{curVer, jdbcType=INTEGER}</if>,
+			#{statCd, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,
+			<if test="apvAskDt == 'sysdate'">GETDATE(),</if><if test="apvAskDt == null or apvAskDt == ''">NULL,</if>
+			<if test="apvAskDt != null and apvAskDt != '' and apvAskDt != 'sysdate'">CONVERT(DATETIME, #{apvAskDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="apvCmplDt == 'sysdate'">GETDATE(),</if><if test="apvCmplDt == null or apvCmplDt == ''">NULL,</if>
+			<if test="apvCmplDt != null and apvCmplDt != '' and apvCmplDt != 'sysdate'">CONVERT(DATETIME, #{apvCmplDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+
+	<update id="updateWoOnecB" parameterType="WoOnecBVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecBDao.updateWoOnecB */
+		UPDATE WO_ONEC_${tableType}
+		<set>
+			<if test="onecNo != null">ONEC_NO = #{onecNo, jdbcType=BIGINT},</if>
+			<if test="onecTypCd != null">ONEC_TYP_CD = #{onecTypCd, jdbcType=VARCHAR},</if>
+			<if test="freqCd != null">FREQ_CD = #{freqCd, jdbcType=VARCHAR},</if>
+			<if test="itemNm != null">ITEM_NM = #{itemNm, jdbcType=VARCHAR},</if>
+			<if test="issDt != null">
+				<if test="issDt == 'sysdate'">ISS_DT = GETDATE(),</if>
+				<if test="issDt == ''">ISS_DT = NULL,</if>
+				<if test="issDt != '' and issDt != 'sysdate'">ISS_DT = CONVERT(DATETIME, #{issDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="revsDt != null">
+				<if test="revsDt == 'sysdate'">REVS_DT = GETDATE(),</if>
+				<if test="revsDt == ''">REVS_DT = NULL,</if>
+				<if test="revsDt != '' and revsDt != 'sysdate'">REVS_DT = CONVERT(DATETIME, #{revsDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="dueDt != null">
+				<if test="dueDt == 'sysdate'">DUE_DT = GETDATE(),</if>
+				<if test="dueDt == ''">DUE_DT = NULL,</if>
+				<if test="dueDt != '' and dueDt != 'sysdate'">DUE_DT = CONVERT(DATETIME, #{dueDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="holdrUid != null">HOLDR_UID = #{holdrUid, jdbcType=VARCHAR},</if>
+			<if test="brndNm != null">BRND_NM = #{brndNm, jdbcType=VARCHAR},</if>
+			<if test="catCd != null">CAT_CD = #{catCd, jdbcType=VARCHAR},</if>
+			<if test="orgnCd != null">ORGN_CD = #{orgnCd, jdbcType=VARCHAR},</if>
+			<if test="mketSitu != null">MKET_SITU = #{mketSitu, jdbcType=VARCHAR},</if>
+			<if test="custAnal != null">CUST_ANAL = #{custAnal, jdbcType=VARCHAR},</if>
+			<if test="cmptrAnal != null">CMPTR_ANAL = #{cmptrAnal, jdbcType=VARCHAR},</if>
+			<if test="bmItem != null">BM_ITEM = #{bmItem, jdbcType=VARCHAR},</if>
+			<if test="bmRetPrc != null">BM_RET_PRC = <if test="bmRetPrc == ''">NULL</if><if test="bmRetPrc != ''">#{bmRetPrc, jdbcType=INTEGER}</if>,</if>
+			<if test="bmSalsPrc != null">BM_SALS_PRC = <if test="bmSalsPrc == ''">NULL</if><if test="bmSalsPrc != ''">#{bmSalsPrc, jdbcType=INTEGER}</if>,</if>
+			<if test="bmSp != null">BM_SP = <if test="bmSp == ''">NULL</if><if test="bmSp != ''">#{bmSp, jdbcType=NUMERIC}</if>,</if>
+			<if test="bmSpecSize != null">BM_SPEC_SIZE = #{bmSpecSize, jdbcType=VARCHAR},</if>
+			<if test="diff != null">DIFF = #{diff, jdbcType=VARCHAR},</if>
+			<if test="spec != null">SPEC = #{spec, jdbcType=VARCHAR},</if>
+			<if test="tgtCust != null">TGT_CUST = #{tgtCust, jdbcType=VARCHAR},</if>
+			<if test="pack != null">PACK = #{pack, jdbcType=VARCHAR},</if>
+			<if test="storgCd != null">STORG_CD = #{storgCd, jdbcType=VARCHAR},</if>
+			<if test="posMyX != null">POS_MY_X = <if test="posMyX == ''">NULL</if><if test="posMyX != ''">#{posMyX, jdbcType=INTEGER}</if>,</if>
+			<if test="posMyY != null">POS_MY_Y = <if test="posMyY == ''">NULL</if><if test="posMyY != ''">#{posMyY, jdbcType=INTEGER}</if>,</if>
+			<if test="posOthrX != null">POS_OTHR_X = <if test="posOthrX == ''">NULL</if><if test="posOthrX != ''">#{posOthrX, jdbcType=INTEGER}</if>,</if>
+			<if test="posOthrY != null">POS_OTHR_Y = <if test="posOthrY == ''">NULL</if><if test="posOthrY != ''">#{posOthrY, jdbcType=INTEGER}</if>,</if>
+			<if test="posTgtPrc != null">POS_TGT_PRC = <if test="posTgtPrc == ''">NULL</if><if test="posTgtPrc != ''">#{posTgtPrc, jdbcType=INTEGER}</if>,</if>
+			<if test="posCost != null">POS_COST = <if test="posCost == ''">NULL</if><if test="posCost != ''">#{posCost, jdbcType=INTEGER}</if>,</if>
+			<if test="posSp != null">POS_SP = <if test="posSp == ''">NULL</if><if test="posSp != ''">#{posSp, jdbcType=NUMERIC}</if>,</if>
+			<if test="posRemk != null">POS_REMK = #{posRemk, jdbcType=VARCHAR},</if>
+			<if test="taApvYn != null">TA_APV_YN = #{taApvYn, jdbcType=VARCHAR},</if>
+			<if test="sf3mVo != null">SF_3M_VO = <if test="sf3mVo == ''">NULL</if><if test="sf3mVo != ''">#{sf3mVo, jdbcType=INTEGER}</if>,</if>
+			<if test="sf6mVo != null">SF_6M_VO = <if test="sf6mVo == ''">NULL</if><if test="sf6mVo != ''">#{sf6mVo, jdbcType=INTEGER}</if>,</if>
+			<if test="sf1yVo != null">SF_1Y_VO = <if test="sf1yVo == ''">NULL</if><if test="sf1yVo != ''">#{sf1yVo, jdbcType=INTEGER}</if>,</if>
+			<if test="sf2yVo != null">SF_2Y_VO = <if test="sf2yVo == ''">NULL</if><if test="sf2yVo != ''">#{sf2yVo, jdbcType=INTEGER}</if>,</if>
+			<if test="sf3yVo != null">SF_3Y_VO = <if test="sf3yVo == ''">NULL</if><if test="sf3yVo != ''">#{sf3yVo, jdbcType=INTEGER}</if>,</if>
+			<if test="sf3mSail != null">SF_3M_SAIL = <if test="sf3mSail == ''">NULL</if><if test="sf3mSail != ''">#{sf3mSail, jdbcType=INTEGER}</if>,</if>
+			<if test="sf6mSail != null">SF_6M_SAIL = <if test="sf6mSail == ''">NULL</if><if test="sf6mSail != ''">#{sf6mSail, jdbcType=INTEGER}</if>,</if>
+			<if test="sf1ySail != null">SF_1Y_SAIL = <if test="sf1ySail == ''">NULL</if><if test="sf1ySail != ''">#{sf1ySail, jdbcType=INTEGER}</if>,</if>
+			<if test="sf2ySail != null">SF_2Y_SAIL = <if test="sf2ySail == ''">NULL</if><if test="sf2ySail != ''">#{sf2ySail, jdbcType=INTEGER}</if>,</if>
+			<if test="sf3ySail != null">SF_3Y_SAIL = <if test="sf3ySail == ''">NULL</if><if test="sf3ySail != ''">#{sf3ySail, jdbcType=INTEGER}</if>,</if>
+			<if test="sfRemk != null">SF_REMK = #{sfRemk, jdbcType=VARCHAR},</if>
+			<if test="promPlan != null">PROM_PLAN = #{promPlan, jdbcType=VARCHAR},</if>
+			<if test="sailPerfm != null">SAIL_PERFM = #{sailPerfm, jdbcType=VARCHAR},</if>
+			<if test="note != null">NOTE = #{note, jdbcType=VARCHAR},</if>
+			<if test="deptId != null">DEPT_ID = #{deptId, jdbcType=VARCHAR},</if>
+			<if test="apvdHisNo != null">APVD_HIS_NO = <if test="apvdHisNo == ''">NULL</if><if test="apvdHisNo != ''">#{apvdHisNo, jdbcType=INTEGER}</if>,</if>
+			<if test="curVer != null">CUR_VER = <if test="curVer == ''">NULL</if><if test="curVer != ''">#{curVer, jdbcType=INTEGER}</if>,</if>
+			<if test="statCd != null">STAT_CD = #{statCd, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = GETDATE(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="apvNo != null">APV_NO = <if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,</if>
+			<if test="apvAskDt != null">
+				<if test="apvAskDt == 'sysdate'">APV_ASK_DT = GETDATE(),</if>
+				<if test="apvAskDt == ''">APV_ASK_DT = NULL,</if>
+				<if test="apvAskDt != '' and apvAskDt != 'sysdate'">APV_ASK_DT = CONVERT(DATETIME, #{apvAskDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="apvCmplDt != null">
+				<if test="apvCmplDt == 'sysdate'">APV_CMPL_DT = GETDATE(),</if>
+				<if test="apvCmplDt == ''">APV_CMPL_DT = NULL,</if>
+				<if test="apvCmplDt != '' and apvCmplDt != 'sysdate'">APV_CMPL_DT = CONVERT(DATETIME, #{apvCmplDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="onecNo != null">AND ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND VER = #{ver, jdbcType=INTEGER}</if>
+			<if test="oldHoldrUid != null and oldHoldrUid != ''">AND HOLDR_UID = #{oldHoldrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWoOnecB" parameterType="WoOnecBVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecBDao.deleteWoOnecB */
+		DELETE FROM WO_ONEC_${tableType}
+		<where>
+			<if test="onecNo != null">AND ONEC_NO = #{onecNo, jdbcType=BIGINT}</if>
+			<if test="ver != null and ver != ''">AND VER = #{ver, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+	<select id="selectWoOnecBVer" resultMap="woOnecBMap" parameterType="WoOnecBVo" >
+		/* com.innobiz.orange.web.wo.dao.WoOnecBDao.selectWoOnecBVer */
+		SELECT VER, CONVERT(VARCHAR(19), REVS_DT, 120) REVS_DT, STAT_CD
+		FROM WO_ONEC_BH
+		WHERE ONEC_NO = #{onecNo, jdbcType=BIGINT}
+		<if test="statCd != null and statCd != ''">AND STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+		ORDER BY VER DESC
+	</select>
+</mapper>

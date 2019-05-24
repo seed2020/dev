@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_MBSH_D [커뮤니티 회원 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtMbshDDao">
+
+	<resultMap id="ctMbshDMap" type="CtMbshDVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+	    <id property="userUid" column="USER_UID" /><!--사용자 UID-->
+	    
+		<result property="userSeculCd" column="USER_SECUL_CD" /><!--사용자 보안등급 코드-->
+		<result property="joinDt" column="JOIN_DT" /><!--가입일시-->
+		<result property="joinStat" column="JOIN_STAT" /><!--가입상태-->
+		<result property="userNm" column="USER_NM" /><!--사용자명-->
+		<result property="deptNm" column="DEPT_NM" /><!--부서명-->
+		<result property="langTyp" column="LANG_TYP" /><!--사용자 언어타입-->
+		<result property="compNm" column="COMP_NM" /><!--회사명-->
+		<result property="ctNm" column="CT_NM" /><!--커뮤니티 명-->
+		<result property="gradeNm" column="GRADE_NM" /><!--직책명-->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtMbshDWhere">
+		<where>
+			<if test="compId != null and compId != ''"> AND CMD_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CMD_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="userUid != null and userUid != ''"> AND CMD_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		    <if test="userSeculCd != null and userSeculCd != ''"> AND CMD_T.USER_SECUL_CD = #{userSeculCd, jdbcType=VARCHAR}</if>
+		    <if test="joinStat != null and joinStat != ''"> AND CMD_T.JOIN_STAT = #{joinStat, jdbcType=VARCHAR}</if>
+		    <if test="userSeculCdList != null">
+		   			<![CDATA[ AND USER_SECUL_CD IN ]]>
+		   				 <foreach collection="userSeculCdList" item="item" index="index" separator="," open="(" close=")">
+				            	#{item, jdbcType=VARCHAR}
+				        </foreach>	   			
+		   	</if>
+		   	<if test="'communityOpt'.equals(schCat) and schWord != null and schWord != ''">
+			        AND (
+							SELECT RESC_VA 
+							FROM CT_RESC_B
+							WHERE RESC_ID = (
+									SELECT CT_SUBJ_RESC
+									FROM CT_ESTB_B
+									WHERE CT_ID = CMD_T.CT_ID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			      		) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+		    
+		    <if test="'mbshDeptNmOpt'.equals(schCat) and schWord != null and schWord != ''">
+		         	AND	(
+							SELECT RESC_VA
+							FROM OR_RESC_B
+							WHERE RESC_ID = (
+												SELECT DEPT_RESC_ID
+												FROM OR_USER_B
+												WHERE USER_UID = CMD_T.USER_UID
+											)
+							AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+						) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%' </if>
+			<if test="'mbshNmOpt'.equals(schCat) and schWord != null and schWord != ''">
+					AND(
+							SELECT RESC_VA
+							FROM OR_RESC_B
+							WHERE RESC_ID = (
+												SELECT RESC_ID
+												FROM OR_USER_B
+												WHERE USER_UID = CMD_T.USER_UID
+											)
+					
+							AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+						) LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%' </if>
+			
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtMbshD" resultMap="ctMbshDMap" parameterType="CtMbshDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtMbshDDao.selectCtMbshD */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.USER_UID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			CMD_T.COMP_ID,
+			CMD_T.CT_ID,
+			CMD_T.USER_UID,
+			CMD_T.USER_SECUL_CD,
+			CMD_T.JOIN_DT,
+			CMD_T.JOIN_STAT,
+			(
+				SELECT RESC_VA
+				FROM OR_RESC_B
+				WHERE RESC_ID = (
+									SELECT RESC_ID
+									FROM OR_USER_B
+									WHERE USER_UID = CMD_T.USER_UID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			)USER_NM,
+			(
+				SELECT RESC_VA
+				FROM OR_RESC_B
+				WHERE RESC_ID = (
+									SELECT DEPT_RESC_ID
+									FROM OR_USER_B
+									WHERE USER_UID = CMD_T.USER_UID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			)DEPT_NM,
+			(
+				SELECT RESC_VA
+				FROM PT_RESC_D
+				WHERE RESC_ID = (
+									SELECT RESC_ID
+									FROM PT_COMP_B
+									WHERE COMP_ID = CMD_T.COMP_ID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			)COMP_NM,
+			(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = (
+									SELECT CT_SUBJ_RESC
+									FROM CT_ESTB_B
+									WHERE CT_ID = CMD_T.CT_ID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		)CT_NM,
+      		(
+      			SELECT RESC_VA 
+				FROM PT_RESC_B 
+      			WHERE RESC_ID = (
+      								SELECT RESC_ID 
+      								FROM PT_CD_B 
+      								WHERE CLS_CD = 'GRADE_CD' AND CD = (
+      																		SELECT GRADE_CD
+																			FROM OR_USER_B
+																			WHERE USER_UID = CMD_T.USER_UID
+      																	)
+      							)
+      		
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			)GRADE_NM,
+			
+		</trim>
+		FROM CT_MBSH_D CMD_T
+		<include refid="selectCtMbshDWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CMD_T.USER_UID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtMbshD" resultType="Integer" parameterType="CtMbshDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtMbshDDao.countCtMbshD */
+		SELECT COUNT(*) CNT
+		FROM CT_MBSH_D CMD_T
+		<include refid="selectCtMbshDWhere"/>
+	</select>
+	
+	<!-- 회원현황 오늘을 제외한 전체 -->
+	<select id="countCtMbshDAll" resultType="Integer" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.countCtMbshDAll */
+		SELECT COUNT(*) CNT FROM CT_MBSH_D CMD_T
+	<include refid="selectCtMbshDWhere"/>
+	</select>
+	
+		
+	<!-- 회원현황 오늘 가입자 -->
+	<select id="countCtMbshDToday" resultType="Integer" parameterType="CtEstbBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtEstbBDao.countCtMbshDToday */
+		SELECT COUNT
+			<![CDATA[ (CASE WHEN  CONVERT(CHAR(8), JOIN_DT, 112) = CONVERT(CHAR(8), GETDATE(),112) THEN 'Y' END) CNT ]]>
+		 FROM CT_MBSH_D CMD_T
+	<include refid="selectCtMbshDWhere"/>
+	</select>
+	
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtMbshD" parameterType="CtMbshDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtMbshDDao.insertCtMbshD */
+		INSERT INTO CT_MBSH_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID, CT_ID, USER_UID,
+		    USER_SECUL_CD, JOIN_DT, JOIN_STAT,
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR}, #{ctId, jdbcType=VARCHAR}, #{userUid, jdbcType=VARCHAR},
+			#{userSeculCd, jdbcType=VARCHAR}, CONVERT(DATETIME, #{joinDt, jdbcType=VARCHAR}, 120), #{joinStat, jdbcType=VARCHAR},
+			
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtMbshD" parameterType="CtMbshDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtMbshDDao.updateCtMbshD */
+		UPDATE CT_MBSH_D
+		<set>
+			<if test="userSeculCd != null"> USER_SECUL_CD = #{userSeculCd, jdbcType=VARCHAR},</if>
+			<if test="joinDt != null"> JOIN_DT = CONVERT(DATETIME, #{joinDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="joinStat != null"> JOIN_STAT = #{joinStat, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtMbshD" parameterType="CtMbshDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtMbshDDao.deleteCtMbshD */
+		DELETE FROM CT_MBSH_D
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

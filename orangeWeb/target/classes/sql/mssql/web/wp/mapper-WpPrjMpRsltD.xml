@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WP_PRJ_MP_RSLT_D[프로잭트인력결과상세] -->
+<mapper namespace="com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao">
+
+	<resultMap id="wpPrjMpRsltDMap" type="WpPrjMpRsltDVo">
+		<id property="prjNo" column="PRJ_NO" /><!-- 프로잭트번호 -->
+		<id property="mpId" column="MP_ID" /><!-- 인력ID -->
+		<id property="rsltYm" column="RSLT_YM" /><!-- 결과년월 -->
+		<result property="rsltMm" column="RSLT_MM" /><!-- 결과맨먼스 -->
+		<result property="mMd" column="M_MD" /><!-- 월멘데이 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWpPrjMpRsltD" resultMap="wpPrjMpRsltDMap" parameterType="WpPrjMpRsltDVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao.selectWpPrjMpRsltD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.PRJ_NO DESC, N.MP_ID DESC, N.RSLT_YM DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.PRJ_NO,
+			T.MP_ID,
+			CONVERT(VARCHAR(10), T.RSLT_YM, 120) RSLT_YM,
+			T.RSLT_MM,
+			T.M_MD,
+		</trim>
+		FROM WP_PRJ_MP_RSLT_D T
+		<where>
+			<if test="prjNo != null">AND T.PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="mpId != null">AND T.MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="rsltYm != null">AND T.RSLT_YM = CONVERT(DATETIME, #{rsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="prjNoList != null">AND T.PRJ_NO IN ( <foreach collection="prjNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="minRsltYm != null and minRsltYm != ''">AND T.RSLT_YM <![CDATA[>=]]> CONVERT(DATETIME, #{minRsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="maxRsltYm != null and maxRsltYm != ''">AND T.RSLT_YM <![CDATA[<]]> CONVERT(DATETIME, #{maxRsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.PRJ_NO, T.MP_ID, T.RSLT_YM</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWpPrjMpRsltD" resultType="Integer" parameterType="WpPrjMpRsltDVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao.countWpPrjMpRsltD */
+		SELECT COUNT(*) CNT
+		FROM WP_PRJ_MP_RSLT_D T
+		<where>
+			<if test="prjNo != null">AND T.PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="mpId != null">AND T.MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="rsltYm != null">AND T.RSLT_YM = CONVERT(DATETIME, #{rsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="prjNoList != null">AND T.PRJ_NO IN ( <foreach collection="prjNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="minRsltYm != null and minRsltYm != ''">AND T.RSLT_YM <![CDATA[>=]]> CONVERT(DATETIME, #{minRsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="maxRsltYm != null and maxRsltYm != ''">AND T.RSLT_YM <![CDATA[<]]> CONVERT(DATETIME, #{maxRsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWpPrjMpRsltD" parameterType="WpPrjMpRsltDVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao.insertWpPrjMpRsltD */
+		INSERT INTO WP_PRJ_MP_RSLT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			PRJ_NO,
+			MP_ID,
+			RSLT_YM,
+			RSLT_MM,
+			M_MD,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{prjNo, jdbcType=BIGINT},
+			#{mpId, jdbcType=VARCHAR},
+			<if test="rsltYm == 'sysdate'">CONVERT(DATETIME, CONVERT(VARCHAR(19), GETDATE(), 120), 120),</if><if test="rsltYm == null or rsltYm == ''">NULL,</if>
+			<if test="rsltYm != null and rsltYm != '' and rsltYm != 'sysdate'">CONVERT(DATETIME, #{rsltYm, jdbcType=VARCHAR}, 120),</if>
+			<if test="rsltMm == ''">NULL</if><if test="rsltMm != ''">#{rsltMm, jdbcType=NUMERIC}</if>,
+			<if test="mMd == ''">NULL</if><if test="mMd != ''">#{mMd, jdbcType=INTEGER}</if>,
+		</trim>
+	</insert>
+
+	<update id="updateWpPrjMpRsltD" parameterType="WpPrjMpRsltDVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao.updateWpPrjMpRsltD */
+		UPDATE WP_PRJ_MP_RSLT_D
+		<set>
+			<if test="prjNo != null">PRJ_NO = #{prjNo, jdbcType=BIGINT},</if>
+			<if test="mpId != null">MP_ID = #{mpId, jdbcType=VARCHAR},</if>
+			<if test="rsltYm != null">
+				<if test="rsltYm == 'sysdate'">RSLT_YM = CONVERT(DATETIME, CONVERT(VARCHAR(19), GETDATE(), 120), 120),</if>
+				<if test="rsltYm == ''">RSLT_YM = NULL,</if>
+				<if test="rsltYm != '' and rsltYm != 'sysdate'">RSLT_YM = CONVERT(DATETIME, #{rsltYm, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="rsltMm != null">RSLT_MM = <if test="rsltMm == ''">NULL</if><if test="rsltMm != ''">#{rsltMm, jdbcType=NUMERIC}</if>,</if>
+			<if test="mMd != null">M_MD = <if test="mMd == ''">NULL</if><if test="mMd != ''">#{mMd, jdbcType=INTEGER}</if>,</if>
+		</set>
+		<where>
+			<if test="prjNo != null">AND PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="mpId != null">AND MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="rsltYm != null">AND RSLT_YM = CONVERT(DATETIME, #{rsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWpPrjMpRsltD" parameterType="WpPrjMpRsltDVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao.deleteWpPrjMpRsltD */
+		DELETE FROM WP_PRJ_MP_RSLT_D
+		<where>
+			<if test="prjNo != null">AND PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="mpId != null">AND MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+			<if test="rsltYm != null">AND RSLT_YM = CONVERT(DATETIME, #{rsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="minRsltYm != null and minRsltYm != ''">AND RSLT_YM <![CDATA[>=]]> CONVERT(DATETIME, #{minRsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="maxRsltYm != null and maxRsltYm != ''">AND RSLT_YM <![CDATA[<]]> CONVERT(DATETIME, #{maxRsltYm, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+	<select id="selectRsltMmSumByPrjNo" resultMap="wpPrjMpRsltDMap" parameterType="WpPrjMpRsltDVo" >
+		/* com.innobiz.orange.web.wp.dao.WpPrjMpRsltDDao.selectRsltMmSumByPrjNo */
+		SELECT T.PRJ_NO, SUM(T.RSLT_MM) RSLT_MM
+		FROM WP_PRJ_MP_RSLT_D T
+		<where>
+			<if test="prjNo != null">AND T.PRJ_NO = #{prjNo, jdbcType=BIGINT}</if>
+			<if test="prjNoList != null">AND T.PRJ_NO IN ( <foreach collection="prjNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="mpId != null">AND MP_ID = #{mpId, jdbcType=VARCHAR}</if>
+		</where>
+		GROUP BY T.PRJ_NO
+	</select>
+
+</mapper>

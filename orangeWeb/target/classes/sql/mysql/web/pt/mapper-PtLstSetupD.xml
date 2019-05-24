@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_LST_SETUP_D[목록설정상세] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtLstSetupDDao">
+
+	<resultMap id="ptLstSetupDMap" type="PtLstSetupDVo">
+		<id property="lstSetupMetaId" column="LST_SETUP_META_ID" /><!-- 목록설정메타ID -->
+		<id property="dftVaYn" column="DFT_VA_YN" /><!-- 기본값여부 -->
+		<id property="atrbId" column="ATRB_ID" /><!-- 속성ID -->
+		<result property="msgId" column="MSG_ID" /><!-- 메시지ID -->
+		<result property="wdthPerc" column="WDTH_PERC" /><!-- 넓이퍼센트 -->
+		<result property="alnVa" column="ALN_VA" /><!-- 줄맞춤값 -->
+		<result property="sortOptVa" column="SORT_OPT_VA" /><!-- 정렬옵션값 -->
+		<result property="dataSortVa" column="DATA_SORT_VA" /><!-- 데이터정렬값 -->
+		<result property="dispYn" column="DISP_YN" /><!-- 표시여부 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtLstSetupD" resultMap="ptLstSetupDMap" parameterType="PtLstSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtLstSetupDDao.selectPtLstSetupD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.LST_SETUP_META_ID,
+			T.DFT_VA_YN,
+			T.ATRB_ID,
+			T.MSG_ID,
+			T.WDTH_PERC,
+			T.ALN_VA,
+			T.SORT_OPT_VA,
+			T.DATA_SORT_VA,
+			T.DISP_YN,
+			T.SORT_ORDR,
+			T.MODR_UID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM PT_LST_SETUP_D T
+		<where>
+			<if test="lstSetupMetaId != null">AND T.LST_SETUP_META_ID = #{lstSetupMetaId, jdbcType=VARCHAR}</if>
+			<if test="dftVaYn != null">AND T.DFT_VA_YN = #{dftVaYn, jdbcType=VARCHAR}</if>
+			<if test="atrbId != null">AND T.ATRB_ID = #{atrbId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.LST_SETUP_META_ID, T.DFT_VA_YN, T.ATRB_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countPtLstSetupD" resultType="Integer" parameterType="PtLstSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtLstSetupDDao.countPtLstSetupD */
+		SELECT COUNT(*) CNT
+		FROM PT_LST_SETUP_D T
+		<where>
+			<if test="lstSetupMetaId != null">AND T.LST_SETUP_META_ID = #{lstSetupMetaId, jdbcType=VARCHAR}</if>
+			<if test="dftVaYn != null">AND T.DFT_VA_YN = #{dftVaYn, jdbcType=VARCHAR}</if>
+			<if test="atrbId != null">AND T.ATRB_ID = #{atrbId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtLstSetupD" parameterType="PtLstSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtLstSetupDDao.insertPtLstSetupD */
+		INSERT INTO PT_LST_SETUP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			LST_SETUP_META_ID,
+			DFT_VA_YN,
+			ATRB_ID,
+			MSG_ID,
+			WDTH_PERC,
+			ALN_VA,
+			SORT_OPT_VA,
+			DATA_SORT_VA,
+			DISP_YN,
+			SORT_ORDR,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{lstSetupMetaId, jdbcType=VARCHAR},
+			#{dftVaYn, jdbcType=VARCHAR},
+			#{atrbId, jdbcType=VARCHAR},
+			#{msgId, jdbcType=VARCHAR},
+			#{wdthPerc, jdbcType=VARCHAR},
+			#{alnVa, jdbcType=VARCHAR},
+			#{sortOptVa, jdbcType=VARCHAR},
+			#{dataSortVa, jdbcType=VARCHAR},
+			#{dispYn, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT IFNULL(MAX(P.SORT_ORDR),0)+1 FROM PT_LST_SETUP_D P WHERE P.LST_SETUP_META_ID = #{lstSetupMetaId, jdbcType=VARCHAR} AND P.DFT_VA_YN = #{dftVaYn, jdbcType=VARCHAR} AND P.ATRB_ID = #{atrbId, jdbcType=VARCHAR}),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtLstSetupD" parameterType="PtLstSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtLstSetupDDao.updatePtLstSetupD */
+		UPDATE PT_LST_SETUP_D
+		<set>
+			<if test="lstSetupMetaId != null">LST_SETUP_META_ID = #{lstSetupMetaId, jdbcType=VARCHAR},</if>
+			<if test="dftVaYn != null">DFT_VA_YN = #{dftVaYn, jdbcType=VARCHAR},</if>
+			<if test="atrbId != null">ATRB_ID = #{atrbId, jdbcType=VARCHAR},</if>
+			<if test="msgId != null">MSG_ID = #{msgId, jdbcType=VARCHAR},</if>
+			<if test="wdthPerc != null">WDTH_PERC = #{wdthPerc, jdbcType=VARCHAR},</if>
+			<if test="alnVa != null">ALN_VA = #{alnVa, jdbcType=VARCHAR},</if>
+			<if test="sortOptVa != null">SORT_OPT_VA = #{sortOptVa, jdbcType=VARCHAR},</if>
+			<if test="dataSortVa != null">DATA_SORT_VA = #{dataSortVa, jdbcType=VARCHAR},</if>
+			<if test="dispYn != null">DISP_YN = #{dispYn, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="lstSetupMetaId != null">AND LST_SETUP_META_ID = #{lstSetupMetaId, jdbcType=VARCHAR}</if>
+			<if test="dftVaYn != null">AND DFT_VA_YN = #{dftVaYn, jdbcType=VARCHAR}</if>
+			<if test="atrbId != null">AND ATRB_ID = #{atrbId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtLstSetupD" parameterType="PtLstSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtLstSetupDDao.deletePtLstSetupD */
+		DELETE FROM PT_LST_SETUP_D
+		<where>
+			<if test="lstSetupMetaId != null">AND LST_SETUP_META_ID = #{lstSetupMetaId, jdbcType=VARCHAR}</if>
+			<if test="dftVaYn != null">AND DFT_VA_YN = #{dftVaYn, jdbcType=VARCHAR}</if>
+			<if test="atrbId != null">AND ATRB_ID = #{atrbId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

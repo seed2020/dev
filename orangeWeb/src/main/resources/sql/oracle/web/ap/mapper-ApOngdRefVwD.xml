@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGD_REF_VW_D[진행문서참조열람상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngdRefVwDDao">
+
+	<resultMap id="apOngdRefVwDMap" type="ApOngdRefVwDVo">
+		<id property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<id property="refVwrUid" column="REF_VWR_UID" /><!-- 참조열람자UID -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="refVwStatCd" column="REF_VW_STAT_CD" /><!-- 참조열람상태코드 -->
+		<result property="refVwrNm" column="REF_VWR_NM" /><!-- 참조열람자명 -->
+		<result property="refVwrPositCd" column="REF_VWR_POSIT_CD" /><!-- 참조열람자직위코드 -->
+		<result property="refVwrPositNm" column="REF_VWR_POSIT_NM" /><!-- 참조열람자직위명 -->
+		<result property="refVwrTitleCd" column="REF_VWR_TITLE_CD" /><!-- 참조열람자직책코드 -->
+		<result property="refVwrTitleNm" column="REF_VWR_TITLE_NM" /><!-- 참조열람자직책명 -->
+		<result property="refVwrDeptId" column="REF_VWR_DEPT_ID" /><!-- 참조열람자부서ID -->
+		<result property="refVwrDeptNm" column="REF_VWR_DEPT_NM" /><!-- 참조열람자부서명 -->
+		<result property="refVwDt" column="REF_VW_DT" /><!-- 참조열람일시 -->
+		<result property="refVwOpinCont" column="REF_VW_OPIN_CONT" /><!-- 참조열람의견내용 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="vwDt" column="VW_DT" /><!-- 조회일시 -->
+		<result property="refVwFixdApvrYn" column="REF_VW_FIXD_APVR_YN" /><!-- 참조열람고정결재자여부 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="refVwStatNm" column="REF_VW_STAT_NM" /><!-- 참조열람상태명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngdRefVwD" resultMap="apOngdRefVwDMap" parameterType="ApOngdRefVwDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdRefVwDDao.selectApOngdRefVwD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'REF_VW_STAT_CD' AND CD = M.REF_VW_STAT_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REF_VW_STAT_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.APV_NO,
+			T.REF_VWR_UID,
+			T.REGR_UID,
+			T.SORT_ORDR,
+			T.REF_VW_STAT_CD,
+			T.REF_VWR_NM,
+			T.REF_VWR_POSIT_CD,
+			T.REF_VWR_POSIT_NM,
+			T.REF_VWR_TITLE_CD,
+			T.REF_VWR_TITLE_NM,
+			T.REF_VWR_DEPT_ID,
+			T.REF_VWR_DEPT_NM,
+			TO_CHAR(T.REF_VW_DT, 'YYYY-MM-DD HH24:MI:SS') REF_VW_DT,
+			T.REF_VW_OPIN_CONT,
+			TO_CHAR(T.REG_DT, 'YYYY-MM-DD HH24:MI:SS') REG_DT,
+			TO_CHAR(T.VW_DT, 'YYYY-MM-DD HH24:MI:SS') VW_DT,
+			T.REF_VW_FIXD_APVR_YN,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'REF_VW_STAT_CD' AND CD = T.REF_VW_STAT_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REF_VW_STAT_NM,
+			</if>
+		</trim>
+		FROM AP_${storage}_REF_VW_${tableType} T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="refVwrUid != null">AND T.REF_VWR_UID = #{refVwrUid, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid != ''">AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.APV_NO, T.REF_VWR_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApOngdRefVwD" resultType="Integer" parameterType="ApOngdRefVwDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdRefVwDDao.countApOngdRefVwD */
+		SELECT COUNT(*) CNT
+		FROM AP_${storage}_REF_VW_${tableType} T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="refVwrUid != null">AND T.REF_VWR_UID = #{refVwrUid, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid != ''">AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngdRefVwD" parameterType="ApOngdRefVwDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdRefVwDDao.insertApOngdRefVwD */
+		INSERT INTO AP_${storage}_REF_VW_${tableType}
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			APV_NO,
+			REF_VWR_UID,
+			REGR_UID,
+			SORT_ORDR,
+			REF_VW_STAT_CD,
+			REF_VWR_NM,
+			REF_VWR_POSIT_CD,
+			REF_VWR_POSIT_NM,
+			REF_VWR_TITLE_CD,
+			REF_VWR_TITLE_NM,
+			REF_VWR_DEPT_ID,
+			REF_VWR_DEPT_NM,
+			REF_VW_DT,
+			REF_VW_OPIN_CONT,
+			REG_DT,
+			VW_DT,
+			REF_VW_FIXD_APVR_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{apvNo, jdbcType=BIGINT},
+			#{refVwrUid, jdbcType=VARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT NVL(MAX(SORT_ORDR),0)+1 FROM AP_${storage}_REF_VW_${tableType} WHERE APV_NO = #{apvNo, jdbcType=VARCHAR}),</if>
+			#{refVwStatCd, jdbcType=VARCHAR},
+			#{refVwrNm, jdbcType=NVARCHAR},
+			#{refVwrPositCd, jdbcType=VARCHAR},
+			#{refVwrPositNm, jdbcType=NVARCHAR},
+			#{refVwrTitleCd, jdbcType=VARCHAR},
+			#{refVwrTitleNm, jdbcType=NVARCHAR},
+			#{refVwrDeptId, jdbcType=VARCHAR},
+			#{refVwrDeptNm, jdbcType=NVARCHAR},
+			<if test="refVwDt == 'sysdate'">SYSDATE,</if><if test="refVwDt == null or refVwDt == ''">NULL,</if>
+			<if test="refVwDt != null and refVwDt != '' and refVwDt != 'sysdate'">TO_DATE(#{refVwDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{refVwOpinCont, jdbcType=NVARCHAR},
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="vwDt == 'sysdate'">SYSDATE,</if><if test="vwDt == null or vwDt == ''">NULL,</if>
+			<if test="vwDt != null and vwDt != '' and vwDt != 'sysdate'">TO_DATE(#{vwDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{refVwFixdApvrYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApOngdRefVwD" parameterType="ApOngdRefVwDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdRefVwDDao.updateApOngdRefVwD */
+		UPDATE AP_${storage}_REF_VW_${tableType}
+		<set>
+			<if test="apvNo != null">APV_NO = #{apvNo, jdbcType=BIGINT},</if>
+			<if test="refVwrUid != null">REF_VWR_UID = #{refVwrUid, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="refVwStatCd != null">REF_VW_STAT_CD = #{refVwStatCd, jdbcType=VARCHAR},</if>
+			<if test="refVwrNm != null">REF_VWR_NM = #{refVwrNm, jdbcType=NVARCHAR},</if>
+			<if test="refVwrPositCd != null">REF_VWR_POSIT_CD = #{refVwrPositCd, jdbcType=VARCHAR},</if>
+			<if test="refVwrPositNm != null">REF_VWR_POSIT_NM = #{refVwrPositNm, jdbcType=NVARCHAR},</if>
+			<if test="refVwrTitleCd != null">REF_VWR_TITLE_CD = #{refVwrTitleCd, jdbcType=VARCHAR},</if>
+			<if test="refVwrTitleNm != null">REF_VWR_TITLE_NM = #{refVwrTitleNm, jdbcType=NVARCHAR},</if>
+			<if test="refVwrDeptId != null">REF_VWR_DEPT_ID = #{refVwrDeptId, jdbcType=VARCHAR},</if>
+			<if test="refVwrDeptNm != null">REF_VWR_DEPT_NM = #{refVwrDeptNm, jdbcType=NVARCHAR},</if>
+			<if test="refVwDt != null">
+				<if test="refVwDt == 'sysdate'">REF_VW_DT = SYSDATE,</if>
+				<if test="refVwDt == ''">REF_VW_DT = NULL,</if>
+				<if test="refVwDt != '' and refVwDt != 'sysdate'">REF_VW_DT = TO_DATE(#{refVwDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="refVwOpinCont != null">REF_VW_OPIN_CONT = #{refVwOpinCont, jdbcType=NVARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = SYSDATE,</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="vwDt != null">
+				<if test="vwDt == 'sysdate'">VW_DT = SYSDATE,</if>
+				<if test="vwDt == ''">VW_DT = NULL,</if>
+				<if test="vwDt != '' and vwDt != 'sysdate'">VW_DT = TO_DATE(#{vwDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="refVwFixdApvrYn != null">REF_VW_FIXD_APVR_YN = #{refVwFixdApvrYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="refVwrUid != null">AND REF_VWR_UID = #{refVwrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngdRefVwD" parameterType="ApOngdRefVwDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdRefVwDDao.deleteApOngdRefVwD */
+		DELETE FROM AP_${storage}_REF_VW_${tableType}
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="refVwrUid != null">AND REF_VWR_UID = #{refVwrUid, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid != ''">AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

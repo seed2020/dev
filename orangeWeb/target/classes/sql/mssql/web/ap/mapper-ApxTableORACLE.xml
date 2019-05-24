@@ -1,0 +1,1642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 저장소 테이블 생성 -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApxTableORACLEDao">
+
+	<!-- 진행문서결재라인상세 -->
+	<update id="createApOngdApvLnD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdApvLnD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_APV_LN_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    APV_LN_HST_NO               NUMBER      (10) NOT NULL,
+    APV_LN_PNO                  NUMBER      (10) NOT NULL,
+    APV_LN_NO                   NUMBER      (10) NOT NULL,
+    DBL_APV_TYP_CD              VARCHAR2    (30) ,
+    APVR_ROLE_CD                VARCHAR2    (30) NOT NULL,
+    APV_STAT_CD                 VARCHAR2    (30) NOT NULL,
+    ABS_RSON_CD                 VARCHAR2    (30) ,
+    ABS_RSON_NM                 VARCHAR2   (120) ,
+    APVR_DEPT_YN                CHAR         (1) NOT NULL,
+    PICH_APNT_YN                CHAR         (1) ,
+    PRED_YN                     CHAR         (1) ,
+    AGNT_UID                    VARCHAR2    (30) ,
+    APVR_UID                    VARCHAR2    (30) ,
+    APVR_NM                     VARCHAR2   (120) ,
+    APVR_POSIT_CD               VARCHAR2    (30) ,
+    APVR_POSIT_NM               VARCHAR2   (120) ,
+    APVR_TITLE_CD               VARCHAR2    (30) ,
+    APVR_TITLE_NM               VARCHAR2   (120) ,
+    APV_DEPT_ID                 VARCHAR2    (30) ,
+    APV_DEPT_NM                 VARCHAR2   (120) ,
+    APV_DEPT_ABBR_NM            VARCHAR2   (120) ,
+    POSIT_DISP_VA               VARCHAR2   (120) ,
+    SIGN_DISP_VA                VARCHAR2   (120) ,
+    DT_DISP_VA                  VARCHAR2   (120) ,
+    SIGN_IMG_PATH               VARCHAR2   (240) ,
+    VW_DT                       DATE             ,
+    APV_DT                      DATE             ,
+    PREV_APVR_APV_DT            DATE             ,
+    APV_OPIN_CONT               VARCHAR2  (2000) ,
+    APV_OPIN_DISP_YN            CHAR         (1) ,
+    PREV_BODY_HST_NO            NUMBER      (10) ,
+    HOLD_BODY_HST_NO            NUMBER      (10) ,
+    PREV_APV_LN_HST_NO          NUMBER      (10) ,
+    HOLD_APV_LN_HST_NO          NUMBER      (10) ,
+    PREV_ATT_HST_NO             NUMBER      (10) ,
+    HOLD_ATT_HST_NO             NUMBER      (10) ,
+    PREV_RECV_DEPT_HST_NO       NUMBER      (10) ,
+    HOLD_RECV_DEPT_HST_NO       NUMBER      (10) ,
+    PREV_REF_DOC_HST_NO         NUMBER      (10) ,
+    HOLD_REF_DOC_HST_NO         NUMBER      (10) ,
+    FIXD_APVR_YN                CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_APV_LN_D ON AP_${storId}_APV_LN_D
+(
+    APV_NO ASC,
+    APV_LN_PNO ASC,
+    APV_LN_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_APV_LN_D ADD
+(CONSTRAINT PK_AP_${storId}_APV_LN_D PRIMARY KEY (APV_NO, APV_LN_PNO, APV_LN_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_APV_LN_D IS '진행문서결재라인상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_LN_HST_NO IS '결재라인이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_LN_PNO IS '결재라인부모번호'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_LN_NO IS '결재라인번호'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.DBL_APV_TYP_CD IS '이중결재구분코드'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_ROLE_CD IS '결재자역할코드'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_STAT_CD IS '결재상태코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.ABS_RSON_CD IS '부재사유코드'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.ABS_RSON_NM IS '부재사유명'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_DEPT_YN IS '결재자부서여부'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PICH_APNT_YN IS '담당자지정여부'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PRED_YN IS '전결여부'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.AGNT_UID IS '대결자UID'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_UID IS '결재자UID'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_NM IS '결재자명'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_POSIT_CD IS '결재자직위코드'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_POSIT_NM IS '결재자직위명'</if><if
+	test="sqlSeq == 22">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_TITLE_CD IS '결재자직책코드'</if><if
+	test="sqlSeq == 23">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APVR_TITLE_NM IS '결재자직책명'</if><if
+	test="sqlSeq == 24">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_DEPT_ID IS '결재부서ID'</if><if
+	test="sqlSeq == 25">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_DEPT_NM IS '결재부서명'</if><if
+	test="sqlSeq == 26">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_DEPT_ABBR_NM IS '결재부서약어명'</if><if
+	test="sqlSeq == 27">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.POSIT_DISP_VA IS '직위표시값'</if><if
+	test="sqlSeq == 28">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.SIGN_DISP_VA IS '서명표시값'</if><if
+	test="sqlSeq == 29">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.DT_DISP_VA IS '일시표시값'</if><if
+	test="sqlSeq == 30">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.SIGN_IMG_PATH IS '서명이미지경로'</if><if
+	test="sqlSeq == 31">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 32">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_DT IS '결재일시'</if><if
+	test="sqlSeq == 33">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PREV_APVR_APV_DT IS '이전결재자결재일시'</if><if
+	test="sqlSeq == 34">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_OPIN_CONT IS '결재의견내용'</if><if
+	test="sqlSeq == 35">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.APV_OPIN_DISP_YN IS '결재의견표시여부'</if><if
+	test="sqlSeq == 36">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PREV_BODY_HST_NO IS '이전본문이력번호'</if><if
+	test="sqlSeq == 37">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.HOLD_BODY_HST_NO IS '보류본문이력번호'</if><if
+	test="sqlSeq == 38">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PREV_APV_LN_HST_NO IS '이전결재라인이력번호'</if><if
+	test="sqlSeq == 39">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.HOLD_APV_LN_HST_NO IS '보류결재라인이력번호'</if><if
+	test="sqlSeq == 40">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PREV_ATT_HST_NO IS '이전첨부이력번호'</if><if
+	test="sqlSeq == 41">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.HOLD_ATT_HST_NO IS '보류첨부이력번호'</if><if
+	test="sqlSeq == 42">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PREV_RECV_DEPT_HST_NO IS '이전수신처이력번호'</if><if
+	test="sqlSeq == 43">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.HOLD_RECV_DEPT_HST_NO IS '보류수신처이력번호'</if><if
+	test="sqlSeq == 44">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.PREV_REF_DOC_HST_NO IS '이전참조문서이력번호'</if><if
+	test="sqlSeq == 45">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.HOLD_REF_DOC_HST_NO IS '보류참조문서이력번호'</if><if
+	test="sqlSeq == 46">
+COMMENT ON COLUMN AP_${storId}_APV_LN_D.FIXD_APVR_YN IS '고정결재자여부'</if>
+	</update>
+	<update id="indexApOngdApvLnD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdApvLnD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_APV_LN_D1 ON AP_${storId}_APV_LN_D (APVR_UID, APV_STAT_CD, APVR_ROLE_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE INDEX IDX_AP_${storId}_APV_LN_D2 ON AP_${storId}_APV_LN_D (APV_DEPT_ID, APV_STAT_CD, APVR_ROLE_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서결재라인이행 -->
+	<update id="createApOngdApvLnE" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdApvLnE : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_APV_LN_E
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    APV_LN_HST_NO               NUMBER      (10) NOT NULL,
+    APV_LN_PNO                  NUMBER      (10) NOT NULL,
+    APV_LN_NO                   NUMBER      (10) NOT NULL,
+    DBL_APV_TYP_CD              VARCHAR2    (30) ,
+    APVR_ROLE_CD                VARCHAR2    (30) NOT NULL,
+    APV_STAT_CD                 VARCHAR2    (30) NOT NULL,
+    ABS_RSON_CD                 VARCHAR2    (30) ,
+    ABS_RSON_NM                 VARCHAR2   (120) ,
+    APVR_DEPT_YN                CHAR         (1) NOT NULL,
+    PICH_APNT_YN                CHAR         (1) ,
+    PRED_YN                     CHAR         (1) ,
+    AGNT_UID                    VARCHAR2    (30) ,
+    APVR_UID                    VARCHAR2    (30) ,
+    APVR_NM                     VARCHAR2   (120) ,
+    APVR_POSIT_CD               VARCHAR2    (30) ,
+    APVR_POSIT_NM               VARCHAR2   (120) ,
+    APVR_TITLE_CD               VARCHAR2    (30) ,
+    APVR_TITLE_NM               VARCHAR2   (120) ,
+    APV_DEPT_ID                 VARCHAR2    (30) ,
+    APV_DEPT_NM                 VARCHAR2   (120) ,
+    APV_DEPT_ABBR_NM            VARCHAR2   (120) ,
+    POSIT_DISP_VA               VARCHAR2   (120) ,
+    SIGN_DISP_VA                VARCHAR2   (120) ,
+    DT_DISP_VA                  VARCHAR2   (120) ,
+    SIGN_IMG_PATH               VARCHAR2   (240) ,
+    VW_DT                       DATE             ,
+    APV_DT                      DATE             ,
+    PREV_APVR_APV_DT            DATE             ,
+    APV_OPIN_CONT               VARCHAR2  (2000) ,
+    APV_OPIN_DISP_YN            CHAR         (1) ,
+    PREV_BODY_HST_NO            NUMBER      (10) ,
+    HOLD_BODY_HST_NO            NUMBER      (10) ,
+    PREV_APV_LN_HST_NO          NUMBER      (10) ,
+    HOLD_APV_LN_HST_NO          NUMBER      (10) ,
+    PREV_ATT_HST_NO             NUMBER      (10) ,
+    HOLD_ATT_HST_NO             NUMBER      (10) ,
+    PREV_RECV_DEPT_HST_NO       NUMBER      (10) ,
+    HOLD_RECV_DEPT_HST_NO       NUMBER      (10) ,
+    PREV_REF_DOC_HST_NO         NUMBER      (10) ,
+    HOLD_REF_DOC_HST_NO         NUMBER      (10) ,
+    FIXD_APVR_YN                CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_APV_LN_E ON AP_${storId}_APV_LN_E
+(
+    APV_NO ASC,
+    APV_LN_PNO ASC,
+    APV_LN_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_APV_LN_E ADD
+(CONSTRAINT PK_AP_${storId}_APV_LN_E PRIMARY KEY (APV_NO, APV_LN_PNO, APV_LN_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_APV_LN_E IS '진행문서결재라인이행'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_LN_HST_NO IS '결재라인이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_LN_PNO IS '결재라인부모번호'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_LN_NO IS '결재라인번호'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.DBL_APV_TYP_CD IS '이중결재구분코드'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_ROLE_CD IS '결재자역할코드'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_STAT_CD IS '결재상태코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.ABS_RSON_CD IS '부재사유코드'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.ABS_RSON_NM IS '부재사유명'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_DEPT_YN IS '결재자부서여부'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PICH_APNT_YN IS '담당자지정여부'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PRED_YN IS '전결여부'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.AGNT_UID IS '대결자UID'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_UID IS '결재자UID'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_NM IS '결재자명'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_POSIT_CD IS '결재자직위코드'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_POSIT_NM IS '결재자직위명'</if><if
+	test="sqlSeq == 22">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_TITLE_CD IS '결재자직책코드'</if><if
+	test="sqlSeq == 23">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APVR_TITLE_NM IS '결재자직책명'</if><if
+	test="sqlSeq == 24">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_DEPT_ID IS '결재부서ID'</if><if
+	test="sqlSeq == 25">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_DEPT_NM IS '결재부서명'</if><if
+	test="sqlSeq == 26">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_DEPT_ABBR_NM IS '결재부서약어명'</if><if
+	test="sqlSeq == 27">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.POSIT_DISP_VA IS '직위표시값'</if><if
+	test="sqlSeq == 28">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.SIGN_DISP_VA IS '서명표시값'</if><if
+	test="sqlSeq == 29">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.DT_DISP_VA IS '일시표시값'</if><if
+	test="sqlSeq == 30">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.SIGN_IMG_PATH IS '서명이미지경로'</if><if
+	test="sqlSeq == 31">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 32">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_DT IS '결재일시'</if><if
+	test="sqlSeq == 33">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PREV_APVR_APV_DT IS '이전결재자결재일시'</if><if
+	test="sqlSeq == 34">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_OPIN_CONT IS '결재의견내용'</if><if
+	test="sqlSeq == 35">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.APV_OPIN_DISP_YN IS '결재의견표시여부'</if><if
+	test="sqlSeq == 36">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PREV_BODY_HST_NO IS '이전본문이력번호'</if><if
+	test="sqlSeq == 37">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.HOLD_BODY_HST_NO IS '보류본문이력번호'</if><if
+	test="sqlSeq == 38">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PREV_APV_LN_HST_NO IS '이전결재라인이력번호'</if><if
+	test="sqlSeq == 39">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.HOLD_APV_LN_HST_NO IS '보류결재라인이력번호'</if><if
+	test="sqlSeq == 40">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PREV_ATT_HST_NO IS '이전첨부이력번호'</if><if
+	test="sqlSeq == 41">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.HOLD_ATT_HST_NO IS '보류첨부이력번호'</if><if
+	test="sqlSeq == 42">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PREV_RECV_DEPT_HST_NO IS '이전수신처이력번호'</if><if
+	test="sqlSeq == 43">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.HOLD_RECV_DEPT_HST_NO IS '보류수신처이력번호'</if><if
+	test="sqlSeq == 44">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.PREV_REF_DOC_HST_NO IS '이전참조문서이력번호'</if><if
+	test="sqlSeq == 45">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.HOLD_REF_DOC_HST_NO IS '보류참조문서이력번호'</if><if
+	test="sqlSeq == 46">
+COMMENT ON COLUMN AP_${storId}_APV_LN_E.FIXD_APVR_YN IS '고정결재자여부'</if>
+	</update>
+
+	<!-- 진행문서결재라인이력 -->
+	<update id="createApOngdApvLnH" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdApvLnH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_APV_LN_H
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    APV_LN_HST_NO               NUMBER      (10) NOT NULL,
+    APV_LN_PNO                  NUMBER      (10) NOT NULL,
+    APV_LN_NO                   NUMBER      (10) NOT NULL,
+    DBL_APV_TYP_CD              VARCHAR2    (30) ,
+    APVR_ROLE_CD                VARCHAR2    (30) NOT NULL,
+    APV_STAT_CD                 VARCHAR2    (30) NOT NULL,
+    ABS_RSON_CD                 VARCHAR2    (30) ,
+    ABS_RSON_NM                 VARCHAR2   (120) ,
+    APVR_DEPT_YN                CHAR         (1) NOT NULL,
+    PICH_APNT_YN                CHAR         (1) ,
+    AGNT_UID                    VARCHAR2    (30) ,
+    PRED_YN                     CHAR         (1) ,
+    APVR_UID                    VARCHAR2    (30) ,
+    APVR_NM                     VARCHAR2   (120) ,
+    APVR_POSIT_CD               VARCHAR2    (30) ,
+    APVR_POSIT_NM               VARCHAR2   (120) ,
+    APVR_TITLE_CD               VARCHAR2    (30) ,
+    APVR_TITLE_NM               VARCHAR2   (120) ,
+    APV_DEPT_ID                 VARCHAR2    (30) ,
+    APV_DEPT_NM                 VARCHAR2   (120) ,
+    APV_DEPT_ABBR_NM            VARCHAR2   (120) ,
+    POSIT_DISP_VA               VARCHAR2   (120) ,
+    SIGN_DISP_VA                VARCHAR2   (120) ,
+    DT_DISP_VA                  VARCHAR2   (120) ,
+    SIGN_IMG_PATH               VARCHAR2   (240) ,
+    VW_DT                       DATE             ,
+    APV_DT                      DATE             ,
+    PREV_APVR_APV_DT            DATE             ,
+    APV_OPIN_CONT               VARCHAR2  (2000) ,
+    APV_OPIN_DISP_YN            CHAR         (1) ,
+    PREV_BODY_HST_NO            NUMBER      (10) ,
+    HOLD_BODY_HST_NO            NUMBER      (10) ,
+    PREV_APV_LN_HST_NO          NUMBER      (10) ,
+    HOLD_APV_LN_HST_NO          NUMBER      (10) ,
+    PREV_ATT_HST_NO             NUMBER      (10) ,
+    HOLD_ATT_HST_NO             NUMBER      (10) ,
+    PREV_RECV_DEPT_HST_NO       NUMBER      (10) ,
+    HOLD_RECV_DEPT_HST_NO       NUMBER      (10) ,
+    PREV_REF_DOC_HST_NO         NUMBER      (10) ,
+    HOLD_REF_DOC_HST_NO         NUMBER      (10) ,
+    FIXD_APVR_YN                CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_APV_LN_H ON AP_${storId}_APV_LN_H
+(
+    APV_NO ASC,
+    APV_LN_HST_NO ASC,
+    APV_LN_PNO ASC,
+    APV_LN_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_APV_LN_H ADD
+(CONSTRAINT PK_AP_${storId}_APV_LN_H PRIMARY KEY (APV_NO, APV_LN_HST_NO, APV_LN_PNO, APV_LN_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_APV_LN_H IS '진행문서결재라인이력'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_LN_HST_NO IS '결재라인이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_LN_PNO IS '결재라인부모번호'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_LN_NO IS '결재라인번호'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.DBL_APV_TYP_CD IS '이중결재구분코드'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_ROLE_CD IS '결재자역할코드'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_STAT_CD IS '결재상태코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.ABS_RSON_CD IS '부재사유코드'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.ABS_RSON_NM IS '부재사유명'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_DEPT_YN IS '결재자부서여부'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PICH_APNT_YN IS '담당자지정여부'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.AGNT_UID IS '대결자UID'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PRED_YN IS '전결여부'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_UID IS '결재자UID'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_NM IS '결재자명'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_POSIT_CD IS '결재자직위코드'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_POSIT_NM IS '결재자직위명'</if><if
+	test="sqlSeq == 22">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_TITLE_CD IS '결재자직책코드'</if><if
+	test="sqlSeq == 23">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APVR_TITLE_NM IS '결재자직책명'</if><if
+	test="sqlSeq == 24">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_DEPT_ID IS '결재부서ID'</if><if
+	test="sqlSeq == 25">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_DEPT_NM IS '결재부서명'</if><if
+	test="sqlSeq == 26">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_DEPT_ABBR_NM IS '결재부서약어명'</if><if
+	test="sqlSeq == 27">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.POSIT_DISP_VA IS '직위표시값'</if><if
+	test="sqlSeq == 28">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.SIGN_DISP_VA IS '서명표시값'</if><if
+	test="sqlSeq == 29">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.DT_DISP_VA IS '일시표시값'</if><if
+	test="sqlSeq == 30">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.SIGN_IMG_PATH IS '서명이미지경로'</if><if
+	test="sqlSeq == 31">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 32">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_DT IS '결재일시'</if><if
+	test="sqlSeq == 33">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PREV_APVR_APV_DT IS '이전결재자결재일시'</if><if
+	test="sqlSeq == 34">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_OPIN_CONT IS '결재의견내용'</if><if
+	test="sqlSeq == 35">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.APV_OPIN_DISP_YN IS '결재의견표시여부'</if><if
+	test="sqlSeq == 36">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PREV_BODY_HST_NO IS '이전본문이력번호'</if><if
+	test="sqlSeq == 37">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.HOLD_BODY_HST_NO IS '보류본문이력번호'</if><if
+	test="sqlSeq == 38">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PREV_APV_LN_HST_NO IS '이전결재라인이력번호'</if><if
+	test="sqlSeq == 39">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.HOLD_APV_LN_HST_NO IS '보류결재라인이력번호'</if><if
+	test="sqlSeq == 40">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PREV_ATT_HST_NO IS '이전첨부이력번호'</if><if
+	test="sqlSeq == 41">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.HOLD_ATT_HST_NO IS '보류첨부이력번호'</if><if
+	test="sqlSeq == 42">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PREV_RECV_DEPT_HST_NO IS '이전수신처이력번호'</if><if
+	test="sqlSeq == 43">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.HOLD_RECV_DEPT_HST_NO IS '보류수신처이력번호'</if><if
+	test="sqlSeq == 44">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.PREV_REF_DOC_HST_NO IS '이전참조문서이력번호'</if><if
+	test="sqlSeq == 45">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.HOLD_REF_DOC_HST_NO IS '보류참조문서이력번호'</if><if
+	test="sqlSeq == 46">
+COMMENT ON COLUMN AP_${storId}_APV_LN_H.FIXD_APVR_YN IS '고정결재자여부'</if>
+	</update>
+	<update id="indexApOngdApvLnH" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdApvLnH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_APV_LN_H1 ON AP_${storId}_APV_LN_H (APV_NO, APV_LN_PNO, APV_LN_HST_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서첨부파일내역 -->
+	<update id="createApOngdAttFileL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdAttFileL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_ATT_FILE_L
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    ATT_HST_NO                  NUMBER      (10) NOT NULL,
+    ATT_SEQ                     NUMBER      (10) NOT NULL,
+    ATT_DISP_NM                 VARCHAR2   (240) NOT NULL,
+    FILE_EXT                    VARCHAR2    (30) ,
+    FILE_KB                     NUMBER      (10) ,
+    FILE_PATH                   VARCHAR2   (240) ,
+    MODR_UID                    VARCHAR2    (30) ,
+    MOD_DT                      DATE             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_ATT_FILE_L ON AP_${storId}_ATT_FILE_L
+(
+    APV_NO ASC,
+    ATT_HST_NO ASC,
+    ATT_SEQ ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_ATT_FILE_L ADD
+(CONSTRAINT PK_AP_${storId}_ATT_FILE_L PRIMARY KEY (APV_NO, ATT_HST_NO, ATT_SEQ))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_ATT_FILE_L IS '진행문서첨부파일내역'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.ATT_HST_NO IS '첨부이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.ATT_SEQ IS '첨부일련번호'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.ATT_DISP_NM IS '첨부표시명'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.FILE_EXT IS '파일확장자'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.FILE_KB IS '파일K바이트'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.FILE_PATH IS '파일경로'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.MODR_UID IS '수정자UID'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_ATT_FILE_L.MOD_DT IS '수정일시'</if>
+	</update>
+
+	<!-- 진행문서기본 -->
+	<update id="createApOngdB" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdB : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_B
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    DOC_NO                      VARCHAR2    (60) ,
+    COMP_ID                     VARCHAR2     (3) NOT NULL,
+    DOC_SUBJ                    VARCHAR2   (400) ,
+    ATT_FILE_YN                 CHAR         (1) NOT NULL,
+    FORM_ID                     VARCHAR2    (30) NOT NULL,
+    FORM_SEQ                    NUMBER      (10) NOT NULL,
+    FORM_APV_LN_TYP_CD          VARCHAR2    (30) NOT NULL,
+    FORM_NM                     VARCHAR2   (240) ,
+    BODY_HGHT_PX                NUMBER      (10) ,
+    FORM_WDTH_TYP_CD            VARCHAR2    (30) ,
+    DOC_LANG_TYP_CD             VARCHAR2    (30) NOT NULL,
+    DOC_STAT_CD                 VARCHAR2    (30) NOT NULL,
+    DOC_PROS_STAT_CD            VARCHAR2    (30) NOT NULL,
+    DOC_KEEP_PRD_CD             VARCHAR2    (30) ,
+    DOC_TYP_CD                  VARCHAR2    (30) NOT NULL,
+    SECUL_CD                    VARCHAR2    (30) ,
+    UGNT_DOC_YN                 CHAR         (1) ,
+    ALL_READ_YN                 CHAR         (1) ,
+    REG_REC_LST_REG_YN          CHAR         (1) ,
+    REG_REC_LST_REG_SKED_YMD    DATE             ,
+    SECU_DOC_YN                 CHAR         (1) ,
+    DOC_PW_ENC                  VARCHAR2   (240) ,
+    SENDR_NM_RESC_ID            VARCHAR2    (50) ,
+    SENDR_NM_RESC_NM            VARCHAR2   (400) ,
+    OFSE_PATH                   VARCHAR2   (240) ,
+    OFSE_HGHT_PX                NUMBER      (10) ,
+    CLS_INFO_ID                 VARCHAR2    (30) ,
+    PSN_CLS_INFO_ID             VARCHAR2    (30) ,
+    APV_LN_TYP_CD               VARCHAR2    (30) NOT NULL,
+    BODY_HST_NO                 NUMBER      (10) NOT NULL,
+    ATT_HST_NO                  NUMBER      (10) NOT NULL,
+    RECV_DEPT_HST_NO            NUMBER      (10) NOT NULL,
+    REF_DOC_HST_NO              NUMBER      (10) NOT NULL,
+    MAK_DT                      DATE             ,
+    MAKR_UID                    VARCHAR2    (30) ,
+    MAKR_NM                     VARCHAR2   (120) ,
+    MAK_DEPT_ID                 VARCHAR2    (30) ,
+    MAK_DEPT_NM                 VARCHAR2   (120) ,
+    CUR_APVR_ID                 VARCHAR2    (30) ,
+    CUR_APVR_NM                 VARCHAR2   (120) ,
+    CUR_APVR_DEPT_YN            CHAR         (1) ,
+    CMPL_DT                     DATE             ,
+    CMPLR_UID                   VARCHAR2    (30) ,
+    CMPLR_NM                    VARCHAR2   (120) ,
+    ENFC_SCOP_CD                VARCHAR2    (30) ,
+    ENFC_DT                     DATE             ,
+    RECV_DOC_NO                 VARCHAR2    (60) ,
+    RECV_DT                     DATE             ,
+    ENFC_DOC_KEEP_PRD_CD        VARCHAR2    (30) ,
+    ENFC_STAT_CD                VARCHAR2    (30) ,
+    SEND_INST_ID                VARCHAR2    (30) ,
+    SEND_INST_NM                VARCHAR2   (120) ,
+    REC_LST_TYP_CD              VARCHAR2    (30) ,
+    REC_LST_DEPT_ID             VARCHAR2    (30) ,
+    ORGN_APV_NO                 NUMBER      (20) ,
+    TRX_APV_NO                  NUMBER      (20) ,
+    INTG_TYP_CD                 VARCHAR2    (30) ,
+    INTG_NO                     NUMBER      (20) ,
+    SENDR_NM_ORG_ID             VARCHAR2    (30) ,
+    SEND_WITH_REF_DOC_YN        CHAR         (1) ,
+    FOOTER_VA                   VARCHAR2   (400) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_B ON AP_${storId}_B
+(
+    APV_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_B ADD
+(CONSTRAINT PK_AP_${storId}_B PRIMARY KEY (APV_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_B IS '진행문서기본'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_B.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_B.DOC_NO IS '문서번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_B.COMP_ID IS '회사ID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_B.DOC_SUBJ IS '문서제목'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_B.ATT_FILE_YN IS '첨부파일여부'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_B.FORM_ID IS '양식ID'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_B.FORM_SEQ IS '양식일련번호'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_B.FORM_APV_LN_TYP_CD IS '양식결재라인구분코드'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_B.FORM_NM IS '양식명'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_B.BODY_HGHT_PX IS '본문높이픽셀'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_B.FORM_WDTH_TYP_CD IS '양식넓이구분코드'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_B.DOC_LANG_TYP_CD IS '문서언어구분코드'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_B.DOC_STAT_CD IS '문서상태코드'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_B.DOC_PROS_STAT_CD IS '문서승인상태코드'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_B.DOC_KEEP_PRD_CD IS '문서보존기간코드'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_B.DOC_TYP_CD IS '문서구분코드'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_B.SECUL_CD IS '보안등급코드'</if><if
+	test="sqlSeq == 22">
+COMMENT ON COLUMN AP_${storId}_B.UGNT_DOC_YN IS '긴급문서여부'</if><if
+	test="sqlSeq == 23">
+COMMENT ON COLUMN AP_${storId}_B.ALL_READ_YN IS '전체열람여부'</if><if
+	test="sqlSeq == 24">
+COMMENT ON COLUMN AP_${storId}_B.REG_REC_LST_REG_YN IS '등록대장등록여부'</if><if
+	test="sqlSeq == 25">
+COMMENT ON COLUMN AP_${storId}_B.REG_REC_LST_REG_SKED_YMD IS '등록대장등록예정년월일'</if><if
+	test="sqlSeq == 26">
+COMMENT ON COLUMN AP_${storId}_B.SECU_DOC_YN IS '보안문서여부'</if><if
+	test="sqlSeq == 27">
+COMMENT ON COLUMN AP_${storId}_B.DOC_PW_ENC IS '문서비밀번호암호값'</if><if
+	test="sqlSeq == 28">
+COMMENT ON COLUMN AP_${storId}_B.SENDR_NM_RESC_ID IS '발신명의리소스ID'</if><if
+	test="sqlSeq == 29">
+COMMENT ON COLUMN AP_${storId}_B.SENDR_NM_RESC_NM IS '발신명의리소스명'</if><if
+	test="sqlSeq == 30">
+COMMENT ON COLUMN AP_${storId}_B.OFSE_PATH IS '관인경로'</if><if
+	test="sqlSeq == 31">
+COMMENT ON COLUMN AP_${storId}_B.OFSE_HGHT_PX IS '관인높이픽셀'</if><if
+	test="sqlSeq == 32">
+COMMENT ON COLUMN AP_${storId}_B.CLS_INFO_ID IS '분류정보ID'</if><if
+	test="sqlSeq == 33">
+COMMENT ON COLUMN AP_${storId}_B.PSN_CLS_INFO_ID IS '개인분류정보ID'</if><if
+	test="sqlSeq == 34">
+COMMENT ON COLUMN AP_${storId}_B.APV_LN_TYP_CD IS '결재라인구분코드'</if><if
+	test="sqlSeq == 35">
+COMMENT ON COLUMN AP_${storId}_B.BODY_HST_NO IS '본문이력번호'</if><if
+	test="sqlSeq == 36">
+COMMENT ON COLUMN AP_${storId}_B.ATT_HST_NO IS '첨부이력번호'</if><if
+	test="sqlSeq == 37">
+COMMENT ON COLUMN AP_${storId}_B.RECV_DEPT_HST_NO IS '수신처이력번호'</if><if
+	test="sqlSeq == 38">
+COMMENT ON COLUMN AP_${storId}_B.REF_DOC_HST_NO IS '참조문서이력번호'</if><if
+	test="sqlSeq == 39">
+COMMENT ON COLUMN AP_${storId}_B.MAK_DT IS '기안일시'</if><if
+	test="sqlSeq == 40">
+COMMENT ON COLUMN AP_${storId}_B.MAKR_UID IS '기안자UID'</if><if
+	test="sqlSeq == 41">
+COMMENT ON COLUMN AP_${storId}_B.MAKR_NM IS '기안자명'</if><if
+	test="sqlSeq == 42">
+COMMENT ON COLUMN AP_${storId}_B.MAK_DEPT_ID IS '기안부서ID'</if><if
+	test="sqlSeq == 43">
+COMMENT ON COLUMN AP_${storId}_B.MAK_DEPT_NM IS '기안부서명'</if><if
+	test="sqlSeq == 44">
+COMMENT ON COLUMN AP_${storId}_B.CUR_APVR_ID IS '현재결재자ID'</if><if
+	test="sqlSeq == 45">
+COMMENT ON COLUMN AP_${storId}_B.CUR_APVR_NM IS '현재결재자명'</if><if
+	test="sqlSeq == 46">
+COMMENT ON COLUMN AP_${storId}_B.CUR_APVR_DEPT_YN IS '현재결재자부서여부'</if><if
+	test="sqlSeq == 47">
+COMMENT ON COLUMN AP_${storId}_B.CMPL_DT IS '완결일시'</if><if
+	test="sqlSeq == 48">
+COMMENT ON COLUMN AP_${storId}_B.CMPLR_UID IS '완결자UID'</if><if
+	test="sqlSeq == 49">
+COMMENT ON COLUMN AP_${storId}_B.CMPLR_NM IS '완결자명'</if><if
+	test="sqlSeq == 50">
+COMMENT ON COLUMN AP_${storId}_B.ENFC_SCOP_CD IS '시행범위코드'</if><if
+	test="sqlSeq == 51">
+COMMENT ON COLUMN AP_${storId}_B.ENFC_DT IS '시행일시'</if><if
+	test="sqlSeq == 52">
+COMMENT ON COLUMN AP_${storId}_B.RECV_DOC_NO IS '접수문서번호'</if><if
+	test="sqlSeq == 53">
+COMMENT ON COLUMN AP_${storId}_B.RECV_DT IS '접수일시'</if><if
+	test="sqlSeq == 54">
+COMMENT ON COLUMN AP_${storId}_B.ENFC_DOC_KEEP_PRD_CD IS '시행문서보존기간코드'</if><if
+	test="sqlSeq == 55">
+COMMENT ON COLUMN AP_${storId}_B.ENFC_STAT_CD IS '시행상태코드'</if><if
+	test="sqlSeq == 56">
+COMMENT ON COLUMN AP_${storId}_B.SEND_INST_ID IS '발송기관ID'</if><if
+	test="sqlSeq == 57">
+COMMENT ON COLUMN AP_${storId}_B.SEND_INST_NM IS '발송기관명'</if><if
+	test="sqlSeq == 58">
+COMMENT ON COLUMN AP_${storId}_B.REC_LST_TYP_CD IS '대장구분코드'</if><if
+	test="sqlSeq == 59">
+COMMENT ON COLUMN AP_${storId}_B.REC_LST_DEPT_ID IS '대장부서ID'</if><if
+	test="sqlSeq == 60">
+COMMENT ON COLUMN AP_${storId}_B.ORGN_APV_NO IS '원본결재번호'</if><if
+	test="sqlSeq == 61">
+COMMENT ON COLUMN AP_${storId}_B.TRX_APV_NO IS '변환결재번호'</if><if
+	test="sqlSeq == 62">
+COMMENT ON COLUMN AP_${storId}_B.INTG_TYP_CD IS '연계구분코드'</if><if
+	test="sqlSeq == 63">
+COMMENT ON COLUMN AP_${storId}_B.INTG_NO IS '연계번호'</if><if
+	test="sqlSeq == 64">
+COMMENT ON COLUMN AP_${storId}_B.SENDR_NM_ORG_ID IS '발신명의조직ID'</if><if
+	test="sqlSeq == 65">
+COMMENT ON COLUMN AP_${storId}_B.SEND_WITH_REF_DOC_YN IS '참조문서포함발송여부'</if><if
+	test="sqlSeq == 66">
+COMMENT ON COLUMN AP_${storId}_B.FOOTER_VA IS '바닥글값'</if>
+	</update>
+	<update id="indexApOngdB" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdB : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_B1 ON AP_${storId}_B (REC_LST_DEPT_ID, REC_LST_TYP_CD, ALL_READ_YN) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE INDEX IDX_AP_${storId}_B2 ON AP_${storId}_B (CLS_INFO_ID, REC_LST_TYP_CD, REC_LST_DEPT_ID) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 3">
+CREATE INDEX IDX_AP_${storId}_B3 ON AP_${storId}_B (DOC_PROS_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 4">
+CREATE INDEX IDX_AP_${storId}_B4 ON AP_${storId}_B (ENFC_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 5">
+CREATE INDEX IDX_AP_${storId}_B5 ON AP_${storId}_B (ORGN_APV_NO, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 6">
+CREATE INDEX IDX_AP_${storId}_B6 ON AP_${storId}_B (REG_REC_LST_REG_SKED_YMD, REG_REC_LST_REG_YN) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 7">
+CREATE INDEX IDX_AP_${storId}_B7 ON AP_${storId}_B (PSN_CLS_INFO_ID) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서본문내역 -->
+	<update id="createApOngdBodyL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdBodyL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_BODY_L
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    BODY_HST_NO                 NUMBER      (10) NOT NULL,
+    BODY_HTML                   CLOB             NOT NULL,
+    MODR_UID                    VARCHAR2    (30) ,
+    MOD_DT                      DATE             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOB (BODY_HTML) STORE AS (
+	TABLESPACE TS_GW_AP INDEX IDX_AP_${storId}_BODY_L_L1(TABLESPACE TS_GW_AP))
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_BODY_L ON AP_${storId}_BODY_L
+(
+    APV_NO ASC,
+    BODY_HST_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_BODY_L ADD
+(CONSTRAINT PK_AP_${storId}_BODY_L PRIMARY KEY (APV_NO, BODY_HST_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_BODY_L IS '진행문서본문내역'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_BODY_L.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_BODY_L.BODY_HST_NO IS '본문이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_BODY_L.BODY_HTML IS '본문HTML'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_BODY_L.MODR_UID IS '수정자UID'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_BODY_L.MOD_DT IS '수정일시'</if>
+	</update>
+
+	<!-- 진행문서ERP양식상세 -->
+	<update id="createApOngdErpFormD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdErpFormD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_ERP_FORM_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    ERP_VA_TYP_CD               VARCHAR2    (30) NOT NULL,
+    ERP_VA                      CLOB             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 20M NEXT 5M MAXEXTENTS UNLIMITED)
+LOB (ERP_VA) STORE AS (
+	TABLESPACE TS_GW_AP INDEX IDX_AP_${storId}_ERP_FORM_D_L1(TABLESPACE TS_GW_AP))
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_ERP_FORM_D ON AP_${storId}_ERP_FORM_D
+(
+    APV_NO ASC,
+    ERP_VA_TYP_CD ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_ERP_FORM_D ADD
+(CONSTRAINT PK_AP_${storId}_ERP_FORM_D PRIMARY KEY (APV_NO, ERP_VA_TYP_CD))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_ERP_FORM_D IS '진행문서ERP양식상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_ERP_FORM_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_ERP_FORM_D.ERP_VA_TYP_CD IS 'ERP값구분코드'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_ERP_FORM_D.ERP_VA IS 'ERP값'</if>
+	</update>
+
+	<!-- 진행문서확장상세 -->
+	<update id="createApOngdExD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdExD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_EX_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    EX_ID                       VARCHAR2    (30) NOT NULL,
+    EX_VA                       VARCHAR2  (2000) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 1M NEXT 1M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_EX_D ON AP_${storId}_EX_D
+(
+    APV_NO ASC,
+    EX_ID ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_EX_D ADD
+(CONSTRAINT PK_AP_${storId}_EX_D PRIMARY KEY (APV_NO, EX_ID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_EX_D IS '진행문서확장상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_EX_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_EX_D.EX_ID IS '확장ID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_EX_D.EX_VA IS '확장값'</if>
+	</update>
+
+	<!-- 진행문서외부문서상세 -->
+	<update id="createApOngdExtnDocD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdExtnDocD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_EXTN_DOC_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    EXTN_DOC_TYP_CD             VARCHAR2    (30) ,
+    EXTN_DOC_CONT_TYP_CD        VARCHAR2    (30) ,
+    PICH_UID                    VARCHAR2    (30) ,
+    PICH_NM                     VARCHAR2   (120) ,
+    MAK_YY                      NUMBER      (10) ,
+    SENDR_NM                    VARCHAR2   (240) ,
+    PAGE_CNT                    NUMBER      (10) ,
+    MAK_ZONE_NM                 VARCHAR2   (240) ,
+    ORGN_APV_NO                 NUMBER      (20) ,
+    REG_SEQ                     NUMBER      (10) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_EXTN_DOC_D ON AP_${storId}_EXTN_DOC_D
+(
+    APV_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_EXTN_DOC_D ADD
+(CONSTRAINT PK_AP_${storId}_EXTN_DOC_D PRIMARY KEY (APV_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_EXTN_DOC_D IS '진행문서외부문서상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.EXTN_DOC_TYP_CD IS '외부문서구분코드'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.EXTN_DOC_CONT_TYP_CD IS '외부문서컨텐츠구분코드'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.PICH_UID IS '담당자UID'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.PICH_NM IS '담당자명'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.MAK_YY IS '생산년도'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.SENDR_NM IS '발신자명'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.PAGE_CNT IS '페이지수'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.MAK_ZONE_NM IS '생산지역명'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.ORGN_APV_NO IS '원본결재번호'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_EXTN_DOC_D.REG_SEQ IS '등록일련번호'</if>
+	</update>
+	<update id="indexApOngdExtnDocD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdExtnDocD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_EXTN_DOC_D1 ON AP_${storId}_EXTN_DOC_D (ORGN_APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서보류의견상세 -->
+	<update id="createApOngdHoldOpinD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdHoldOpinD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_HOLD_OPIN_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    APVR_UID                    VARCHAR2    (30) NOT NULL,
+    APV_OPIN_CONT               VARCHAR2  (2000) ,
+    APV_OPIN_DISP_YN            CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_HOLD_OPIN_D ON AP_${storId}_HOLD_OPIN_D
+(
+    APV_NO ASC,
+    APVR_UID ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_HOLD_OPIN_D ADD
+(CONSTRAINT PK_AP_${storId}_HOLD_OPIN_D PRIMARY KEY (APV_NO, APVR_UID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_HOLD_OPIN_D IS '진행문서보류의견상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_HOLD_OPIN_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_HOLD_OPIN_D.APVR_UID IS '결재자UID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_HOLD_OPIN_D.APV_OPIN_CONT IS '결재의견내용'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_HOLD_OPIN_D.APV_OPIN_DISP_YN IS '결재의견표시여부'</if>
+	</update>
+
+	<!-- 진행문서담당자상세 -->
+	<update id="createApOngdPichD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdPichD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_PICH_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    PICH_TYP_CD                 VARCHAR2    (30) NOT NULL,
+    PICH_UID                    VARCHAR2    (30) ,
+    PICH_DEPT_ID                VARCHAR2    (30) ,
+    PICH_NM                     VARCHAR2   (120) ,
+    PICH_DEPT_NM                VARCHAR2   (120) ,
+    PICH_OPIN_CONT              VARCHAR2   (800) ,
+    HDL_STAT_CD                 VARCHAR2    (30) NOT NULL,
+    HDL_DT                      DATE             ,
+    VW_DT                       DATE             ,
+    PREV_APVR_APV_DT            DATE             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_PICH_D ON AP_${storId}_PICH_D
+(
+    APV_NO ASC,
+    PICH_TYP_CD ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_PICH_D ADD
+(CONSTRAINT PK_AP_${storId}_PICH_D PRIMARY KEY (APV_NO, PICH_TYP_CD))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_PICH_D IS '진행문서담당자상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_PICH_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PICH_TYP_CD IS '담당자구분코드'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PICH_UID IS '담당자UID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PICH_DEPT_ID IS '담당자부서ID'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PICH_NM IS '담당자명'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PICH_DEPT_NM IS '담당자부서명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PICH_OPIN_CONT IS '담당자의견내용'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_PICH_D.HDL_STAT_CD IS '처리상태코드'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_PICH_D.HDL_DT IS '처리일시'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_PICH_D.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_PICH_D.PREV_APVR_APV_DT IS '이전결재자결재일시'</if>
+	</update>
+	<update id="indexApOngdPichD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdPichD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_PICH_D1 ON AP_${storId}_PICH_D (PICH_TYP_CD, PICH_UID, HDL_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE INDEX IDX_AP_${storId}_PICH_D2 ON AP_${storId}_PICH_D (PICH_TYP_CD, PICH_DEPT_ID, HDL_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서공람게시확인내역 -->
+	<update id="createApOngdPubBxCnfmL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdPubBxCnfmL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_PUB_BX_CNFM_L
+(
+    PUB_BX_DEPT_ID              VARCHAR2    (30) NOT NULL,
+    APV_NO                      NUMBER      (20) NOT NULL,
+    USER_UID                    VARCHAR2    (30) NOT NULL,
+    USER_NM                     VARCHAR2   (120) ,
+    DEPT_ID                     VARCHAR2    (30) ,
+    DEPT_NM                     VARCHAR2   (120) ,
+    POSIT_CD                    VARCHAR2    (30) ,
+    POSIT_NM                    VARCHAR2   (120) ,
+    VW_DT                       DATE             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_PUB_BX_CNFM_L ON AP_${storId}_PUB_BX_CNFM_L
+(
+    PUB_BX_DEPT_ID ASC,
+    APV_NO ASC,
+    USER_UID ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_PUB_BX_CNFM_L ADD
+(CONSTRAINT PK_AP_${storId}_PUB_BX_CNFM_L PRIMARY KEY (PUB_BX_DEPT_ID, APV_NO, USER_UID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_PUB_BX_CNFM_L IS '진행문서공람게시확인내역'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.PUB_BX_DEPT_ID IS '공람게시부서ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.USER_UID IS '사용자UID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.USER_NM IS '사용자명'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.DEPT_ID IS '부서ID'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.DEPT_NM IS '부서명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.POSIT_CD IS '직위코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.POSIT_NM IS '직위명'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_CNFM_L.VW_DT IS '조회일시'</if>
+	</update>
+
+	<!-- 진행문서공람게시상세 -->
+	<update id="createApOngdPubBxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdPubBxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_PUB_BX_D
+(
+    PUB_BX_DEPT_ID              VARCHAR2    (30) NOT NULL,
+    APV_NO                      NUMBER      (20) NOT NULL,
+    PUB_BX_DT                   DATE             NOT NULL,
+    PUB_BX_END_YMD              DATE             ,
+    REGR_UID                    VARCHAR2    (30) ,
+    REGR_NM                     VARCHAR2   (120) ,
+    REG_DEPT_ID                 VARCHAR2    (30) NOT NULL,
+    REG_DEPT_NM                 VARCHAR2   (120) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_PUB_BX_D ON AP_${storId}_PUB_BX_D
+(
+    PUB_BX_DEPT_ID ASC,
+    APV_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_PUB_BX_D ADD
+(CONSTRAINT PK_AP_${storId}_PUB_BX_D PRIMARY KEY (PUB_BX_DEPT_ID, APV_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_PUB_BX_D IS '진행문서공람게시상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.PUB_BX_DEPT_ID IS '공람게시부서ID'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.PUB_BX_DT IS '공람게시일시'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.PUB_BX_END_YMD IS '공람게시종료년월일'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.REGR_UID IS '등록자UID'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.REGR_NM IS '등록자명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.REG_DEPT_ID IS '등록부서ID'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_PUB_BX_D.REG_DEPT_NM IS '등록부서명'</if>
+	</update>
+	<update id="indexApOngdPubBxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdPubBxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_PUB_BX_D1 ON AP_${storId}_PUB_BX_D (PUB_BX_DEPT_ID, PUB_BX_END_YMD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서수신처내역 -->
+	<update id="createApOngdRecvDeptL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdRecvDeptL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_RECV_DEPT_L
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    RECV_DEPT_HST_NO            NUMBER      (10) NOT NULL,
+    RECV_DEPT_SEQ               NUMBER      (10) NOT NULL,
+    RECV_DEPT_TYP_CD            VARCHAR2    (30) NOT NULL,
+    RECV_DEPT_ID                VARCHAR2    (30) ,
+    RECV_DEPT_NM                VARCHAR2   (400) ,
+    REF_DEPT_ID                 VARCHAR2    (30) ,
+    REF_DEPT_NM                 VARCHAR2   (400) ,
+    MODR_UID                    VARCHAR2    (30) ,
+    MOD_DT                      DATE             ,
+    SEND_YN                     CHAR         (1) ,
+    ADD_SEND_YN                 CHAR         (1) NOT NULL
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_RECV_DEPT_L ON AP_${storId}_RECV_DEPT_L
+(
+    APV_NO ASC,
+    RECV_DEPT_HST_NO ASC,
+    RECV_DEPT_SEQ ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_RECV_DEPT_L ADD
+(CONSTRAINT PK_AP_${storId}_RECV_DEPT_L PRIMARY KEY (APV_NO, RECV_DEPT_HST_NO, RECV_DEPT_SEQ))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_RECV_DEPT_L IS '진행문서수신처내역'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.RECV_DEPT_HST_NO IS '수신처이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.RECV_DEPT_SEQ IS '수신처일련번호'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.RECV_DEPT_TYP_CD IS '수신처구분코드'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.RECV_DEPT_ID IS '수신처ID'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.RECV_DEPT_NM IS '수신처명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.REF_DEPT_ID IS '참조처ID'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.REF_DEPT_NM IS '참조처명'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.MODR_UID IS '수정자UID'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.MOD_DT IS '수정일시'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.SEND_YN IS '발송여부'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_RECV_DEPT_L.ADD_SEND_YN IS '추가발송여부'</if>
+	</update>
+
+	<!-- 진행문서참조문서내역 -->
+	<update id="createApOngdRefDocL" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdRefDocL : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_DOC_L
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    REF_DOC_HST_NO              NUMBER      (10) NOT NULL,
+    REF_APV_NO                  NUMBER      (20) NOT NULL,
+    SORT_ORDR                   NUMBER      (10) NOT NULL,
+    MODR_UID                    VARCHAR2    (30) ,
+    MOD_DT                      DATE             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_REF_DOC_L ON AP_${storId}_REF_DOC_L
+(
+    APV_NO ASC,
+    REF_DOC_HST_NO ASC,
+    REF_APV_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_REF_DOC_L ADD
+(CONSTRAINT PK_AP_${storId}_REF_DOC_L PRIMARY KEY (APV_NO, REF_DOC_HST_NO, REF_APV_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_REF_DOC_L IS '진행문서참조문서내역'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_REF_DOC_L.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_REF_DOC_L.REF_DOC_HST_NO IS '참조문서이력번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_REF_DOC_L.REF_APV_NO IS '참조결재번호'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_REF_DOC_L.SORT_ORDR IS '정렬순서'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_REF_DOC_L.MODR_UID IS '수정자UID'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_REF_DOC_L.MOD_DT IS '수정일시'</if>
+	</update>
+
+	<!-- 진행문서참조열람상세 -->
+	<update id="createApOngdRefVwD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdRefVwD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_VW_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    REGR_UID                    VARCHAR2    (30) NOT NULL,
+    REF_VWR_UID                 VARCHAR2    (30) NOT NULL,
+    SORT_ORDR                   NUMBER      (10) NOT NULL,
+    REF_VW_STAT_CD              VARCHAR2    (30) NOT NULL,
+    REF_VWR_NM                  VARCHAR2   (120) ,
+    REF_VWR_POSIT_CD            VARCHAR2    (30) ,
+    REF_VWR_POSIT_NM            VARCHAR2   (120) ,
+    REF_VWR_TITLE_CD            VARCHAR2    (30) ,
+    REF_VWR_TITLE_NM            VARCHAR2   (120) ,
+    REF_VWR_DEPT_ID             VARCHAR2    (30) ,
+    REF_VWR_DEPT_NM             VARCHAR2   (120) ,
+    REF_VW_DT                   DATE             ,
+    REF_VW_OPIN_CONT            VARCHAR2  (2000) ,
+    REG_DT                      DATE             ,
+    VW_DT                       DATE             ,
+    REF_VW_FIXD_APVR_YN         CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_REF_VW_D ON AP_${storId}_REF_VW_D
+(
+    APV_NO ASC,
+    REF_VWR_UID ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_REF_VW_D ADD
+(CONSTRAINT PK_AP_${storId}_REF_VW_D PRIMARY KEY (APV_NO, REF_VWR_UID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_REF_VW_D IS '진행문서참조열람상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REGR_UID IS '등록자UID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_UID IS '참조열람자UID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.SORT_ORDR IS '정렬순서'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VW_STAT_CD IS '참조열람상태코드'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_NM IS '참조열람자명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_POSIT_CD IS '참조열람자직위코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_POSIT_NM IS '참조열람자직위명'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_TITLE_CD IS '참조열람자직책코드'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_TITLE_NM IS '참조열람자직책명'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_DEPT_ID IS '참조열람자부서ID'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VWR_DEPT_NM IS '참조열람자부서명'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VW_DT IS '참조열람일시'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VW_OPIN_CONT IS '참조열람의견내용'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REG_DT IS '등록일시'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_REF_VW_D.REF_VW_FIXD_APVR_YN IS '참조열람고정결재자여부'</if>
+	</update>
+	<update id="indexApOngdRefVwD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdRefVwD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_REF_VW_D1 ON AP_${storId}_REF_VW_D (REF_VWR_UID, REF_VW_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서참조열람이행 -->
+	<update id="createApOngdRefVwE" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdRefVwE : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_VW_E
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    REGR_UID                    VARCHAR2    (30) NOT NULL,
+    REF_VWR_UID                 VARCHAR2    (30) NOT NULL,
+    SORT_ORDR                   NUMBER      (10) NOT NULL,
+    REF_VW_STAT_CD              VARCHAR2    (30) NOT NULL,
+    REF_VWR_NM                  VARCHAR2   (120) ,
+    REF_VWR_POSIT_CD            VARCHAR2    (30) ,
+    REF_VWR_POSIT_NM            VARCHAR2   (120) ,
+    REF_VWR_TITLE_CD            VARCHAR2    (30) ,
+    REF_VWR_TITLE_NM            VARCHAR2   (120) ,
+    REF_VWR_DEPT_ID             VARCHAR2    (30) ,
+    REF_VWR_DEPT_NM             VARCHAR2   (120) ,
+    REF_VW_DT                   DATE             ,
+    REF_VW_OPIN_CONT            VARCHAR2  (2000) ,
+    REG_DT                      DATE             ,
+    VW_DT                       DATE             ,
+    REF_VW_FIXD_APVR_YN         CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_REF_VW_E ON AP_${storId}_REF_VW_E
+(
+    APV_NO ASC,
+    REF_VWR_UID ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_REF_VW_E ADD
+(CONSTRAINT PK_AP_${storId}_REF_VW_E PRIMARY KEY (APV_NO, REF_VWR_UID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_REF_VW_E IS '진행문서참조열람이행'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REGR_UID IS '등록자UID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_UID IS '참조열람자UID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.SORT_ORDR IS '정렬순서'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VW_STAT_CD IS '참조열람상태코드'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_NM IS '참조열람자명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_POSIT_CD IS '참조열람자직위코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_POSIT_NM IS '참조열람자직위명'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_TITLE_CD IS '참조열람자직책코드'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_TITLE_NM IS '참조열람자직책명'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_DEPT_ID IS '참조열람자부서ID'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VWR_DEPT_NM IS '참조열람자부서명'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VW_DT IS '참조열람일시'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VW_OPIN_CONT IS '참조열람의견내용'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REG_DT IS '등록일시'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_REF_VW_E.REF_VW_FIXD_APVR_YN IS '참조열람고정결재자여부'</if>
+	</update>
+	<update id="indexApOngdRefVwE" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdRefVwE : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_REF_VW_E1 ON AP_${storId}_REF_VW_E (REF_VWR_UID, REF_VW_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서참조열람이력 -->
+	<update id="createApOngdRefVwH" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdRefVwH : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_REF_VW_H
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    REGR_UID                    VARCHAR2    (30) NOT NULL,
+    REF_VWR_UID                 VARCHAR2    (30) NOT NULL,
+    SORT_ORDR                   NUMBER      (10) NOT NULL,
+    REF_VW_STAT_CD              VARCHAR2    (30) NOT NULL,
+    REF_VWR_NM                  VARCHAR2   (120) ,
+    REF_VWR_POSIT_CD            VARCHAR2    (30) ,
+    REF_VWR_POSIT_NM            VARCHAR2   (120) ,
+    REF_VWR_TITLE_CD            VARCHAR2    (30) ,
+    REF_VWR_TITLE_NM            VARCHAR2   (120) ,
+    REF_VWR_DEPT_ID             VARCHAR2    (30) ,
+    REF_VWR_DEPT_NM             VARCHAR2   (120) ,
+    REF_VW_DT                   DATE             ,
+    REF_VW_OPIN_CONT            VARCHAR2  (2000) ,
+    REG_DT                      DATE             ,
+    VW_DT                       DATE             ,
+    REF_VW_FIXD_APVR_YN         CHAR         (1) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_REF_VW_H ON AP_${storId}_REF_VW_H
+(
+    APV_NO ASC,
+    REGR_UID ASC,
+    REF_VWR_UID ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_REF_VW_H ADD
+(CONSTRAINT PK_AP_${storId}_REF_VW_H PRIMARY KEY (APV_NO, REGR_UID, REF_VWR_UID))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_REF_VW_H IS '진행문서참조열람이력'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REGR_UID IS '등록자UID'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_UID IS '참조열람자UID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.SORT_ORDR IS '정렬순서'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VW_STAT_CD IS '참조열람상태코드'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_NM IS '참조열람자명'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_POSIT_CD IS '참조열람자직위코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_POSIT_NM IS '참조열람자직위명'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_TITLE_CD IS '참조열람자직책코드'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_TITLE_NM IS '참조열람자직책명'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_DEPT_ID IS '참조열람자부서ID'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VWR_DEPT_NM IS '참조열람자부서명'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VW_DT IS '참조열람일시'</if><if
+	test="sqlSeq == 18">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VW_OPIN_CONT IS '참조열람의견내용'</if><if
+	test="sqlSeq == 19">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REG_DT IS '등록일시'</if><if
+	test="sqlSeq == 20">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 21">
+COMMENT ON COLUMN AP_${storId}_REF_VW_H.REF_VW_FIXD_APVR_YN IS '참조열람고정결재자여부'</if>
+	</update>
+
+	<!-- 진행문서발송상세 -->
+	<update id="createApOngdSendD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdSendD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_SEND_D
+(
+    APV_NO                      NUMBER      (20) NOT NULL,
+    SEND_SEQ                    NUMBER      (10) NOT NULL,
+    RECV_DEPT_ID                VARCHAR2    (30) ,
+    RECV_DEPT_NM                VARCHAR2   (400) ,
+    REF_DEPT_NM                 VARCHAR2   (400) ,
+    RECV_DEPT_TYP_CD            VARCHAR2    (30) ,
+    HDL_STAT_CD                 VARCHAR2    (30) NOT NULL,
+    HDLR_UID                    VARCHAR2    (30) ,
+    HDLR_NM                     VARCHAR2   (120) ,
+    HDLR_OPIN_CONT              VARCHAR2   (800) ,
+    HDL_DT                      DATE             ,
+    VW_DT                       DATE             ,
+    PREV_APVR_APV_DT            DATE             
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_SEND_D ON AP_${storId}_SEND_D
+(
+    APV_NO ASC,
+    SEND_SEQ ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_SEND_D ADD
+(CONSTRAINT PK_AP_${storId}_SEND_D PRIMARY KEY (APV_NO, SEND_SEQ))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_SEND_D IS '진행문서발송상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_SEND_D.APV_NO IS '결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_SEND_D.SEND_SEQ IS '발송일련번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_SEND_D.RECV_DEPT_ID IS '수신처ID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_SEND_D.RECV_DEPT_NM IS '수신처명'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_SEND_D.REF_DEPT_NM IS '참조처명'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_SEND_D.RECV_DEPT_TYP_CD IS '수신처구분코드'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_SEND_D.HDL_STAT_CD IS '처리상태코드'</if><if
+	test="sqlSeq == 12">
+COMMENT ON COLUMN AP_${storId}_SEND_D.HDLR_UID IS '처리자UID'</if><if
+	test="sqlSeq == 13">
+COMMENT ON COLUMN AP_${storId}_SEND_D.HDLR_NM IS '처리자명'</if><if
+	test="sqlSeq == 14">
+COMMENT ON COLUMN AP_${storId}_SEND_D.HDLR_OPIN_CONT IS '처리자의견내용'</if><if
+	test="sqlSeq == 15">
+COMMENT ON COLUMN AP_${storId}_SEND_D.HDL_DT IS '처리일시'</if><if
+	test="sqlSeq == 16">
+COMMENT ON COLUMN AP_${storId}_SEND_D.VW_DT IS '조회일시'</if><if
+	test="sqlSeq == 17">
+COMMENT ON COLUMN AP_${storId}_SEND_D.PREV_APVR_APV_DT IS '이전결재자결재일시'</if>
+	</update>
+	<update id="indexApOngdSendD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdSendD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_SEND_D1 ON AP_${storId}_SEND_D (RECV_DEPT_ID, HDL_STAT_CD, APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+
+	<!-- 진행문서변환상세 -->
+	<update id="createApOngdTrxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.createApOngdTrxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE TABLE AP_${storId}_TRX_D
+(
+    TRX_APV_NO                  NUMBER      (20) NOT NULL,
+    ORGN_APV_NO                 NUMBER      (20) NOT NULL,
+    FORM_ID                     VARCHAR2    (30) NOT NULL,
+    FORM_SEQ                    NUMBER      (10) NOT NULL,
+    BODY_HGHT_PX                NUMBER      (10) ,
+    FORM_WDTH_TYP_CD            VARCHAR2    (30) ,
+    FOOTER_VA                   VARCHAR2   (400) 
+)
+TABLESPACE TS_GW_AP
+STORAGE (INITIAL 5M NEXT 5M MAXEXTENTS UNLIMITED)
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 2">
+CREATE UNIQUE INDEX PK_AP_${storId}_TRX_D ON AP_${storId}_TRX_D
+(
+    TRX_APV_NO ASC
+)
+TABLESPACE TS_GW_AP
+LOGGING
+NOPARALLEL</if><if
+	test="sqlSeq == 3">
+ALTER TABLE AP_${storId}_TRX_D ADD
+(CONSTRAINT PK_AP_${storId}_TRX_D PRIMARY KEY (TRX_APV_NO))</if><if
+	test="sqlSeq == 4">
+COMMENT ON TABLE AP_${storId}_TRX_D IS '진행문서변환상세'</if><if
+	test="sqlSeq == 5">
+COMMENT ON COLUMN AP_${storId}_TRX_D.TRX_APV_NO IS '변환결재번호'</if><if
+	test="sqlSeq == 6">
+COMMENT ON COLUMN AP_${storId}_TRX_D.ORGN_APV_NO IS '원본결재번호'</if><if
+	test="sqlSeq == 7">
+COMMENT ON COLUMN AP_${storId}_TRX_D.FORM_ID IS '양식ID'</if><if
+	test="sqlSeq == 8">
+COMMENT ON COLUMN AP_${storId}_TRX_D.FORM_SEQ IS '양식일련번호'</if><if
+	test="sqlSeq == 9">
+COMMENT ON COLUMN AP_${storId}_TRX_D.BODY_HGHT_PX IS '본문높이픽셀'</if><if
+	test="sqlSeq == 10">
+COMMENT ON COLUMN AP_${storId}_TRX_D.FORM_WDTH_TYP_CD IS '양식넓이구분코드'</if><if
+	test="sqlSeq == 11">
+COMMENT ON COLUMN AP_${storId}_TRX_D.FOOTER_VA IS '바닥글값'</if>
+	</update>
+	<update id="indexApOngdTrxD" parameterType="ApStorBVo">
+/* com.innobiz.orange.web.ap.dao.ApxTableORACLEDao.indexApOngdTrxD : ${sqlSeq} */<if
+	test="sqlSeq == 1">
+CREATE INDEX IDX_AP_${storId}_TRX_D1 ON AP_${storId}_TRX_D (ORGN_APV_NO, TRX_APV_NO) TABLESPACE TS_GW_AP LOGGING NOPARALLEL</if>
+	</update>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_REC_MAST_CMD_D [커뮤니티 자료실 마스터 한줄답변 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtRecMastCmdDDao">
+
+	<resultMap id="ctRecMastCmdDMap" type="CtRecMastCmdDVo">
+		<id property="cmtId" column="CMT_ID" /><!-- 한줄답변ID -->
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		
+		<result property="cmt" column="CMT" /><!--한줄답변-->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		
+	</resultMap>
+
+	<!-- 조회조건 -->
+	<sql id="selectCtRecMastCmdDWhere">
+	    <where>
+	    	<if test="cmtId != null and cmtId != ''"> AND CRMCD_T.CMT_ID = #{cmtId, jdbcType=NUMERIC}</if>    
+	        <if test="bullId != null and bullId != ''"> AND CRMCD_T.BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	    </where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtRecMastCmdD" resultMap="ctRecMastCmdDMap" parameterType="CtRecMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtRecMastCmdDDao.selectCtRecMastCmdD */
+		
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			CRMCD_T.CMT_ID, CRMCD_T.BULL_ID, CRMCD_T.CMT,
+			CRMCD_T.REGR_UID, CRMCD_T.REG_DT, 
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CRMCD_T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			
+		</trim>
+		FROM CT_REC_MAST_CMD_D CRMCD_T
+		<include refid="selectCtRecMastCmdDWhere"/>
+		
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CRMCD_T.CMT_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtRecMastCmdD" resultType="Integer" parameterType="CtRecMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtRecMastCmdDDao.countCtRecMastCmdD */
+		SELECT COUNT(*) CNT
+		FROM CT_REC_MAST_CMD_D CRMCD_T
+		<include refid="selectCtRecMastCmdDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtRecMastCmdD" parameterType="CtRecMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtRecMastCmdDDao.insertCtRecMastCmdD */
+		INSERT INTO CT_REC_MAST_CMD_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CMT_ID, BULL_ID, CMT,
+			REGR_UID, REG_DT, 
+		    
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{cmtId, jdbcType=NUMERIC}, #{bullId, jdbcType=NUMERIC}, #{cmt, jdbcType=NVARCHAR},
+			#{regrUid, jdbcType=VARCHAR}, 
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if> 
+
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtRecMastCmdD" parameterType="CtRecMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtRecMastCmdDDao.updateCtRecMastCmdD */
+		UPDATE CT_REC_MAST_CMD_D
+		<set>
+			<if test="cmt != null"> CMT = #{cmt, jdbcType=VARCHAR},</if>
+			
+		</set>
+		<where>
+		    <if test="cmtId != null and cmtId != ''"> AND CMT_ID = #{cmtId, jdbcType=NUMERIC}</if>
+		    <if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	    </where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtRecMastCmdD" parameterType="CtRecMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtRecMastCmdDDao.deleteCtRecMastCmdD */
+		DELETE FROM CT_REC_MAST_CMD_D
+		<where>
+		    <if test="cmtId != null and cmtId != ''"> AND CMT_ID = #{cmtId, jdbcType=NUMERIC}</if>
+		    <if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	    </where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_COMP_B[회사기본] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtCompBDao">
+
+	<resultMap id="ptCompBMap" type="PtCompBVo">
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="rcd" column="RCD" /><!-- 참조코드 -->
+		<result property="compNm" column="COMP_NM" /><!-- 회사명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="delYn" column="DEL_YN" /><!-- 삭제여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="mailDomain" column="MAIL_DOMAIN" /><!-- 메일도메인 -->
+		<result property="licCnt" column="LIC_CNT" /><!-- 라이선스수 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtCompB" resultMap="ptCompBMap" parameterType="PtCompBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCompBDao.selectPtCompB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM PT_RESC_D WHERE COMP_ID = M.COMP_ID AND RESC_ID = M.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.COMP_ID,
+			T.RCD,
+			T.COMP_NM,
+			T.RESC_ID,
+			T.SORT_ORDR,
+			T.USE_YN,
+			T.DEL_YN,
+			T.REGR_UID,
+			TO_CHAR(T.REG_DT, 'YYYY-MM-DD HH24:MI:SS') REG_DT,
+			T.MODR_UID,
+			TO_CHAR(T.MOD_DT, 'YYYY-MM-DD HH24:MI:SS') MOD_DT,
+			T.MAIL_DOMAIN,
+			T.LIC_CNT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM PT_RESC_D WHERE COMP_ID = T.COMP_ID AND RESC_ID = T.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM PT_COMP_B T
+		<where>
+			<if test="compId != null">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="delYn != null and delYn != ''">AND T.DEL_YN = #{delYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.COMP_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countPtCompB" resultType="Integer" parameterType="PtCompBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCompBDao.countPtCompB */
+		SELECT COUNT(*) CNT
+		FROM PT_COMP_B T
+		<where>
+			<if test="compId != null">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="delYn != null and delYn != ''">AND T.DEL_YN = #{delYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtCompB" parameterType="PtCompBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCompBDao.insertPtCompB */
+		INSERT INTO PT_COMP_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			COMP_ID,
+			RCD,
+			COMP_NM,
+			RESC_ID,
+			SORT_ORDR,
+			USE_YN,
+			DEL_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+			MAIL_DOMAIN,
+			LIC_CNT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=VARCHAR},
+			#{rcd, jdbcType=VARCHAR},
+			#{compNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT NVL(MAX(SORT_ORDR),0)+1 FROM PT_COMP_B),</if>
+			#{useYn, jdbcType=VARCHAR},
+			#{delYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{mailDomain, jdbcType=VARCHAR},
+			<if test="licCnt == ''">NULL</if><if test="licCnt != ''">#{licCnt, jdbcType=INTEGER}</if>,
+		</trim>
+	</insert>
+
+	<update id="updatePtCompB" parameterType="PtCompBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCompBDao.updatePtCompB */
+		UPDATE PT_COMP_B
+		<set>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="rcd != null">RCD = #{rcd, jdbcType=VARCHAR},</if>
+			<if test="compNm != null">COMP_NM = #{compNm, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null">USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="delYn != null">DEL_YN = #{delYn, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = SYSDATE,</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="mailDomain != null">MAIL_DOMAIN = #{mailDomain, jdbcType=VARCHAR},</if>
+			<if test="licCnt != null">LIC_CNT = <if test="licCnt == ''">NULL</if><if test="licCnt != ''">#{licCnt, jdbcType=INTEGER}</if>,</if>
+		</set>
+		<where>
+			<if test="compId != null">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtCompB" parameterType="PtCompBVo" >
+		/* com.innobiz.orange.web.pt.dao.PtCompBDao.deletePtCompB */
+		DELETE FROM PT_COMP_B
+		<where>
+			<if test="compId != null">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

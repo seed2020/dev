@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : EM_SEND_B[보내기기본] -->
+<mapper namespace="com.innobiz.orange.web.em.dao.EmSendBDao">
+
+	<resultMap id="emSendBMap" type="EmSendBVo">
+		<id property="sendNo" column="SEND_NO" /><!-- 보내기번호 -->
+		<id property="emailNo" column="EMAIL_NO" /><!-- 이메일번호 -->
+		<result property="fileYn" column="FILE_YN" /><!-- 파일여부 -->
+		<result property="subj" column="SUBJ" /><!-- 제목 -->
+		<result property="cont" column="CONT" /><!-- 내용 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectEmSendBWhere">
+		<where>
+			<if test="!isMail"><if test="sendNo != null"> AND T.SEND_NO = #{sendNo, jdbcType=VARCHAR}</if></if>
+			<if test="isMail"><if test="emailNo != null"> AND T.EMAIL_NO = #{emailNo, jdbcType=VARCHAR}</if></if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectEmSendB" resultMap="emSendBMap" parameterType="EmSendBVo" >
+		/* com.innobiz.orange.web.em.dao.EmSendBDao.selectEmSendB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null"><if test="!isMail">N.SEND_NO</if><if test="isMail">N.EMAIL_NO</if></if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			<if test="!isMail">T.SEND_NO,</if>
+			<if test="isMail">
+				T.EMAIL_NO,
+				T.FILE_YN,
+			</if>
+			T.SUBJ,
+			T.CONT,
+		</trim>
+		FROM <if test="!isMail">EM_SEND_B</if><if test="isMail">EM_SEND_EMAIL_B</if> T
+		<include refid="selectEmSendBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY <if test="!isMail">T.SEND_NO</if><if test="isMail">T.EMAIL_NO</if></if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countEmSendB" resultType="Integer" parameterType="EmSendBVo" >
+		/* com.innobiz.orange.web.em.dao.EmSendBDao.countEmSendB */
+		SELECT COUNT(*) CNT
+		FROM <if test="!isMail">EM_SEND_B</if><if test="isMail">EM_SEND_EMAIL_B</if> T
+		<include refid="selectEmSendBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertEmSendB" parameterType="EmSendBVo" >
+		/* com.innobiz.orange.web.em.dao.EmSendBDao.insertEmSendB */
+		INSERT INTO <if test="!isMail">EM_SEND_B</if><if test="isMail">EM_SEND_EMAIL_B</if>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="!isMail">SEND_NO,</if>
+			<if test="isMail">EMAIL_NO,</if>
+			SUBJ,
+			CONT,
+			<if test="isMail">FILE_YN,</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			<if test="!isMail">#{sendNo, jdbcType=INTEGER},</if>
+			<if test="isMail">#{emailNo, jdbcType=INTEGER},</if>
+			#{subj, jdbcType=NVARCHAR},
+			#{cont, jdbcType=NVARCHAR},
+			<if test="isMail">#{fileYn, jdbcType=CHAR},</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateEmSendB" parameterType="EmSendBVo" >
+		/* com.innobiz.orange.web.em.dao.EmSendBDao.updateEmSendB */
+		UPDATE <if test="!isMail">EM_SEND_B</if><if test="isMail">EM_SEND_EMAIL_B</if>
+		<set>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=VARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=INTEGER},</if>
+			<if test="isMail"><if test="fileYn != null"> FILE_YN = #{fileYn, jdbcType=CHAR},</if></if>
+		</set>
+		<where>
+			<if test="!isMail"><if test="sendNo != null and sendNo !=''"> AND SEND_NO = #{sendNo, jdbcType=VARCHAR}</if></if>
+			<if test="isMail"><if test="emailNo != null and emailNo !=''"> AND EMAIL_NO = #{emailNo, jdbcType=VARCHAR}</if></if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteEmSendB" parameterType="EmSendBVo" >
+		/* com.innobiz.orange.web.em.dao.EmSendBDao.deleteEmSendB */
+		DELETE FROM <if test="!isMail">EM_SEND_B</if><if test="isMail">EM_SEND_EMAIL_B</if>
+		<where>
+			<if test="!isMail"><if test="sendNo != null and sendNo !=''"> AND SEND_NO = #{sendNo, jdbcType=VARCHAR}</if></if>
+			<if test="isMail"><if test="emailNo != null and emailNo !=''"> AND EMAIL_NO = #{emailNo, jdbcType=VARCHAR}</if></if>
+		</where>
+	</delete>
+
+</mapper>

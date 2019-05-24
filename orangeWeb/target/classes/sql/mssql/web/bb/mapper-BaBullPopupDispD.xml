@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_BULL_POPUP_DISP_D[팝업설정출력] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaBullPopupDispDDao">
+
+	<resultMap id="baBullPopupDispDMap" type="BaBullPopupDispDVo">
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<id property="brdId" column="BRD_ID" /><!-- 게시판ID -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="updtDt" column="UPDT_DT" /><!-- 처리일 -->
+	</resultMap>
+
+	<select id="selectBaBullPopupDispD" resultMap="baBullPopupDispDMap" parameterType="BaBullPopupDispDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaBullPopupDispDDao.selectBaBullPopupDispD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">BRD_ID DESC</if>) AS RNUM,
+			</if>
+			BULL_ID,
+			BRD_ID,
+			USER_UID,
+			UPDT_DT,
+		</trim>
+		FROM BA_BULL_POPUP_DISP_D
+		<where>
+			<if test="brdId != null and brdId != ''"> AND BRD_ID = #{brdId, jdbcType=VARCHAR}</if>
+			<if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="strtDt != null and strtDt != '' and endDt != null and endDt != ''"> 
+				<![CDATA[
+					 AND CONVERT(VARCHAR(10), UPDT_DT, 120) >= #{strtDt, jdbcType=VARCHAR}
+					 AND CONVERT(VARCHAR(10), UPDT_DT, 120) <= #{endDt, jdbcType=VARCHAR}
+				 ]]>
+			 </if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY BRD_ID DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<select id="countBaBullPopupDispD" resultType="Integer" parameterType="BaBullPopupDispDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaBullPopupDispDDao.countBaBullPopupDispD */
+		SELECT COUNT(*) CNT
+		FROM BA_BULL_POPUP_DISP_D 
+		<where>
+			<if test="brdId != null and brdId != ''"> AND BRD_ID = #{brdId, jdbcType=VARCHAR}</if>
+			<if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="strtDt != null and strtDt != '' and endDt != null and endDt != ''"> 
+				<![CDATA[
+					 AND CONVERT(VARCHAR(10), UPDT_DT, 120) >= #{strtDt, jdbcType=VARCHAR}
+					 AND CONVERT(VARCHAR(10), UPDT_DT, 120) <= #{endDt, jdbcType=VARCHAR}
+				 ]]>
+			 </if>
+		</where>
+	</select>
+
+	<insert id="insertBaBullPopupDispD" parameterType="BaBullPopupDispDVo">
+		/* com.innobiz.orange.web.bb.dao.baBullPopupDispDDao.insertbaBullPopupDispD */
+		INSERT INTO BA_BULL_POPUP_DISP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			BULL_ID,
+			BRD_ID,
+			USER_UID,
+			UPDT_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{bullId, jdbcType=VARCHAR},
+			#{brdId, jdbcType=VARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+			GETDATE(),
+		</trim>
+	</insert>
+
+	<update id="updateBaBullPopupDispD" parameterType="BaBullPopupDispDVo" >
+		/* com.innobiz.orange.web.bb.dao.baBullPopupDispDDao.updatebaBullPopupDispD */
+		UPDATE BA_BULL_POPUP_DISP_D
+		<set>
+			UPDT_DT = GETDATE(),
+		</set>
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=INTEGER}
+			AND BRD_ID = #{brdId, jdbcType=VARCHAR}
+			AND USER_UID = #{userUid, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<delete id="deleteBaBullPopupDispD" parameterType="BaBullPopupDispDVo">
+		/* com.innobiz.orange.web.bb.dao.baBullPopupDispDDao.deletebaBullPopupDispD */
+		DELETE FROM BA_BULL_POPUP_DISP_D
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=INTEGER}
+			AND BRD_ID = #{brdId, jdbcType=VARCHAR}
+			<if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_PUB_DOC_TGT_D[상신목록] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmPubDocTgtDDao">
+
+	<resultMap id="dmPubDocTgtDMap" type="DmPubDocTgtDVo">
+		<id property="docGrpId" column="DOC_GRP_ID" /><!-- 문서그룹ID -->
+		<id property="tgtId" column="TGT_ID" /><!-- 대상ID -->
+		<result property="tgtTypCd" column="TGT_TYP_CD" /><!-- 대상구분 -->
+		<result property="statCd" column="STAT_CD" /><!-- 상태코드 -->
+		<result property="readStrtDt" column="READ_STRT_DT" /><!-- 열람시작일시 -->
+		<result property="readEndDt" column="READ_END_DT" /><!-- 열람종료일시 -->
+		<result property="rjtOpin" column="RJT_OPIN" /><!-- 반려의견 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+	</resultMap>
+
+
+	<!-- 조회조건 -->
+	<sql id="selectDmPubDocTgtDWhere">
+		<where>
+			<if test="docGrpId != null and docGrpId != ''"> AND T.DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}</if>
+			<if test="tgtId != null and tgtId !=''"> AND T.TGT_ID = #{tgtId, jdbcType=VARCHAR}</if>
+			<if test="tgtTypCd != null and tgtTypCd !=''"> AND T.TGT_TYP_CD = #{tgtTypCd, jdbcType=VARCHAR}</if>
+			<if test="statCd != null and statCd !=''"> AND T.STAT_CD = #{statCd, jdbcType=VARCHAR}</if>
+			<if test="'readDt'.equals(durCat) and durStrtDt != null and durStrtDt != ''"><![CDATA[AND CONVERT(VARCHAR(10), T.READ_END_DT, 120) >= #{durStrtDt, jdbcType=VARCHAR}]]></if>
+			<if test="'readDt'.equals(durCat) and durEndDt != null and durEndDt != ''"><![CDATA[AND CONVERT(VARCHAR(10), T.READ_STRT_DT, 120) <= #{durEndDt, jdbcType=VARCHAR}]]></if>
+			<if test="regrUid != null and regrUid !=''"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<!-- 다중 조회조건(String) -->
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmPubDocTgtD" resultMap="dmPubDocTgtDMap" parameterType="DmPubDocTgtDVo" >
+		/* com.innobiz.orange.web.dm.dao.DmPubDocTgtDDao.selectDmPubDocTgtD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.REG_DT DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.DOC_GRP_ID,
+		    T.TGT_ID,
+		    T.TGT_TYP_CD,
+		    T.STAT_CD,
+		    T.READ_STRT_DT,
+		    T.READ_END_DT,
+		    T.RJT_OPIN,
+		    T.REGR_UID,
+		    T.REG_DT,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+		</trim>
+		FROM DM_PUB_DOC_TGT_D T
+		<include refid="selectDmPubDocTgtDWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.REG_DT DESC </if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmPubDocTgtD" resultType="Integer" parameterType="DmPubDocTgtDVo" >
+		/* com.innobiz.orange.web.dm.dao.DmPubDocTgtDDao.countDmPubDocTgtD */
+		SELECT COUNT(*) CNT
+		FROM DM_PUB_DOC_TGT_D T
+		<include refid="selectDmPubDocTgtDWhere"/>
+	</select>
+		
+	<!-- 등록 저장 -->
+	<insert id="insertDmPubDocTgtD" parameterType="DmPubDocTgtDVo" >
+		/* com.innobiz.orange.web.dm.dao.DmPubDocTgtDDao.insertDmPubDocTgtD */
+		INSERT INTO DM_PUB_DOC_TGT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			DOC_GRP_ID,
+		    TGT_ID,
+		    TGT_TYP_CD,
+		    STAT_CD,
+		    READ_STRT_DT,
+		    READ_END_DT,
+		    REGR_UID,
+		    REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{docGrpId, jdbcType=VARCHAR},
+			#{tgtId, jdbcType=VARCHAR},
+			#{tgtTypCd, jdbcType=CHAR},
+			#{statCd, jdbcType=CHAR},
+			<if test="readStrtDt == null or readStrtDt == ''">NULL,</if>
+			<if test="readStrtDt != null and readStrtDt != ''">CONVERT(DATETIME, #{readStrtDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="readEndDt == null or readEndDt == ''">NULL,</if>
+			<if test="readEndDt != null and readEndDt != ''">CONVERT(DATETIME, #{readEndDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateDmPubDocTgtD" parameterType="DmPubDocTgtDVo" >
+		/* com.innobiz.orange.web.dm.dao.DmPubDocTgtDDao.updateDmPubDocTgtD */
+		UPDATE DM_PUB_DOC_TGT_D
+		<set>
+			<if test="statCd != null"> STAT_CD = #{statCd, jdbcType=VARCHAR},</if>
+			<if test="readStrtDt != null"> READ_STRT_DT = CONVERT(DATETIME, #{readStrtDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="readEndDt != null"> READ_END_DT = CONVERT(DATETIME, #{readEndDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="rjtOpin != null"> RJT_OPIN = #{rjtOpin, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}
+			AND TGT_ID = #{tgtId, jdbcType=VARCHAR}
+			<if test="regrUid != null and regrUid !=''"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteDmPubDocTgtD" parameterType="DmPubDocTgtDVo" >
+		/* com.innobiz.orange.web.dm.dao.DmPubDocTgtDDao.deleteDmPubDocTgtD */
+		DELETE FROM DM_PUB_DOC_TGT_D
+		<where>
+			AND DOC_GRP_ID = #{docGrpId, jdbcType=VARCHAR}
+			AND TGT_ID = #{tgtId, jdbcType=VARCHAR}
+			<if test="regrUid != null and regrUid !=''"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

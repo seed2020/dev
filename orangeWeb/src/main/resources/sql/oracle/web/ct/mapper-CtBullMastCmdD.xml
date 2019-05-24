@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_BULL_MAST_CMD_D [커뮤니티 게시판 마스터 한줄답변 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtBullMastCmdDDao">
+
+	<resultMap id="ctBullMastCmdDMap" type="CtBullMastCmdDVo">
+		<id property="cmtId" column="CMT_ID" /><!-- 한줄답변ID -->
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		
+		<result property="cmt" column="CMT" /><!--한줄답변-->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		
+	</resultMap>
+	
+		<!-- 조회조건 -->
+	<sql id="selectCtBullMastCmdDWhere">
+	    <where>
+	    	<if test="cmtId != null and cmtId != ''"> AND CBMCD_T.CMT_ID = #{cmtId, jdbcType=NUMERIC}</if>    
+	        <if test="bullId != null and bullId != ''"> AND CBMCD_T.BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	    </where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtBullMastCmdD" resultMap="ctBullMastCmdDMap" parameterType="CtBullMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBullMastCmdDDao.selectCtBullMastCmdD */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			CBMCD_T.CMT_ID, CBMCD_T.BULL_ID, CBMCD_T.CMT,
+			CBMCD_T.REGR_UID, CBMCD_T.REG_DT,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CBMCD_T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			
+		</trim>
+		FROM CT_BULL_MAST_CMD_D CBMCD_T
+		<include refid="selectCtBullMastCmdDWhere"/>
+		
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CBMCD_T.CMT_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtBullMastCmdD" resultType="Integer" parameterType="CtBullMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBullMastCmdDDao.countCtBullMastCmdD */
+		SELECT COUNT(*) CNT
+		FROM CT_BULL_MAST_CMD_D CBMCD_T
+		<include refid="selectCtBullMastCmdDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtBullMastCmdD" parameterType="CtBullMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBullMastCmdDDao.insertCtBullMastCmdD */
+		INSERT INTO CT_BULL_MAST_CMD_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CMT_ID, BULL_ID, CMT,
+			REGR_UID, REG_DT, 
+		    
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{cmtId, jdbcType=NUMERIC}, #{bullId, jdbcType=NUMERIC}, #{cmt, jdbcType=NVARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if> 
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtBullMastCmdD" parameterType="CtBullMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBullMastCmdDDao.updateCtBullMastCmdD */
+		UPDATE CT_BULL_MAST_CMD_D
+		<set>
+			<if test="cmt != null"> CMT = #{cmt, jdbcType=NVARCHAR},</if>
+		</set>
+		<where>
+		    <if test="cmtId != null and cmtId != ''"> AND CMT_ID = #{cmtId, jdbcType=NUMERIC}</if>
+		    <if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	    </where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtBullMastCmdD" parameterType="CtBullMastCmdDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBullMastCmdDDao.deleteCtBullMastCmdD */
+		DELETE FROM CT_BULL_MAST_CMD_D
+		<where>
+		    <if test="cmtId != null and cmtId != ''"> AND CMT_ID = #{cmtId, jdbcType=NUMERIC}</if>
+		    <if test="bullId != null and bullId != ''"> AND BULL_ID = #{bullId, jdbcType=NUMERIC}</if>
+	    </where>
+	</delete>
+	
+
+</mapper>

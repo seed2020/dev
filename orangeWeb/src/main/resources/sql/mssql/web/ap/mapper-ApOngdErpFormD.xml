@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGD_ERP_FORM_D[진행문서ERP양식상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngdErpFormDDao">
+
+	<resultMap id="apOngdErpFormDMap" type="ApOngdErpFormDVo">
+		<id property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<id property="erpVaTypCd" column="ERP_VA_TYP_CD" /><!-- ERP값구분코드 -->
+		<result property="erpVa" column="ERP_VA" jdbcType="CLOB" javaType="java.lang.String" /><!-- ERP값 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngdErpFormD" resultMap="apOngdErpFormDMap" parameterType="ApOngdErpFormDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdErpFormDDao.selectApOngdErpFormD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.APV_NO DESC, N.ERP_VA_TYP_CD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.APV_NO,
+			T.ERP_VA_TYP_CD,
+			T.ERP_VA,
+		</trim>
+		FROM AP_${storage}_ERP_FORM_D T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="erpVaTypCd != null">AND T.ERP_VA_TYP_CD = #{erpVaTypCd, jdbcType=VARCHAR}</if>
+			<if test="apvNoList != null">AND T.APV_NO IN ( <foreach collection="apvNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.APV_NO, T.ERP_VA_TYP_CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countApOngdErpFormD" resultType="Integer" parameterType="ApOngdErpFormDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdErpFormDDao.countApOngdErpFormD */
+		SELECT COUNT(*) CNT
+		FROM AP_${storage}_ERP_FORM_D T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="erpVaTypCd != null">AND T.ERP_VA_TYP_CD = #{erpVaTypCd, jdbcType=VARCHAR}</if>
+			<if test="apvNoList != null">AND T.APV_NO IN ( <foreach collection="apvNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngdErpFormD" parameterType="ApOngdErpFormDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdErpFormDDao.insertApOngdErpFormD */
+		INSERT INTO AP_${storage}_ERP_FORM_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			APV_NO,
+			ERP_VA_TYP_CD,
+			ERP_VA,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{apvNo, jdbcType=BIGINT},
+			#{erpVaTypCd, jdbcType=VARCHAR},
+			#{erpVa, jdbcType=CLOB},
+		</trim>
+	</insert>
+
+	<update id="updateApOngdErpFormD" parameterType="ApOngdErpFormDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdErpFormDDao.updateApOngdErpFormD */
+		UPDATE AP_${storage}_ERP_FORM_D
+		<set>
+			<if test="apvNo != null">APV_NO = #{apvNo, jdbcType=BIGINT},</if>
+			<if test="erpVaTypCd != null">ERP_VA_TYP_CD = #{erpVaTypCd, jdbcType=VARCHAR},</if>
+			<if test="erpVa != null">ERP_VA = #{erpVa, jdbcType=CLOB},</if>
+		</set>
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="erpVaTypCd != null">AND ERP_VA_TYP_CD = #{erpVaTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngdErpFormD" parameterType="ApOngdErpFormDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdErpFormDDao.deleteApOngdErpFormD */
+		DELETE FROM AP_${storage}_ERP_FORM_D
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="erpVaTypCd != null">AND ERP_VA_TYP_CD = #{erpVaTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

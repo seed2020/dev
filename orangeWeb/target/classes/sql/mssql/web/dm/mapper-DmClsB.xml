@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_CLS_B[분류체계기본] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmClsBDao">
+
+	<resultMap id="dmClsBMap" type="DmClsBVo">
+		<id property="storId" column="STOR_ID" /><!-- 저장소ID -->
+		<id property="clsId" column="CLS_ID" /><!-- 분류체계ID -->
+		<result property="clsNm" column="CLS_NM" /><!-- 분류체계명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="clsPid" column="CLS_PID" /><!-- 상위분류체계ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectDmClsBWhere">
+		<where>
+			<if test="storId != null and storId != ''"> AND T.STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="clsId != null and clsId !=''"> AND T.CLS_ID = #{clsId, jdbcType=VARCHAR}</if>
+			<if test="clsPid != null and clsPid !=''"> AND T.CLS_PID = #{clsPid, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn !=''"> AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="selIdList != null">AND T.CLS_ID IN ( <foreach collection="selIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmClsB" resultMap="dmClsBMap" parameterType="DmClsBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsBDao.selectDmClsB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.REG_DT DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.STOR_ID,
+			T.CLS_ID,
+			(SELECT RESC_VA FROM DM_RESC_B WHERE STOR_ID = T.STOR_ID AND RESC_ID = T.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AS CLS_NM,
+			T.RESC_ID,
+			T.CLS_PID,
+			T.SORT_ORDR,
+			T.USE_YN,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM DM_CLS_B T
+		<include refid="selectDmClsBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.REG_DT</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmClsB" resultType="Integer" parameterType="DmClsBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsBDao.countDmClsB */
+		SELECT COUNT(*) CNT
+		FROM DM_CLS_B T
+		<include refid="selectDmClsBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertDmClsB" parameterType="DmClsBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsBDao.insertDmClsB */
+		INSERT INTO DM_CLS_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			STOR_ID,
+			CLS_ID,
+			CLS_NM,
+			RESC_ID,
+			CLS_PID,
+			SORT_ORDR,
+			USE_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{storId, jdbcType=VARCHAR},
+			#{clsId, jdbcType=VARCHAR},
+			#{clsNm, jdbcType=VARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{clsPid, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			#{useYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">GETDATE(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateDmClsB" parameterType="DmClsBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsBDao.updateDmClsB */
+		UPDATE DM_CLS_B
+		<set>
+			<if test="clsNm != null"> CLS_NM = #{clsNm, jdbcType=VARCHAR},</if>
+			<if test="clsPid != null"> CLS_PID = #{clsPid, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null"> USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = GETDATE(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="clsId != null and clsId !=''"> AND CLS_ID = #{clsId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteDmClsB" parameterType="DmClsBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmClsBDao.deleteDmClsB */
+		DELETE FROM DM_CLS_B
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="clsId != null and clsId !=''"> AND CLS_ID = #{clsId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

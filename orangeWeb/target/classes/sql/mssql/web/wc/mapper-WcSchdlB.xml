@@ -1,0 +1,658 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_SCHDL_B[일정 기본] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcSchdlBDao">
+
+	<resultMap id="wcSchdlBMap" type="WcSchdlBVo">
+		<id property="schdlId" column="SCHDL_ID" /><!-- 일정ID -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="deptId" column="DEPT_ID" /><!-- 부서ID -->
+		<result property="grpId" column="GRP_ID" /><!-- 그룹ID -->
+		<result property="schdlTypCd" column="SCHDL_TYP_CD" /><!-- 일정구분코드 -->
+		<result property="schdlKndCd" column="SCHDL_KND_CD" /><!-- 일정종류코드 -->
+		<result property="openGradCd" column="OPEN_GRAD_CD" /><!-- 공개등급코드 -->
+		<result property="schdlStatCd" column="SCHDL_STAT_CD" /><!-- 일정상태코드 -->
+		<result property="editorTypCd" column="EDITOR_TYP_CD" /><!-- 에디터구분코드 -->
+		<result property="selfRegYn" column="SELF_REG_YN" /><!-- 본인입력여부 -->
+		<result property="schdlStartDt" column="SCHDL_START_DT" /><!-- 일정시작일시 -->
+		<result property="schdlEndDt" column="SCHDL_END_DT" /><!-- 일정종료일시 -->
+		<result property="repetYn" column="REPET_YN" /><!-- 반복여부 -->
+		<result property="holiYn" column="HOLI_YN" /><!-- 휴일여부 -->
+		<result property="solaLunaYn" column="SOLA_LUNA_YN" /><!-- 양음력여부 -->
+		<result property="subj" column="SUBJ" /><!-- 제목 -->
+		<result property="locNm" column="LOC_NM" /><!-- 장소명 -->
+		<result property="locLatdLotdVa" column="LOC_LATD_LOTD_VA" /><!-- 장소위도경도값 -->
+		<result property="cont" column="CONT" /><!-- 내용 -->
+		<result property="workPrioOrdr" column="WORK_PRIO_ORDR" /><!-- 할일우선순서 -->
+		<result property="workCmltYmd" column="WORK_CMLT_YMD" /><!-- 할일완료년월일 -->
+		<result property="attYn" column="ATT_YN" /><!-- 첨부여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="schdlFileId" column="SCHDL_FILE_ID" /><!-- 일정파일ID -->
+		<result property="schdlPid" column="SCHDL_PID" /><!-- 일정 부모ID -->
+		<result property="schdlYm" column="SCHDL_YM" /><!-- 해당 월별 년월 -->
+		<result property="schdlPrevYm" column="SCHDL_PREVYM" /><!-- 이전 월별 년월 -->
+		<result property="schdlNextYm" column="SCHDL_NEXTYM" /><!-- 이후 월별 년월 -->
+		
+		<result property="searchPromChk" column="SEARCH_PROM_CHK" /><!-- 검색약속체크 -->
+		<result property="searchWorkChk" column="SEARCH_WORK_CHK" /><!-- 검색할일체크  -->
+		<result property="searchEvntChk" column="SEARCH_EVNT_CHK" /><!-- 검색행사체크 -->
+		<result property="searchAnnvChk" column="SEARCH_ANNV_CHK" /><!-- 검색기념일체크 -->
+		<result property="searchPsnChk" column="SEARCH_PSN_CHK" /><!-- 검색개인체크 -->
+		<result property="searchDeptChk" column="SEARCH_DEPT_CHK" /><!-- 검색부서체크 -->
+		<result property="searchCompChk" column="SEARCH_COMP_CHK" /><!-- 검색회사체크 -->
+		<result property="searchGrpChk" column="SEARCH_GRP_CHK" /><!-- 검색그룹체크 -->
+		
+		<result property="startHour" column="STARTHOUR" /><!-- 해당날짜의 시작시간 -->
+		<result property="endHour" column="ENDHOUR" /><!-- 해당날짜의 종료 시간 -->
+		
+		<result property="repetStartDt" column="REPET_START_DT"/><!-- 반복시작일시 -->
+		<result property="repetEndDt" column="REPET_END_DT"/><!-- 반복시작일시 -->
+		
+		<result property="schdlTypNm" column="SCHDL_TYP_NM"/><!-- 일정구분명 -->
+		<result property="alldayYn" column="ALLDAY_YN"/><!-- 종일여부 -->
+		<result property="grpNm" column="GRP_NM"/><!-- 그룹명 -->
+		<result property="afterDay" column="AFTER_DAY"/><!-- 기간별 일수차 -->
+		
+	</resultMap>
+
+	<!-- 조회조건 -->
+	<sql id="selectWcSchdlBWhere">
+		<where>
+			<if test="schdlId != null and schdlId !=''">AND WS_T.SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="schdlPid != null and schdlPid !=''">AND WS_T.SCHDL_PID = #{schdlPid, jdbcType=CHAR}</if>
+			<if test="schWord != null and schWord !=''">AND WS_T.SUBJ LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+			<if test="schdlTypCd != null and schdlTypCd != ''">AND WS_T.SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR}
+				<if test="schdlPid == null or schdlPid == ''">AND EXISTS (SELECT 1 FROM WC_SCHDL_B WHERE SCHDL_PID = WS_T.SCHDL_ID)</if>
+			</if>
+			<if test="schdlStartDt != null and schdlStartDt !='' and schdlEndDt != null and schdlEndDt !='' ">
+			AND (
+				CONVERT(VARCHAR(10), WS_T.SCHDL_START_DT, 120) BETWEEN #{schdlStartDt, jdbcType=VARCHAR} AND #{schdlEndDt, jdbcType=VARCHAR}
+				OR CONVERT(VARCHAR(10), WS_T.SCHDL_END_DT, 120) BETWEEN #{schdlStartDt, jdbcType=VARCHAR} AND #{schdlEndDt, jdbcType=VARCHAR}
+			)
+ 			</if>
+ 			<if test="schdlStartDt != null and schdlStartDt !='' and (schdlEndDt == null or schdlEndDt =='') ">
+			AND (
+				#{schdlStartDt, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(10), WS_T.SCHDL_START_DT, 120) AND CONVERT(VARCHAR(10), WS_T.SCHDL_END_DT, 120)
+			)
+ 			</if>
+ 			<if test="schdlTypCd == null or schdlTypCd == ''">
+ 			AND WS_T.SCHDL_TYP_CD != '5'
+ 			</if>
+			<if test="searchPromChk != null and searchPromChk != '' 
+			or  searchWorkChk != null and searchWorkChk != ''
+			or  searchEvntChk != null and searchEvntChk != ''
+			or  searchAnnvChk != null and searchAnnvChk != '' ">
+			AND ( WS_T.SCHDL_TYP_CD = #{searchPromChk, jdbcType=VARCHAR}	
+				OR WS_T.SCHDL_TYP_CD = #{searchWorkChk, jdbcType=VARCHAR}
+				OR WS_T.SCHDL_TYP_CD = #{searchEvntChk, jdbcType=VARCHAR}
+				OR WS_T.SCHDL_TYP_CD = #{searchAnnvChk, jdbcType=VARCHAR}
+			)
+			</if>
+			<if test="searchPsnChk != null and searchPsnChk != '' 
+			or  searchDeptChk != null and searchDeptChk != ''
+			or  searchCompChk != null and searchCompChk != ''
+			or  searchGrpChk != null and searchGrpChk != '' ">
+			AND ( WS_T.SCHDL_KND_CD =  #{searchPsnChk, jdbcType=VARCHAR}
+				OR WS_T.SCHDL_KND_CD =  #{searchDeptChk, jdbcType=VARCHAR}
+				OR WS_T.SCHDL_KND_CD =  #{searchCompChk, jdbcType=VARCHAR}
+				OR WS_T.SCHDL_KND_CD =  #{searchGrpChk, jdbcType=VARCHAR}
+			)
+			</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+			<if test="schCompId != null and schCompId !=''"> AND COMP_ID = #{schCompId, jdbcType=VARCHAR}</if>
+			<if test="repetYn != null and repetYn !=''"> AND WS_T.REPET_YN = #{repetYn, jdbcType=VARCHAR}</if>	
+		</where>
+	</sql>
+	
+	<!-- 목록조회-->
+	<select id="selectWcSchdlB" resultMap="wcSchdlBMap" parameterType="WcSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.selectWcSchdlB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.SCHDL_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			WS_T.SCHDL_ID,
+			WS_T.USER_UID,
+			WS_T.COMP_ID,
+			WS_T.DEPT_ID,
+			WS_T.GRP_ID,
+			WS_T.SCHDL_TYP_CD,
+			WS_T.SCHDL_KND_CD,
+			WS_T.OPEN_GRAD_CD,
+			WS_T.SCHDL_STAT_CD,
+			WS_T.EDITOR_TYP_CD,
+			WS_T.SELF_REG_YN,
+			CONVERT(VARCHAR(19), WS_T.SCHDL_START_DT, 120) AS SCHDL_START_DT,
+			CONVERT(VARCHAR(19), WS_T.SCHDL_END_DT, 120) SCHDL_END_DT,
+			WS_T.REPET_YN,
+			WS_T.HOLI_YN,
+			WS_T.SOLA_LUNA_YN,
+			WS_T.SUBJ,
+			WS_T.LOC_NM,
+			WS_T.LOC_LATD_LOTD_VA,
+			<if test="withLob">WS_T.CONT,</if>
+			WS_T.WORK_PRIO_ORDR,
+			WS_T.WORK_CMLT_YMD,
+			WS_T.ATT_YN,
+			WS_T.REGR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = WS_T.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AS REGR_NM,
+			CONVERT(VARCHAR(19), WS_T.REG_DT, 120) AS REG_DT,
+			CONVERT(VARCHAR(19), WS_T.MOD_DT, 120) AS MOD_DT,
+			WS_T.MODR_UID,
+			WS_T.SCHDL_FILE_ID,
+			WS_T.SCHDL_PID,
+			WS_T.ALLDAY_YN,
+			(SELECT CONVERT(VARCHAR(19), REPET_START_DT, 120) FROM WC_REPET_SETUP_D WHERE SCHDL_ID = WS_T.SCHDL_ID) AS REPET_START_DT,
+			(SELECT CONVERT(VARCHAR(19), REPET_END_DT, 120) FROM WC_REPET_SETUP_D WHERE SCHDL_ID = WS_T.SCHDL_ID) AS REPET_END_DT,
+			(SELECT RESC_VA FROM WC_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM WC_CAT_CLS_B WHERE CAT_ID = WS_T.SCHDL_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS SCHDL_TYP_NM ,
+			(SELECT GRP_NM FROM WC_SCHDL_GRP_B WSG_T WHERE WS_T.GRP_ID = WSG_T.SCHDL_GRP_ID) AS GRP_NM,
+			DATEDIFF(DAY,WS_T.SCHDL_START_DT,WS_T.SCHDL_END_DT) AS AFTER_DAY,
+		</trim>
+		FROM WC_SCHDL_B WS_T 
+			<if test="userUid != null or deptId != null or compId != null">
+			INNER JOIN (
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE SCHDL_TYP_CD = '5'
+				
+				<if test="userUid != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE USER_UID = #{userUid, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '1'
+				</if>
+				
+				<if test="deptId != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE DEPT_ID = #{deptId, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '3'
+				</if>
+				
+				<if test="compId != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE COMP_ID =  #{compId, jdbcType=VARCHAR}
+					<if test="userUid != null or deptId != null">
+					AND SCHDL_KND_CD = '4'
+					</if>
+				</if>
+				
+				<if test="userUid != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE SCHDL_KND_CD = '2' AND GRP_ID IN (SELECT DISTINCT SCHDL_GRP_ID FROM WC_SCHDL_GRP_MBSH_D WHERE USER_UID= #{userUid, jdbcType=VARCHAR} )
+				</if>
+				
+			) B ON WS_T.SCHDL_ID = B.SCHDL_ID
+			</if>
+			<include refid="selectWcSchdlBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY WS_T.SCHDL_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	
+	<!-- 포틀렛 목록조회(기념일) -->
+	<select id="selectWcSchdlBPlt" resultMap="wcSchdlBMap" parameterType="WcSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.selectWcSchdlBPlt */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			WS_T.SCHDL_ID,
+			WS_T.USER_UID,
+			WS_T.COMP_ID,
+			WS_T.DEPT_ID,
+			WS_T.GRP_ID,
+			WS_T.SCHDL_TYP_CD,
+			WS_T.SCHDL_KND_CD,
+			WS_T.OPEN_GRAD_CD,
+			WS_T.SCHDL_STAT_CD,
+			WS_T.EDITOR_TYP_CD,
+			WS_T.SELF_REG_YN,
+			CONVERT(VARCHAR(19), WS_T.SCHDL_START_DT, 120) AS SCHDL_START_DT,
+			CONVERT(VARCHAR(19), WS_T.SCHDL_END_DT, 120) AS SCHDL_END_DT,
+			WS_T.REPET_YN,
+			WS_T.HOLI_YN,
+			WS_T.SOLA_LUNA_YN,
+			WS_T.SUBJ,
+			WS_T.LOC_NM,
+			WS_T.LOC_LATD_LOTD_VA,
+			<if test="withLob">WS_T.CONT,</if>
+			WS_T.WORK_PRIO_ORDR,
+			WS_T.WORK_CMLT_YMD,
+			WS_T.ATT_YN,
+			WS_T.REGR_UID,
+			WS_T.REGR_NM,
+			CONVERT(VARCHAR(19), WS_T.REG_DT, 120) AS REG_DT,
+			CONVERT(VARCHAR(19), WS_T.MOD_DT, 120) AS MOD_DT,
+			WS_T.MODR_UID,
+			WS_T.SCHDL_FILE_ID,
+			WS_T.SCHDL_PID,
+			WS_T.ALLDAY_YN,
+			(SELECT CONVERT(VARCHAR(19), REPET_START_DT, 120) FROM WC_REPET_SETUP_D WHERE SCHDL_ID = WS_T.SCHDL_ID) REPET_START_DT,
+			(SELECT CONVERT(VARCHAR(19), REPET_END_DT, 120) FROM WC_REPET_SETUP_D WHERE SCHDL_ID = WS_T.SCHDL_ID) REPET_END_DT,
+			(SELECT RESC_VA FROM WC_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM WC_CAT_CLS_B WHERE CAT_ID = WS_T.SCHDL_TYP_CD) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS SCHDL_TYP_NM ,
+			(SELECT GRP_NM FROM WC_SCHDL_GRP_B WSG_T WHERE WS_T.GRP_ID = WSG_T.SCHDL_GRP_ID) AS GRP_NM,
+			DATEDIFF(DAY,WS_T.SCHDL_START_DT,WS_T.SCHDL_END_DT) AS AFTER_DAY,
+		</trim>
+		FROM WC_SCHDL_B WS_T
+			<if test="userUid != null">
+			INNER JOIN (
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE USER_UID = #{userUid, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '1'
+				
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE DEPT_ID = #{deptId, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '3'
+				
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE COMP_ID = #{compId, jdbcType=VARCHAR} 
+					AND SCHDL_KND_CD = '4'
+				
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE SCHDL_KND_CD = '2'
+					AND GRP_ID IN (SELECT DISTINCT SCHDL_GRP_ID FROM WC_SCHDL_GRP_MBSH_D WHERE USER_UID= #{userUid, jdbcType=VARCHAR})	
+				
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE SCHDL_TYP_CD='5'
+			) B ON WS_T.SCHDL_ID = B.SCHDL_ID
+			</if>
+			<where>
+				AND WS_T.SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR}
+				<![CDATA[AND WS_T.SCHDL_END_DT >= CONVERT(DATETIME, #{schdlStartDt, jdbcType=VARCHAR}, 120)]]>
+				<![CDATA[AND WS_T.SCHDL_START_DT <= CONVERT(DATETIME, #{schdlEndDt, jdbcType=VARCHAR}, 120)]]>
+				<!-- AND (
+						CONVERT(VARCHAR(10), WS_T.SCHDL_START_DT, 120) BETWEEN
+							#{schdlStartDt, jdbcType=VARCHAR} AND #{schdlEndDt, jdbcType=VARCHAR}
+						OR CONVERT(VARCHAR(10), WS_T.SCHDL_END_DT, 120) BETWEEN
+							#{schdlStartDt, jdbcType=VARCHAR} AND #{schdlEndDt, jdbcType=VARCHAR}
+				) -->
+				<if test="compId != null and compId !=''"> AND WS_T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			</where>
+			ORDER BY WS_T.SCHDL_ID
+	</select>
+	
+	
+	<!-- 공통기념일 목록조회 건수 -->
+	<select id="countCommonAnnv" resultType="Integer" parameterType="WcSchdlBVo">
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.countCommonAnnv */
+		SELECT
+		COUNT(DISTINCT SCHDL_PID) CNT
+		FROM WC_SCHDL_B
+		<where>
+			<if test="schdlTypCd != null and schdlTypCd != ''">AND SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR} </if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+
+	<!-- 일정기간 검색 -->
+	<select id="selectStartToEndDate" resultMap="wcSchdlBMap" parameterType="WcSchdlBVo">
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.selectStartToEndDate */
+		SELECT A.COMP_ID ,A.USER_UID ,A.SCHDL_TYP_CD ,A.SUBJ ,A.LOC_NM ,A.OPEN_GRAD_CD ,A.SCHDL_STAT_CD ,
+				  A.WORK_PRIO_ORDR ,A.WORK_CMLT_YMD ,
+				  <if test="withLob">A.CONT ,</if>
+				  A.ATT_YN ,A.SELF_REG_YN ,A.REGR_UID ,A.REG_DT ,
+				  A.EDITOR_TYP_CD ,A.SCHDL_ID ,A.MOD_DT ,A.MODR_UID ,A.SCHDL_FILE_ID ,A.SCHDL_START_DT ,
+				  A.SCHDL_END_DT ,A.REPET_YN ,A.SCHDL_PID ,A.SCHDL_KND_CD ,A.GRP_ID ,A.DEPT_ID ,A.HOLI_YN ,
+				  A.SOLA_LUNA_YN ,A.LOC_LATD_LOTD_VA ,A.REGR_NM ,A.ALLDAY_YN
+			, DATEDIFF(DAY,A.SCHDL_START_DT,A.SCHDL_END_DT) AS AFTER_DAY
+		FROM WC_SCHDL_B A
+			INNER JOIN (
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B T
+				WHERE (
+					#{schdlPrevYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlNextYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR SOLA_LUNA_YN ='N'
+					)
+				
+				<if test="schdlKndCd == null or schdlKndCd != '-1'">
+					<if test="schdlKndCd != null"><![CDATA[ AND SCHDL_KND_CD = #{schdlKndCd, jdbcType=VARCHAR} ]]></if>
+					<if test="userUid != null and deptId==null"><![CDATA[ AND USER_UID = #{userUid, jdbcType=VARCHAR} ]]></if>
+					<if test="deptId != null"><![CDATA[ AND (DEPT_ID=#{deptId, jdbcType=VARCHAR} OR T.SCHDL_ID = (SELECT D.SCHDL_ID FROM WC_SCHDL_DEPT_R D WHERE D.ORG_ID = #{deptId, jdbcType=VARCHAR} AND D.SCHDL_ID = T.SCHDL_ID)) ]]></if>
+					<if test="compId != null"><![CDATA[ AND COMP_ID = #{compId, jdbcType=VARCHAR} ]]></if>
+					<if test="schdlTypCdLst != null">
+						AND SCHDL_TYP_CD IN
+						<foreach collection="schdlTypCdLst" item="item" index="index" separator="," open="(" close=")">
+						#{item, jdbcType=VARCHAR}
+					 </foreach>
+					</if>
+					<if test="schdlKndCdLst != null">
+						AND SCHDL_KND_CD IN
+						<foreach collection="schdlKndCdLst" item="item" index="index" separator="," open="(" close=")">
+							<if test="item != 2">#{item, jdbcType=VARCHAR}</if>
+						</foreach>				
+					</if>
+					
+					<if test="schdlKndCd==2 and choiGrpIds != null">
+						AND GRP_ID IN
+						<foreach collection="choiGrpIds" item="item" index="index" separator="," open="(" close=")">
+							#{item, jdbcType=VARCHAR}
+						</foreach>
+					</if>
+					
+					<if test="schdlKndCd == null and choiGrpIds != null">
+						OR GRP_ID IN
+						<foreach collection="choiGrpIds" item="item" index="index" separator="," open="(" close=")">
+							#{item, jdbcType=VARCHAR}
+						</foreach>
+					</if>
+				</if>
+				
+				<if test="schdlKndCd =='-1'">
+					AND USER_UID =  #{userUid, jdbcType=VARCHAR} 
+					AND SCHDL_KND_CD = '1'
+					
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B T
+				WHERE (
+					#{schdlPrevYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlNextYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR SOLA_LUNA_YN ='N'
+					)
+					AND ((DEPT_ID=#{deptId, jdbcType=VARCHAR} OR T.SCHDL_ID = (SELECT D.SCHDL_ID FROM WC_SCHDL_DEPT_R D WHERE D.ORG_ID = #{deptId, jdbcType=VARCHAR} AND D.SCHDL_ID = T.SCHDL_ID)) AND SCHDL_KND_CD = '3')
+				
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE (
+					#{schdlPrevYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlNextYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR SOLA_LUNA_YN ='N'
+					)
+					AND COMP_ID =  #{compId, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '4'
+				
+					<if test="choiGrpIds != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE (
+					#{schdlPrevYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlNextYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR SOLA_LUNA_YN ='N'
+					)
+					AND SCHDL_KND_CD = '2'
+					AND GRP_ID IN <foreach collection="choiGrpIds" item="item" index="index" separator="," open="(" close=")">#{item, jdbcType=VARCHAR}</foreach>	  
+					</if>
+				</if>
+
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE (
+					#{schdlPrevYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR #{schdlNextYm, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(7), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(7), SCHDL_END_DT, 23)
+					OR SOLA_LUNA_YN ='N'
+					)
+					AND SCHDL_TYP_CD = '5'
+			) B
+			ON A.SCHDL_ID = B.SCHDL_ID
+		<if test="schdlTypCd != null">
+		WHERE
+			SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR}
+		</if>		
+		ORDER BY SCHDL_START_DT
+	</select>
+	
+	<!-- 빈시간 검색 -->
+	<select id="selectEmptyTime" resultMap="wcSchdlBMap" parameterType="WcSchdlBVo">
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.selectEmptyTime */
+		<![CDATA[ 
+		SELECT *
+		FROM (
+			SELECT
+				GUEST_UID AS USER_UID
+				,SCHDL_TYP_CD
+				,SCHDL_KND_CD
+				,SUBJ
+				,A.SCHDL_ID
+				,CASE WHEN SCHDL_START_DT < CONVERT(datetime,#{schdlStartDt, jdbcType=VARCHAR} +' 00:00:00') THEN 0 ELSE DATEPART(hh, SCHDL_START_DT) END STARTHOUR
+				,SCHDL_START_DT
+				,CASE WHEN SCHDL_END_DT > CONVERT(datetime,#{schdlStartDt, jdbcType=VARCHAR} +' 23:59:59') THEN 23 ELSE  DATEPART(hh, SCHDL_END_DT) END ENDHOUR
+				,SCHDL_END_DT
+				,ALLDAY_YN
+			FROM WC_SCHDL_B A
+				INNER JOIN WC_PROM_GUEST_D B		
+			ON A.SCHDL_ID = B.SCHDL_ID
+			WHERE A.SCHDL_KND_CD = '1'
+			
+			UNION
+			 
+			SELECT
+				USER_UID
+				,SCHDL_TYP_CD
+				,SCHDL_KND_CD
+				,SUBJ
+				,A.SCHDL_ID
+				,CASE WHEN SCHDL_START_DT < CONVERT(datetime,#{schdlStartDt, jdbcType=VARCHAR} +' 00:00:00') THEN 0 ELSE DATEPART(hh, SCHDL_START_DT) END STARTHOUR
+				,SCHDL_START_DT
+				,CASE WHEN SCHDL_END_DT > CONVERT(datetime,#{schdlStartDt, jdbcType=VARCHAR} +' 23:59:59') THEN 23 ELSE  DATEPART(hh, SCHDL_END_DT) END ENDHOUR
+				,SCHDL_END_DT
+				,ALLDAY_YN
+			FROM WC_SCHDL_B A
+			WHERE A.SCHDL_KND_CD = '1'
+		) A
+		]]>
+		WHERE
+			USER_UID IN <foreach collection="promGuestLst" item="item" index="index" separator="," open="(" close=")">#{item.guestUid, jdbcType=VARCHAR}</foreach>				
+			AND #{schdlStartDt, jdbcType=VARCHAR} BETWEEN CONVERT(VARCHAR(10), SCHDL_START_DT, 23) AND CONVERT(VARCHAR(10), SCHDL_END_DT, 23) 
+		ORDER BY USER_UID, SCHDL_START_DT				
+	</select>
+	
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcSchdlB" resultType="Integer" parameterType="WcSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.countWcSchdlB */
+		SELECT COUNT(*) CNT
+		FROM WC_SCHDL_B WS_T
+		<if test="userUid != null or deptId != null or compId != null">
+			INNER JOIN (
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE SCHDL_TYP_CD = '5'
+				
+				<if test="userUid != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE USER_UID = #{userUid, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '1'
+				</if>
+				<if test="deptId != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE DEPT_ID = #{deptId, jdbcType=VARCHAR}
+					AND SCHDL_KND_CD = '3'
+				</if>
+				<if test="compId != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE COMP_ID = #{compId, jdbcType=VARCHAR}
+					<if test="userUid != null or deptId != null">
+					AND SCHDL_KND_CD = 4
+					</if>
+				</if>
+				<if test="userUid != null">
+				UNION
+				
+				SELECT SCHDL_ID
+				FROM WC_SCHDL_B
+				WHERE SCHDL_KND_CD = '2'
+				AND GRP_ID IN (SELECT DISTINCT SCHDL_GRP_ID FROM WC_SCHDL_GRP_MBSH_D WHERE USER_UID= #{userUid, jdbcType=VARCHAR})
+				</if>
+			) B ON WS_T.SCHDL_ID = B.SCHDL_ID
+		</if>
+		<include refid="selectWcSchdlBWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWcSchdlB" parameterType="WcSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.insertWcSchdlB */
+		INSERT INTO WC_SCHDL_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SCHDL_ID,
+			USER_UID,
+			COMP_ID,
+			DEPT_ID,
+			GRP_ID,
+			SCHDL_TYP_CD,
+			SCHDL_KND_CD,
+			OPEN_GRAD_CD,
+			SCHDL_STAT_CD,
+			EDITOR_TYP_CD,
+			SELF_REG_YN,
+			SCHDL_START_DT,
+			SCHDL_END_DT,
+			REPET_YN,
+			HOLI_YN,
+			SOLA_LUNA_YN,
+			SUBJ,
+			LOC_NM,
+			LOC_LATD_LOTD_VA,
+			CONT,
+			WORK_PRIO_ORDR,
+			WORK_CMLT_YMD,
+			ATT_YN,
+			REGR_UID,
+			REGR_NM,
+			REG_DT,
+			SCHDL_FILE_ID,
+			SCHDL_PID,
+			ALLDAY_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{schdlId, jdbcType=VARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+			#{compId, jdbcType=CHAR},
+			#{deptId, jdbcType=VARCHAR},
+			#{grpId, jdbcType=VARCHAR},
+			#{schdlTypCd, jdbcType=VARCHAR},
+			#{schdlKndCd, jdbcType=VARCHAR},
+			#{openGradCd, jdbcType=VARCHAR},
+			#{schdlStatCd, jdbcType=VARCHAR},
+			#{editorTypCd, jdbcType=VARCHAR},
+			#{selfRegYn, jdbcType=CHAR},
+			CONVERT(DATETIME, #{schdlStartDt, jdbcType=VARCHAR}, 120),
+			CONVERT(DATETIME, #{schdlEndDt, jdbcType=VARCHAR}, 120),
+			#{repetYn, jdbcType=CHAR},
+			#{holiYn, jdbcType=CHAR},
+			#{solaLunaYn, jdbcType=CHAR},
+			#{subj, jdbcType=NVARCHAR},
+			#{locNm, jdbcType=NVARCHAR},
+			#{locLatdLotdVa, jdbcType=VARCHAR},
+			#{cont, jdbcType=LONGVARCHAR},
+			#{workPrioOrdr, jdbcType=VARCHAR},
+			CONVERT(DATETIME, #{workCmltYmd, jdbcType=VARCHAR}, 120),
+			#{attYn, jdbcType=CHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			#{regrNm, jdbcType=VARCHAR},
+			GETDATE(),
+			#{schdlFileId, jdbcType=VARCHAR},
+			#{schdlPid, jdbcType=VARCHAR},
+			#{alldayYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWcSchdlB" parameterType="WcSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.updateWcSchdlB */
+		UPDATE WC_SCHDL_B
+		<set>
+			<if test="userUid != null"> USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="compId != null"> COMP_ID = #{compId, jdbcType=CHAR},</if>
+			<if test="deptId != null"> DEPT_ID = #{deptId, jdbcType=VARCHAR},</if>
+			<if test="grpId != null"> GRP_ID = #{grpId, jdbcType=VARCHAR},</if>
+			<if test="schdlTypCd != null"> SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR},</if>
+			<if test="schdlKndCd != null"> SCHDL_KND_CD = #{schdlKndCd, jdbcType=VARCHAR},</if>
+			<if test="openGradCd != null"> OPEN_GRAD_CD = #{openGradCd, jdbcType=VARCHAR},</if>
+			<if test="schdlStatCd != null"> SCHDL_STAT_CD = #{schdlStatCd, jdbcType=VARCHAR},</if>
+			<if test="editorTypCd != null"> EDITOR_TYP_CD = #{editorTypCd, jdbcType=VARCHAR},</if>
+			<if test="selfRegYn != null"> SELF_REG_YN = #{selfRegYn, jdbcType=CHAR},</if>
+			<if test="schdlStartDt != null"> SCHDL_START_DT = CONVERT(DATETIME, #{schdlStartDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="schdlEndDt != null"> SCHDL_END_DT = CONVERT(DATETIME, #{schdlEndDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="repetYn != null"> REPET_YN = #{repetYn, jdbcType=CHAR},</if>
+			<if test="holiYn != null"> HOLI_YN = #{holiYn, jdbcType=CHAR},</if>
+			<if test="solaLunaYn != null"> SOLA_LUNA_YN = #{solaLunaYn, jdbcType=CHAR},</if>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=NVARCHAR},</if>
+			<if test="locNm != null"> LOC_NM = #{locNm, jdbcType=NVARCHAR},</if>
+			<if test="locLatdLotdVa != null"> LOC_LATD_LOTD_VA = #{locLatdLotdVa, jdbcType=VARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=LONGVARCHAR},</if>
+			<if test="workPrioOrdr != null"> WORK_PRIO_ORDR = #{workPrioOrdr, jdbcType=VARCHAR},</if>
+			<if test="workCmltYmd != null"> WORK_CMLT_YMD = CONVERT(DATETIME, #{workCmltYmd, jdbcType=VARCHAR}, 120),</if>
+			<if test="attYn != null"> ATT_YN = #{attYn, jdbcType=CHAR},</if>
+			<if test="modDt != null">MOD_DT = GETDATE(),</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="schdlFileId != null"> SCHDL_FILE_ID = #{schdlFileId, jdbcType=VARCHAR},</if>
+			<if test="schdlPid != null"> SCHDL_PID = #{schdlPid, jdbcType=VARCHAR},</if>
+			<if test="alldayYn != null"> ALLDAY_YN = #{alldayYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=CHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWcSchdlB" parameterType="WcSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcSchdlBDao.deleteWcSchdlB */
+		DELETE FROM WC_SCHDL_B
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=CHAR}</if>
+			<if test="schdlPid != null and schdlPid !=''"> AND SCHDL_PID = #{schdlPid, jdbcType=CHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_AGNT_R[대리인 관계] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcAgntRDao">
+
+	<resultMap id="wcAgntRMap" type="WcAgntRVo">
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="agntUid" column="AGNT_ID" /><!-- 대리인UID -->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWcAgntRWhere">
+		<where>
+			<if test="compId != null and compId !=''"> AND WA_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND WA_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null and agntUid !=''"> AND WA_T.AGNT_ID = #{agntUid, jdbcType=VARCHAR}</if>
+			
+			
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcAgntR" resultMap="wcAgntRMap" parameterType="WcAgntRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcAgntRDao.selectWcAgntR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.COMP_ID,N.USER_UID,N.AGNT_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			WA_T.COMP_ID,WA_T.USER_UID,WA_T.AGNT_ID,
+		</trim>
+		FROM WC_AGNT_R WA_T
+		<include refid="selectWcAgntRWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY WA_T.COMP_ID,WA_T.USER_UID,WA_T.AGNT_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcAgntR" resultType="Integer" parameterType="WcAgntRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcAgntRDao.countWcAgntR */
+		SELECT COUNT(*) CNT
+		FROM WC_AGNT_R WA_T
+		<include refid="selectWcAgntRWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWcAgntR" parameterType="WcAgntRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcAgntRDao.insertWcAgntR */
+		INSERT INTO WC_AGNT_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			 COMP_ID, USER_UID, AGNT_ID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR},#{userUid, jdbcType=VARCHAR},#{agntUid, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWcAgntR" parameterType="WcAgntRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcAgntRDao.updateWcAgntR */
+		UPDATE WC_AGNT_R
+		<set>
+		    <!-- 
+			<if test="cntcTypCd != null"> COMP_ID = #{compId, jdbcType=CHAR},</if>
+			<if test="cntcCont != null"> USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="dftCntcYn != null"> AGNT_ID = #{agntUid, jdbcType=VARCHAR},</if>
+			 -->
+		</set>
+		<where>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null"> AND AGNT_ID = #{agntUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWcAgntR" parameterType="WcAgntRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcAgntRDao.deleteWcAgntR */
+		DELETE FROM WC_AGNT_R
+		<where>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null"> AND AGNT_ID = #{agntUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

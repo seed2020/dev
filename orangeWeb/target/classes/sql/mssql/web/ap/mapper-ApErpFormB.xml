@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ERP_FORM_B[ERP양식기본] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApErpFormBDao">
+
+	<resultMap id="apErpFormBMap" type="ApErpFormBVo">
+		<id property="erpFormId" column="ERP_FORM_ID" /><!-- ERP양식ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="erpFormTypCd" column="ERP_FORM_TYP_CD" /><!-- ERP양식구분코드 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="regUrl" column="REG_URL" /><!-- 등록URL -->
+		<result property="infmUrl" column="INFM_URL" /><!-- 통보URL -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApErpFormB" resultMap="apErpFormBMap" parameterType="ApErpFormBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpFormBDao.selectApErpFormB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM AP_RESC_D WHERE COMP_ID = M.COMP_ID AND RESC_ID = M.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.ERP_FORM_ID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.ERP_FORM_ID,
+			T.COMP_ID,
+			T.ERP_FORM_TYP_CD,
+			T.RESC_ID,
+			T.REG_URL,
+			T.INFM_URL,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM AP_RESC_D WHERE COMP_ID = T.COMP_ID AND RESC_ID = T.RESC_ID AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			</if>
+		</trim>
+		FROM AP_ERP_FORM_B T<if test="schCat == 'erpFormNm' and schWord != null and schWord != ''">, AP_RESC_D R</if>
+		<where>
+			<if test="schCat == 'erpFormNm' and schWord != null and schWord != ''">AND R.COMP_ID = T.COMP_ID AND R.LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND R.RESC_ID = T.RESC_ID AND R.RESC_VA LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+			<if test="erpFormId != null">AND T.ERP_FORM_ID = #{erpFormId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="erpFormTypCd != null and erpFormTypCd != ''">AND T.ERP_FORM_TYP_CD = #{erpFormTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.ERP_FORM_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApErpFormB" resultType="Integer" parameterType="ApErpFormBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpFormBDao.countApErpFormB */
+		SELECT COUNT(*) CNT
+		FROM AP_ERP_FORM_B T<if test="schCat == 'erpFormNm' and schWord != null and schWord != ''">, AP_RESC_D R</if>
+		<where>
+			<if test="schCat == 'erpFormNm' and schWord != null and schWord != ''">AND R.COMP_ID = T.COMP_ID AND R.LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND R.RESC_ID = T.RESC_ID AND R.RESC_VA LIKE '%'+#{schWord, jdbcType=VARCHAR}+'%'</if>
+			<if test="erpFormId != null">AND T.ERP_FORM_ID = #{erpFormId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="erpFormTypCd != null and erpFormTypCd != ''">AND T.ERP_FORM_TYP_CD = #{erpFormTypCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApErpFormB" parameterType="ApErpFormBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpFormBDao.insertApErpFormB */
+		INSERT INTO AP_ERP_FORM_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ERP_FORM_ID,
+			COMP_ID,
+			ERP_FORM_TYP_CD,
+			RESC_ID,
+			REG_URL,
+			INFM_URL,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{erpFormId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{erpFormTypCd, jdbcType=VARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{regUrl, jdbcType=NVARCHAR},
+			#{infmUrl, jdbcType=NVARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApErpFormB" parameterType="ApErpFormBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpFormBDao.updateApErpFormB */
+		UPDATE AP_ERP_FORM_B
+		<set>
+			<if test="erpFormId != null">ERP_FORM_ID = #{erpFormId, jdbcType=VARCHAR},</if>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="erpFormTypCd != null">ERP_FORM_TYP_CD = #{erpFormTypCd, jdbcType=VARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="regUrl != null">REG_URL = #{regUrl, jdbcType=NVARCHAR},</if>
+			<if test="infmUrl != null">INFM_URL = #{infmUrl, jdbcType=NVARCHAR},</if>
+		</set>
+		<where>
+			<if test="erpFormId != null">AND ERP_FORM_ID = #{erpFormId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApErpFormB" parameterType="ApErpFormBVo" >
+		/* com.innobiz.orange.web.ap.dao.ApErpFormBDao.deleteApErpFormB */
+		DELETE FROM AP_ERP_FORM_B
+		<where>
+			<if test="erpFormId != null">AND ERP_FORM_ID = #{erpFormId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

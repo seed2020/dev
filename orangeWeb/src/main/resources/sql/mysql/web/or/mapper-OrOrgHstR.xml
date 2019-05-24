@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : OR_ORG_HST_R[조직이력관계] -->
+<mapper namespace="com.innobiz.orange.web.or.dao.OrOrgHstRDao">
+
+	<resultMap id="orOrgHstRMap" type="OrOrgHstRVo">
+		<id property="orgId" column="ORG_ID" /><!-- 조직ID -->
+		<id property="hstOrgId" column="HST_ORG_ID" /><!-- 이력조직ID -->
+		<result property="hstRescId" column="HST_RESC_ID" /><!-- 이력리소스ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="hstRescNm" column="HST_RESC_NM" /><!-- 이력리소스명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectOrOrgHstR" resultMap="orOrgHstRMap" parameterType="OrOrgHstRVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgHstRDao.selectOrOrgHstR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = M.HST_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) HST_RESC_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.ORG_ID,
+			T.HST_ORG_ID,
+			T.HST_RESC_ID,
+			T.SORT_ORDR,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = T.HST_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) HST_RESC_NM,
+			</if>
+		</trim>
+		FROM OR_ORG_HST_R T
+		<where>
+			<if test="orgId != null">AND T.ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="hstOrgId != null">AND T.HST_ORG_ID = #{hstOrgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.ORG_ID, T.HST_ORG_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countOrOrgHstR" resultType="Integer" parameterType="OrOrgHstRVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgHstRDao.countOrOrgHstR */
+		SELECT COUNT(*) CNT
+		FROM OR_ORG_HST_R T
+		<where>
+			<if test="orgId != null">AND T.ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="hstOrgId != null">AND T.HST_ORG_ID = #{hstOrgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertOrOrgHstR" parameterType="OrOrgHstRVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgHstRDao.insertOrOrgHstR */
+		INSERT INTO OR_ORG_HST_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ORG_ID,
+			HST_ORG_ID,
+			HST_RESC_ID,
+			SORT_ORDR,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{orgId, jdbcType=VARCHAR},
+			#{hstOrgId, jdbcType=VARCHAR},
+			#{hstRescId, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT IFNULL(MAX(P.SORT_ORDR),0)+1 FROM OR_ORG_HST_R P WHERE P.ORG_ID = #{orgId, jdbcType=VARCHAR}),</if>
+		</trim>
+	</insert>
+
+	<update id="updateOrOrgHstR" parameterType="OrOrgHstRVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgHstRDao.updateOrOrgHstR */
+		UPDATE OR_ORG_HST_R
+		<set>
+			<if test="orgId != null">ORG_ID = #{orgId, jdbcType=VARCHAR},</if>
+			<if test="hstOrgId != null">HST_ORG_ID = #{hstOrgId, jdbcType=VARCHAR},</if>
+			<if test="hstRescId != null">HST_RESC_ID = #{hstRescId, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="orgId != null">AND ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="hstOrgId != null">AND HST_ORG_ID = #{hstOrgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteOrOrgHstR" parameterType="OrOrgHstRVo" >
+		/* com.innobiz.orange.web.or.dao.OrOrgHstRDao.deleteOrOrgHstR */
+		DELETE FROM OR_ORG_HST_R
+		<where>
+			<if test="orgId != null">AND ORG_ID = #{orgId, jdbcType=VARCHAR}</if>
+			<if test="hstOrgId != null">AND HST_ORG_ID = #{hstOrgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

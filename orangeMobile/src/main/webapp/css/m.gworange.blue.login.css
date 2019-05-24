@@ -1,0 +1,88 @@
+@charset "utf-8";
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var, b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video { margin:0; padding:0; border:0; outline:0; }
+body { font-family:"gulim","dotum","arial"; font-size:0.8em; color:#222; }
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section { display:block; }
+nav ul { list-style:none; }
+blockquote, q { quotes:none; }
+blockquote:before, blockquote:after,
+q:before, q:after { content:''; content:none; }
+/* change colours to suit your needs */
+ins { background-color:#ff9; color:#000;text-decoration:none;}
+/* change colours to suit your needs */
+mark { background-color:#ff9; color:#000; font-style:italic; font-weight:bold; }
+del { text-decoration: line-through; }
+abbr[title], dfn[title] { border-bottom:1px dotted; cursor:help; }
+table { border-collapse:collapse; border-spacing:0; }
+/* change border colour to suit your needs */
+hr { display:block; height:1px; border:0; border-top:1px solid #cccccc; margin:0; padding:0; }
+body { -webkit-text-size-adjust:none; } 
+
+/* wrapper */
+.wrapper,.wrapscroll { position:absolute; top:0; right:0; bottom:0; left:0; overflow:hidden; background:#f7f7fb; }
+.wrapscroll { overflow-y:auto; }
+.wrapscroll::-webkit-scrollbar { display:none; }
+
+/* header */
+.header,.header2 { width:100%; }
+.header { height:60px; margin:35px 0 0 0; }
+.header2 { height:55px; background:#fff; border-bottom:1px solid #dedede; margin:0; }
+.header .tit { width:65px; height:40px; font-size:1.6em; color:#ed5f00; font-weight:bold; background:url("/images/blue/header_logo2.png") no-repeat 0 -7px; background-size:contain; padding:17px 0 0 108px; margin:0 auto; }
+.header2 .logo { float:left; width:82px; height:40px; margin:7px 0 0 10px; }
+.header2 .tit { position:absolute; left:87px; right:0; font-size:1.6em; color:#ed5f00; font-weight:bold; text-align:center; padding:18px 89px 0 0; }
+
+/* input */
+.inputarea { padding:0 10px 0 10px; }
+.inputarea dd { padding:20px 0 0 0; }
+.inputarea2 { padding:35px 10px 0 10px; }
+.inputarea2 dd { padding:10px 0 0 0; }
+
+.input_pw { height:35px; font-size:1.2em; color:#999; background:#fff; border:1px solid #cccccc; border-radius:3px; padding:17px 0 0 3px; }
+.input_pw2 { margin:-53px 4px 0 4px; }
+.input_pw2 .input_lt { width:100%; height:45px; font-size:1.2em; color:#999; padding:1px 0 0 0; margin:3px 0 3px 0; opacity:0.1; }
+
+.input,.input_disabled { border:1px solid #cccccc; border-radius:3px; padding:0 3px 0 3px; }
+.input { background:#fff; }
+.input_disabled { background:#f7f3f7; }
+.input_lt,.input_lt_disabled { width:100%; height:45px; font-size:1.2em; border:0px solid #fff; margin:3px 0 3px 0; }
+.input_lt { color:#999; padding:1px 0 0 0; }
+.input_lt_disabled { color:#b5b4b4; background:#f7f3f7; padding:1px 0 0 0; }
+
+.langarea { width:100%; margin:10px 0 0 0; height:32px; }
+.checklt { position:absolute; left:10px; right:50%; }
+.checklt .check,.check_on,.check_disabled,.check_disabled_on { float:left; width:26px; height:26px; margin:3px 5px 0 0; cursor:pointer; }
+.checklt .check { background:url("/images/blue/login_check.png") no-repeat; background-size:contain; }
+.checklt .check_on { background:url("/images/blue/login_check_on.png") no-repeat; background-size:contain; }
+.checklt .check_disabled { background:url("/images/blue/login_checkd.png") no-repeat; background-size:contain; }
+.checklt .check_disabled_on { background:url("/images/blue/login_checkd_on.png") no-repeat; background-size:contain; }
+.checklt .txt { font-size:1.2em; color:#999; line-height:140%; letter-spacing:-0.03em; word-spacing:0.06em; padding:7px 5px 0 0; }
+.selectrt { position:absolute; left:58%; right:10px; }
+.select { height:30px; background:#fff; border:1px solid #cccccc; border-radius:3px; cursor:pointer; margin:0 0 0 5px; }
+.select .txt { position:absolute; top:8px; left:10px; right:29px; }
+.select .txt span { float:left; width:100%; font-size:1.2em; color:#999; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; padding:0px 0 0 0; }
+.select .btn { float:right; width:28px; height:30px; background:url("/images/blue/search_btn1.png") no-repeat 2px 0; border-left:1px solid #cccccc; background-size:contain; }
+.select_open { position:absolute; top:30px; left:5px; right:2px; z-index:3; visibility:visible; }
+.select_open .open { float:left; width:100%; background:#fff; border:1px solid #cccccc; border-bottom-left-radius:5px; border-bottom-right-radius:5px; }
+.select_open .open dd { float:left; font-size:1em; color:#999; }
+.select_open .open .txt { width:97%; height:23px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; padding:8px 0 0 5px; cursor:pointer; }
+.select_open .open .line { width:100%; border-bottom:1px dotted #cccccc; }
+.btnarea { margin:45px 0 0 0; padding:0 10px 0 10px; }
+.btnarea .btn { height:35px; font-size:1.6em; color:#fff; text-align:center; background:#109aad; border:1px solid #109aad; border-radius:3px; padding:14px 0 0 0; cursor:pointer; }
+
+/* footer */
+.footer { position:absolute; right:0; bottom:0; left:0; font:0.95em "Tahoma","gulim","arial"; color:#aeaeae; background:#efeff7; border-top:1px solid #dfdfef; } 
+.wrap { width:100%; }
+.footer_mu { position:relative; float:right; left:-50%; text-align:left; }
+.footer_mu dl { position:relative; left:50%; padding:32px 0 25px 0; text-align:center; margin:0 auto; }
+.footer_mu dd { float:left; color:#5e5e5e; background:#efeff7; border:1px solid #cdcdd7; border-radius:3px; padding:5px 17px 5px 17px; margin:0 1px 0 1px; cursor:pointer; }
+.copyright { padding:18px 0 18px 0; text-align:center; margin:0 auto; width:100%; right:0; }

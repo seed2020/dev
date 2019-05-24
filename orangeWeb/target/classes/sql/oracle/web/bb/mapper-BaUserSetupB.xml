@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_USER_SETUP_B[사용자설정] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaUserSetupBDao">
+
+	<resultMap id="baUserSetupBMap" type="BaUserSetupBVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="ddln" column="DDLN" /><!-- 기한 -->
+	</resultMap>
+
+	<select id="selectBaUserSetupB" resultMap="baUserSetupBMap" parameterType="BaUserSetupBVo" >
+		/* com.innobiz.orange.web.bb.dao.BaUserSetupBDao.selectBaUserSetupB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.USER_UID,
+			T.DDLN,
+		</trim>
+		FROM BA_USER_SETUP_B T
+		<where>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID ASC</if>
+	</select>
+
+	<select id="countBaUserSetupB" resultType="Integer" parameterType="BaUserSetupBVo" >
+		/* com.innobiz.orange.web.bb.dao.BaUserSetupBDao.countBaUserSetupB */
+		SELECT COUNT(*) CNT
+		FROM BA_USER_SETUP_B T
+		<where>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertBaUserSetupB" parameterType="BaUserSetupBVo">
+		/* com.innobiz.orange.web.bb.dao.BaUserSetupBDao.insertBaUserSetupB */
+		INSERT INTO BA_USER_SETUP_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			DDLN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{userUid, jdbcType=VARCHAR},
+			#{ddln, jdbcType=INTEGER},
+		</trim>
+	</insert>
+
+	<update id="updateBaUserSetupB" parameterType="BaUserSetupBVo" >
+		/* com.innobiz.orange.web.pt.dao.BaUserSetupBDao.updateBaUserSetupB */
+		UPDATE BA_USER_SETUP_B
+		<set>
+			<if test="ddln != null"> DDLN = #{ddln, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			AND USER_UID = #{userUid, jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<delete id="deleteBaUserSetupB" parameterType="BaUserSetupBVo">
+		/* com.innobiz.orange.web.bb.dao.BaUserSetupBDao.deleteBaUserSetupB */
+		DELETE FROM BA_USER_SETUP_B
+		<where>
+			AND USER_UID = #{userUid, jdbcType=VARCHAR}
+		</where>
+	</delete>
+
+</mapper>

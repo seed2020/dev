@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_AUTH_GRP_USER_R[권한그룹사용자관계] -->
+<mapper namespace="com.innobiz.orange.web.wb.dao.WbBcCntcDDao">
+
+	<resultMap id="wbBcCntcDMap" type="WbBcCntcDVo">
+		<result property="bcId" column="BC_ID" /><!-- 명함ID -->
+		<result property="bcCntcSeq" column="BC_CNTC_SEQ" /><!-- 명함연락처상세ID -->
+		<result property="cntcTypCd" column="CNTC_TYP_CD" /><!-- 연락처구분코드 -->
+		<result property="cntcCont" column="CNTC_CONT" /><!-- 연락처내용 -->
+		<result property="dftCntcYn" column="DFT_CNTC_YN" /><!-- 기본연락처여부 -->
+		<result property="cntcClsCd" column="CNTC_CLS_CD" /><!-- 연락처분류코드 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWbBcCntcDWhere">
+		<where>
+			<if test="bcId != null and bcId !=''"> AND WBC_T.BC_ID = #{bcId, jdbcType=VARCHAR}</if>
+			<if test="bcCntcSeq != null"> AND WBC_T.BC_CNTC_SEQ = #{bcCntcSeq, jdbcType=INTEGER}</if>
+			<if test="cntcTypCd != null"> AND WBC_T.CNTC_TYP_CD = #{cntcTypCd, jdbcType=VARCHAR}</if>
+			<if test="cntcClsCd != null"> AND WBC_T.CNTC_CLS_CD = #{cntcClsCd, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWbBcCntcD" resultMap="wbBcCntcDMap" parameterType="WbBcCntcDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcCntcDDao.selectWbBcCntcD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			WBC_T.BC_ID , WBC_T.BC_CNTC_SEQ , WBC_T.CNTC_TYP_CD , WBC_T.CNTC_CONT , DFT_CNTC_YN,CNTC_CLS_CD,
+		</trim>
+		FROM WB_BC_CNTC_D WBC_T
+		<include refid="selectWbBcCntcDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY WBC_T.BC_ID,WBC_T.CNTC_TYP_CD</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWbBcCntcD" resultType="Integer" parameterType="WbBcCntcDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcCntcDDao.countWbBcCntcD */
+		SELECT COUNT(*) CNT
+		FROM WB_BC_CNTC_D WBC_T
+		<include refid="selectWbBcCntcDWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWbBcCntcD" parameterType="WbBcCntcDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcCntcDDao.insertWbBcCntcD */
+		INSERT INTO WB_BC_CNTC_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			BC_ID , BC_CNTC_SEQ , CNTC_TYP_CD , CNTC_CONT , DFT_CNTC_YN , CNTC_CLS_CD,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{bcId, jdbcType=VARCHAR},#{bcCntcSeq, jdbcType=INTEGER},#{cntcTypCd, jdbcType=VARCHAR},#{cntcCont, jdbcType=VARCHAR},#{dftCntcYn, jdbcType=VARCHAR},#{cntcClsCd, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWbBcCntcD" parameterType="WbBcCntcDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcCntcDDao.updateWbBcCntcD */
+		UPDATE WB_BC_CNTC_D
+		<set>
+			<if test="cntcTypCd != null"> CNTC_TYP_CD = #{cntcTypCd, jdbcType=VARCHAR},</if>
+			<if test="cntcCont != null"> CNTC_CONT = #{cntcCont, jdbcType=VARCHAR},</if>
+			<if test="dftCntcYn != null"> DFT_CNTC_YN = #{dftCntcYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="bcId != null and bcId !=''"> AND BC_ID = #{bcId, jdbcType=VARCHAR}</if>
+			<if test="bcCntcSeq != null"> AND BC_CNTC_SEQ = #{bcCntcSeq, jdbcType=INTEGER}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWbBcCntcD" parameterType="WbBcCntcDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcCntcDDao.deleteWbBcCntcD */
+		DELETE FROM WB_BC_CNTC_D
+		<where>
+			<if test="bcId != null and bcId !=''"> AND BC_ID = #{bcId, jdbcType=VARCHAR}</if>
+			<if test="bcCntcSeq != null"> AND BC_CNTC_SEQ = #{bcCntcSeq, jdbcType=INTEGER}</if>
+		</where>
+	</delete>
+	
+	
+	<!-- 연락처의 최대순서 -->
+	<select id="selectMaxCntcSeq" resultType="Integer" parameterType="WbBcCntcDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcCntcDDao.selectMaxCntcSeq */
+		SELECT MAX(BC_CNTC_SEQ) AS BC_CNTC_SEQ
+		FROM WB_BC_CNTC_D
+		WHERE BC_ID = #{bcId, jdbcType=VARCHAR}
+		AND CNTC_TYP_CD = #{cntcTypCd, jdbcType=VARCHAR}
+	</select>
+
+</mapper>

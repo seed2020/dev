@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_AGN_APNT_D[대리지정상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApAgnApntDDao">
+
+	<resultMap id="apAgnApntDMap" type="ApAgnApntDVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="agntUid" column="AGNT_UID" /><!-- 대리인UID -->
+		<id property="seq" column="SEQ" /><!-- 일련번호 -->
+		<result property="endDt" column="END_DT" /><!-- 종료일시 -->
+		<result property="strtDt" column="STRT_DT" /><!-- 시작일시 -->
+		<result property="agntRescId" column="AGNT_RESC_ID" /><!-- 대리인리소스ID -->
+		<result property="absRsonCd" column="ABS_RSON_CD" /><!-- 부재사유코드 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자U명 -->
+		<result property="agntNm" column="AGNT_NM" /><!-- 대리인U명 -->
+		<result property="agntRescNm" column="AGNT_RESC_NM" /><!-- 대리인리소스명 -->
+		<result property="absRsonNm" column="ABS_RSON_NM" /><!-- 부재사유명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApAgnApntD" resultMap="apAgnApntDMap" parameterType="ApAgnApntDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApAgnApntDDao.selectApAgnApntD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.AGNT_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AGNT_NM,
+			(SELECT RESC_VA FROM AP_RESC_B WHERE RESC_ID = M.AGNT_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AGNT_RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ABS_RSON_CD' AND CD = M.ABS_RSON_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ABS_RSON_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.USER_UID,
+			T.AGNT_UID,
+			T.SEQ,
+			DATE_FORMAT(T.END_DT, '%Y-%m-%d %H:%i:%s') END_DT,
+			DATE_FORMAT(T.STRT_DT, '%Y-%m-%d %H:%i:%s') STRT_DT,
+			T.AGNT_RESC_ID,
+			T.ABS_RSON_CD,
+			T.REGR_UID,
+			DATE_FORMAT(T.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT,
+			T.MODR_UID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.AGNT_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AGNT_NM,
+			(SELECT RESC_VA FROM AP_RESC_B WHERE RESC_ID = T.AGNT_RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AGNT_RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ABS_RSON_CD' AND CD = T.ABS_RSON_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) ABS_RSON_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM AP_AGN_APNT_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null">AND T.AGNT_UID = #{agntUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="(durCat == 'endDt' or durCat == 'between') and durEndDt != null and durEndDt != ''"><![CDATA[AND T.END_DT >= STR_TO_DATE(#{durEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="(durCat == 'strtDt' or durCat == 'between') and durStrtDt != null and durStrtDt != ''"><![CDATA[AND T.STRT_DT <= STR_TO_DATE(#{durStrtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID, T.AGNT_UID, T.SEQ</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countApAgnApntD" resultType="Integer" parameterType="ApAgnApntDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApAgnApntDDao.countApAgnApntD */
+		SELECT COUNT(*) CNT
+		FROM AP_AGN_APNT_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null">AND T.AGNT_UID = #{agntUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND T.SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="(durCat == 'endDt' or durCat == 'between') and durEndDt != null and durEndDt != ''"><![CDATA[AND T.END_DT >= STR_TO_DATE(#{durEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="(durCat == 'strtDt' or durCat == 'between') and durStrtDt != null and durStrtDt != ''"><![CDATA[AND T.STRT_DT <= STR_TO_DATE(#{durStrtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApAgnApntD" parameterType="ApAgnApntDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApAgnApntDDao.insertApAgnApntD */
+		INSERT INTO AP_AGN_APNT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			AGNT_UID,
+			SEQ,
+			END_DT,
+			STRT_DT,
+			AGNT_RESC_ID,
+			ABS_RSON_CD,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR},
+			#{agntUid, jdbcType=VARCHAR},
+			<if test="seq != null and seq != ''">#{seq, jdbcType=INTEGER},</if>
+			<if test="seq == null or seq == ''">(SELECT IFNULL(MAX(P.SEQ),0)+1 FROM AP_AGN_APNT_D P WHERE P.USER_UID = #{userUid, jdbcType=VARCHAR} AND P.AGNT_UID = #{agntUid, jdbcType=VARCHAR}),</if>
+			<if test="endDt == 'sysdate'">NOW(),</if><if test="endDt == null or endDt == ''">NULL,</if>
+			<if test="endDt != null and endDt != '' and endDt != 'sysdate'">STR_TO_DATE(#{endDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="strtDt == 'sysdate'">NOW(),</if><if test="strtDt == null or strtDt == ''">NULL,</if>
+			<if test="strtDt != null and strtDt != '' and strtDt != 'sysdate'">STR_TO_DATE(#{strtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{agntRescId, jdbcType=VARCHAR},
+			#{absRsonCd, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateApAgnApntD" parameterType="ApAgnApntDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApAgnApntDDao.updateApAgnApntD */
+		UPDATE AP_AGN_APNT_D
+		<set>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="agntUid != null">AGNT_UID = #{agntUid, jdbcType=VARCHAR},</if>
+			<if test="seq != null">SEQ = #{seq, jdbcType=INTEGER},</if>
+			<if test="endDt != null">
+				<if test="endDt == 'sysdate'">END_DT = NOW(),</if>
+				<if test="endDt == ''">END_DT = NULL,</if>
+				<if test="endDt != '' and endDt != 'sysdate'">END_DT = STR_TO_DATE(#{endDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="strtDt != null">
+				<if test="strtDt == 'sysdate'">STRT_DT = NOW(),</if>
+				<if test="strtDt == ''">STRT_DT = NULL,</if>
+				<if test="strtDt != '' and strtDt != 'sysdate'">STRT_DT = STR_TO_DATE(#{strtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="agntRescId != null">AGNT_RESC_ID = #{agntRescId, jdbcType=VARCHAR},</if>
+			<if test="absRsonCd != null">ABS_RSON_CD = #{absRsonCd, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = NOW(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null">AND AGNT_UID = #{agntUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="(durCat == 'endDt' or durCat == 'between') and durEndDt != null and durEndDt != ''"><![CDATA[AND T.END_DT >= STR_TO_DATE(#{durEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="(durCat == 'strtDt' or durCat == 'between') and durStrtDt != null and durStrtDt != ''"><![CDATA[AND T.STRT_DT <= STR_TO_DATE(#{durStrtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApAgnApntD" parameterType="ApAgnApntDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApAgnApntDDao.deleteApAgnApntD */
+		DELETE FROM AP_AGN_APNT_D
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="agntUid != null">AND AGNT_UID = #{agntUid, jdbcType=VARCHAR}</if>
+			<if test="seq != null">AND SEQ = #{seq, jdbcType=INTEGER}</if>
+			<if test="endDt != null and endDt != ''">AND END_DT = STR_TO_DATE(#{endDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')</if>
+			<if test="(durCat == 'endDt' or durCat == 'between') and durEndDt != null and durEndDt != ''"><![CDATA[AND T.END_DT >= STR_TO_DATE(#{durEndDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="(durCat == 'strtDt' or durCat == 'between') and durStrtDt != null and durStrtDt != ''"><![CDATA[AND T.STRT_DT <= STR_TO_DATE(#{durStrtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s')]]></if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

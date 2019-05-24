@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : EM_ADR_BLD_INFO_B[건물정보] -->
+<mapper namespace="com.innobiz.orange.web.em.dao.EmAdrBldInfoBDao">
+
+	<resultMap id="emAdrBldInfoBMap" type="EmAdrBldInfoBVo">
+		<id property="bldMngNo" column="BLD_MNG_NO" /><!-- 건물관리번호 -->
+		<result property="lowTownCd" column="LOW_TOWN_CD" /><!-- 법정동코드 -->
+		<result property="sido" column="SIDO" /><!-- 시도 -->
+		<result property="gugun" column="GUGUN" /><!-- 시군구 -->
+		<result property="dong" column="DONG" /><!-- 법정읍면동 -->
+		<result property="ri" column="RI" /><!-- 법정리 -->
+		<result property="mtYn" column="MT_YN" /><!-- 산여부 -->
+		<result property="mainLotNo" column="MAIN_LOT_NO" /><!-- 지번본번 -->
+		<result property="subLotNo" column="SUB_LOT_NO" /><!-- 지번부번 -->
+		<result property="roadNmCd" column="ROAD_NM_CD" /><!-- 도로명코드 -->
+		<result property="roadNm" column="ROAD_NM" /><!-- 도로명 -->
+		<result property="basementYn" column="BASEMENT_YN" /><!-- 지하여부 -->
+		<result property="mainBldNo" column="MAIN_BLD_NO" /><!-- 건물본번 -->
+		<result property="subBldNo" column="SUB_BLD_NO" /><!-- 건물부번 -->
+		<result property="bldNm" column="BLD_NM" /><!-- 건축물대장건물명 -->
+		<result property="bldDetlNm" column="BLD_DETL_NM" /><!-- 상세건물명 -->
+		<result property="dongSeq" column="DONG_SEQ" /><!-- 읍면동일련번호 -->
+		<result property="govTownCd" column="GOV_TOWN_CD" /><!-- 행정동코드 -->
+		<result property="govTownNm" column="GOV_TOWN_NM" /><!-- 행정동명 -->
+		<result property="zipNo" column="ZIP_NO" /><!-- 우편번호 -->
+		<result property="zipSeq" column="ZIP_SEQ" /><!-- 우편일련번호 -->
+		<result property="bulkDeliveryNm" column="BULK_DELIVERY_NM" /><!-- 다량배달처명 -->
+		<result property="moveReasonCd" column="MOVE_REASON_CD" /><!-- 이동사유코드 -->
+		<result property="noticeYmd" column="NOTICE_YMD" /><!-- 고시일자 -->
+		<result property="beforeRoadAdr" column="BEFORE_ROAD_ADR" /><!-- 변경전도로명주소 -->
+		<result property="cityPublicBldNm" column="CITY_PUBLIC_BLD_NM" /><!-- 시군구용건물명 -->
+		<result property="aptHourseYn" column="APT_HOURSE_YN" /><!-- 공동주택여부 -->
+		<result property="dftZoneNo" column="DFT_ZONE_NO" /><!-- 기초구역번호 -->
+		<result property="detlAdrYn" column="DETL_ADR_YN" /><!-- 상세주소여부 -->
+		<result property="비고1" column="NOTE1" /><!-- 비고1 -->
+		<result property="비고2" column="NOTE2" /><!-- 비고2 -->
+	</resultMap>
+	
+	<resultMap id="emAdrCommVoMap" type="EmAdrCommVo">
+		<result property="label" column="LABEL" /><!-- 시도 OR 시군구 명 -->
+		<result property="value" column="VALUE" /><!-- 코드 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectEmAdrBldInfoBWhere">
+		<where>
+			<if test="bldMngNo != null"> BLD_MNG_NO = #{bldMngNo, jdbcType=VARCHAR},</if>
+			<!-- 도로명 , 지번 , 건물명  -->
+			<if test="'road'.equals(schCat) and schWord != null and schWord != ''"> AND R.ROAD_NM LIKE CONCAT(#{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="('oldpost'.equals(schCat) or 'bldNm'.equals(schCat) ) and schWord != null and schWord != ''"> AND D.DONG LIKE CONCAT(#{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="mainBldNo != null and mainBldNo != ''"> AND T.MAIN_BLD_NO = #{mainBldNo, jdbcType=INTEGER}</if>
+			<if test="subBldNo != null and subBldNo != ''"> AND T.SUB_BLD_NO = #{subBldNo, jdbcType=INTEGER}</if>
+			<if test="mainLotNo != null and mainLotNo != ''"> AND T.MAIN_LOT_NO = #{mainLotNo, jdbcType=INTEGER}</if>
+			<if test="subLotNo != null and subLotNo != ''"> AND T.SUB_LOT_NO = #{subLotNo, jdbcType=INTEGER}</if>
+			<if test="bldNm != null and bldNm != ''"> AND T.CITY_PUBLIC_BLD_NM LIKE CONCAT('%', #{bldNm, jdbcType=VARCHAR}, '%')</if>
+			<if test="schSido != null and schSido != ''"> AND SUBSTR(R.ROAD_NM_CD,1,2) = #{schSido, jdbcType=VARCHAR}</if>
+			<if test="schGugun != null and schGugun != ''"> AND SUBSTR(R.ROAD_NM_CD,1,5) = #{schGugun, jdbcType=VARCHAR}</if>
+			<!-- 다중 조회조건(String) -->
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectEmAdrBldInfoB" resultMap="emAdrBldInfoBMap" parameterType="EmAdrBldInfoBVo" >
+		/* com.innobiz.orange.web.em.dao.EmAdrBldInfoBDao.selectEmAdrBldInfoB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			G.SIDO,
+			G.GUGUN,
+			D.DONG,
+			D.RI,
+			T.MT_YN,
+			T.MAIN_LOT_NO,
+			T.SUB_LOT_NO,
+			R.ROAD_NM,
+			T.BASEMENT_YN,
+			T.MAIN_BLD_NO,
+			T.SUB_BLD_NO,
+			T.BLD_MNG_NO,
+			T.ZIP_NO,
+			T.CITY_PUBLIC_BLD_NM,
+			T.APT_HOURSE_YN,
+			T.DFT_ZONE_NO,
+		</trim>
+		FROM EM_ADR_DONG_B D INNER JOIN EM_ADR_BLD_INFO_B T ON T.LOW_TOWN_CD = D.LOW_TOWN_CD
+										   INNER JOIN EM_ADR_GUGUN_B G ON SUBSTR(T.LOW_TOWN_CD,1,5) = G.GUGUN_CD
+										   INNER JOIN EM_ADR_ROAD_B R ON T.ROAD_NM_CD = R.ROAD_NM_CD 
+		<include refid="selectEmAdrBldInfoBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.LOW_TOWN_CD , T.MAIN_BLD_NO , T.SUB_BLD_NO ASC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countEmAdrBldInfoB" resultType="Integer" parameterType="EmAdrBldInfoBVo" >
+		/* com.innobiz.orange.web.em.dao.EmAdrBldInfoBDao.countEmAdrBldInfoB */
+		SELECT COUNT(*) CNT
+		FROM EM_ADR_DONG_B D INNER JOIN EM_ADR_BLD_INFO_B T ON T.LOW_TOWN_CD = D.LOW_TOWN_CD
+										   INNER JOIN EM_ADR_GUGUN_B G ON SUBSTR(T.LOW_TOWN_CD,1,5) = G.GUGUN_CD
+										   INNER JOIN EM_ADR_ROAD_B R ON T.ROAD_NM_CD = R.ROAD_NM_CD 
+		<include refid="selectEmAdrBldInfoBWhere"/>
+	</select>
+	
+	<!-- 주소 등록 저장 -->
+	<insert id="insertEmAdrBldInfoB" parameterType="EmAdrBldInfoBVo" >
+		/* com.innobiz.orange.web.em.dao.EmAdrBldInfoBDao.insertEmAdrBldInfoB */
+		INSERT INTO EM_ADR_BLD_INFO_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			LOW_TOWN_CD,
+			SIDO,
+			GUGUN,
+			DONG,
+			RI,
+			MT_YN,
+			MAIN_LOT_NO,
+			SUB_LOT_NO,
+			ROAD_NM_CD,
+			ROAD_NM,
+			BASEMENT_YN,
+			MAIN_BLD_NO,
+			SUB_BLD_NO,
+			BLD_NM,
+			BLD_DETL_NM,
+			BLD_MNG_NO,
+			DONG_SEQ,
+			GOV_TOWN_CD,
+			GOV_TOWN_NM,
+			ZIP_NO,
+			ZIP_SEQ,
+			BULK_DELIVERY_NM,
+			MOVE_REASON_CD,
+			NOTICE_YMD,
+			BEFORE_ROAD_ADR,
+			CITY_PUBLIC_BLD_NM,
+			APT_HOURSE_YN,
+			DFT_ZONE_NO,
+			DETL_ADR_YN,
+			NOTE1,
+			NOTE2,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{lowTownCd, jdbcType=VARCHAR},
+			#{sido, jdbcType=VARCHAR},
+			#{gugun, jdbcType=VARCHAR},
+			#{dong, jdbcType=VARCHAR},
+			#{ri, jdbcType=VARCHAR},
+			#{mtYn, jdbcType=VARCHAR},
+			#{mainLotNo, jdbcType=VARCHAR},
+			#{subLotNo, jdbcType=VARCHAR},
+			#{roadNmCd, jdbcType=VARCHAR},
+			#{roadNm, jdbcType=VARCHAR},
+			#{basementYn, jdbcType=VARCHAR},
+			#{mainBldNo, jdbcType=VARCHAR},
+			#{subBldNo, jdbcType=VARCHAR},
+			#{bldNm, jdbcType=VARCHAR},
+			#{bldDetlNm, jdbcType=VARCHAR},
+			#{bldMngNo, jdbcType=VARCHAR},
+			#{dongSeq, jdbcType=VARCHAR},
+			#{govTownCd, jdbcType=VARCHAR},
+			#{govTownNm, jdbcType=VARCHAR},
+			#{zipNo, jdbcType=VARCHAR},
+			#{zipSeq, jdbcType=VARCHAR},
+			#{bulkDeliveryNm, jdbcType=VARCHAR},
+			#{moveReasonCd, jdbcType=VARCHAR},
+			#{noticeYmd, jdbcType=VARCHAR},
+			#{beforeRoadAdr, jdbcType=VARCHAR},
+			#{cityPublicBldNm, jdbcType=VARCHAR},
+			#{aptHourseYn, jdbcType=VARCHAR},
+			#{dftZoneNo, jdbcType=VARCHAR},
+			#{detlAdrYn, jdbcType=VARCHAR},
+			#{note1, jdbcType=VARCHAR},
+			#{note2, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 주소 수정 -->
+	<update id="updateEmAdrBldInfoB" parameterType="EmAdrBldInfoBVo" >
+		/* com.innobiz.orange.web.em.dao.EmAdrBldInfoBDao.updateEmAdrBldInfoB */
+		UPDATE EM_ADR_BLD_INFO_B
+		<set>
+			<if test="lowTownCd != null"> LOW_TOWN_CD = #{lowTownCd, jdbcType=VARCHAR},</if>
+			<if test="sido != null"> SIDO = #{sido, jdbcType=VARCHAR},</if>
+			<if test="gugun != null"> GUGUN = #{gugun, jdbcType=VARCHAR},</if>
+			<if test="dong != null"> DONG = #{dong, jdbcType=VARCHAR},</if>
+			<if test="ri != null"> RI = #{ri, jdbcType=VARCHAR},</if>
+			<if test="mtYn != null"> MT_YN = #{mtYn, jdbcType=VARCHAR},</if>
+			<if test="mainLotNo != null"> MAIN_LOT_NO = #{mainLotNo, jdbcType=VARCHAR},</if>
+			<if test="subLotNo != null"> SUB_LOT_NO = #{subLotNo, jdbcType=VARCHAR},</if>
+			<if test="roadNmCd != null"> ROAD_NM_CD = #{roadNmCd, jdbcType=VARCHAR},</if>
+			<if test="roadNm != null"> ROAD_NM = #{roadNm, jdbcType=VARCHAR},</if>
+			<if test="basementYn != null"> BASEMENT_YN = #{basementYn, jdbcType=VARCHAR},</if>
+			<if test="mainBldNo != null"> MAIN_BLD_NO = #{mainBldNo, jdbcType=VARCHAR},</if>
+			<if test="subBldNo != null"> SUB_BLD_NO = #{subBldNo, jdbcType=VARCHAR},</if>
+			<if test="bldNm != null"> BLD_NM = #{bldNm, jdbcType=VARCHAR},</if>
+			<if test="bldDetlNm != null"> BLD_DETL_NM = #{bldDetlNm, jdbcType=VARCHAR},</if>
+			<if test="bldMngNo != null"> BLD_MNG_NO = #{bldMngNo, jdbcType=VARCHAR},</if>
+			<if test="dongSeq != null"> DONG_SEQ = #{dongSeq, jdbcType=VARCHAR},</if>
+			<if test="govTownCd != null"> GOV_TOWN_CD = #{govTownCd, jdbcType=VARCHAR},</if>
+			<if test="govTownNm != null"> GOV_TOWN_NM = #{govTownNm, jdbcType=VARCHAR},</if>
+			<if test="zipNo != null"> ZIP_NO = #{zipNo, jdbcType=VARCHAR},</if>
+			<if test="zipSeq != null"> ZIP_SEQ = #{zipSeq, jdbcType=VARCHAR},</if>
+			<if test="bulkDeliveryNm != null"> BULK_DELIVERY_NM = #{bulkDeliveryNm, jdbcType=VARCHAR},</if>
+			<if test="moveReasonCd != null"> MOVE_REASON_CD = #{moveReasonCd, jdbcType=VARCHAR},</if>
+			<if test="noticeYmd != null"> NOTICE_YMD = #{noticeYmd, jdbcType=VARCHAR},</if>
+			<if test="beforeRoadAdr != null"> BEFORE_ROAD_ADR = #{beforeRoadAdr, jdbcType=VARCHAR},</if>
+			<if test="cityPublicBldNm != null"> CITY_PUBLIC_BLD_NM = #{cityPublicBldNm, jdbcType=VARCHAR},</if>
+			<if test="aptHourseYn != null"> APT_HOURSE_YN = #{aptHourseYn, jdbcType=VARCHAR},</if>
+			<if test="dftZoneNo != null"> DFT_ZONE_NO = #{dftZoneNo, jdbcType=VARCHAR},</if>
+			<if test="detlAdrYn != null"> DETL_ADR_YN = #{detlAdrYn, jdbcType=VARCHAR},</if>
+			<if test="note1 != null"> NOTE1 = #{note1, jdbcType=VARCHAR},</if>
+			<if test="note2 != null"> NOTE2 = #{note2, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="bldMngNo != null"> BLD_MNG_NO = #{bldMngNo, jdbcType=VARCHAR},</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<!-- 주소 삭제 -->
+	<delete id="deleteEmAdrBldInfoB" parameterType="EmAdrBldInfoBVo" >
+		/* com.innobiz.orange.web.em.dao.EmAdrBldInfoBDao.deleteEmAdrBldInfoB */
+		DELETE FROM EM_ADR_BLD_INFO_B
+		<where>
+			<if test="bldMngNo != null"> BLD_MNG_NO = #{bldMngNo, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+	
+	<!-- 시도 목록 조회 -->
+	<select id="selectEmAdrBldInfoBSido" resultMap="emAdrCommVoMap" parameterType="EmAdrCommVo">
+		SELECT SIDO AS LABEL , SUBSTR(GUGUN_CD,1,2) AS VALUE
+		FROM EM_ADR_GUGUN_B
+		GROUP BY SIDO , SUBSTR(GUGUN_CD,1,2)
+		ORDER BY SUBSTR(GUGUN_CD,1,2)
+	</select>
+	
+	<!-- 시군구 목록 조회 -->
+	<select id="selectEmAdrBldInfoBGugun" resultMap="emAdrCommVoMap" parameterType="EmAdrCommVo">
+		SELECT GUGUN AS LABEL , GUGUN_CD AS VALUE
+		FROM EM_ADR_GUGUN_B
+		<where>
+			<if test="schWord != null"> SUBSTR(GUGUN_CD,1,2) = #{schWord, jdbcType=VARCHAR}</if>
+			AND GUGUN IS NOT NULL
+		</where>		
+		GROUP BY GUGUN , GUGUN_CD
+		ORDER BY GUGUN
+	</select>
+	
+</mapper>

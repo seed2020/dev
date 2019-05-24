@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WD_ANB_USE_L[연차사용내역] -->
+<mapper namespace="com.innobiz.orange.web.wd.dao.WdAnbUseLDao">
+
+	<resultMap id="wdAnbUseLMap" type="WdAnbUseLVo">
+		<id property="year" column="YEAR" /><!-- 기준년도 -->
+		<id property="anbTypCd" column="ANB_TYP_CD" /><!-- 연차구분코드 -->
+		<id property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<id property="useYmd" column="USE_YMD" /><!-- 사용년월일 -->
+		<result property="cmplYn" column="CMPL_YN" /><!-- 완결여부 -->
+		<result property="useCnt" column="USE_CNT" /><!-- 사용수 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일 -->
+		<result property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<result property="rson" column="RSON" /><!-- 근거 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWdAnbUseL" resultMap="wdAnbUseLMap" parameterType="WdAnbUseLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbUseLDao.selectWdAnbUseL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.YEAR DESC, N.ANB_TYP_CD DESC, N.ODUR_UID DESC, N.USE_YMD DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.YEAR,
+			T.ANB_TYP_CD,
+			T.ODUR_UID,
+			CONVERT(VARCHAR(10), T.USE_YMD, 120) USE_YMD,
+			T.CMPL_YN,
+			T.USE_CNT,
+			CONVERT(VARCHAR(19), T.REG_DT, 120) REG_DT,
+			T.APV_NO,
+			T.RSON,
+		</trim>
+		FROM WD_ANB_USE_L T
+		<where>
+			<if test="year != null">AND T.YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND T.ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="useYmd != null">AND T.USE_YMD = CONVERT(DATETIME, #{useYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="cmplYn != null and cmplYn != ''">AND T.CMPL_YN = #{cmplYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.YEAR, T.ANB_TYP_CD, T.ODUR_UID, T.USE_YMD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWdAnbUseL" resultType="Integer" parameterType="WdAnbUseLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbUseLDao.countWdAnbUseL */
+		SELECT COUNT(*) CNT
+		FROM WD_ANB_USE_L T
+		<where>
+			<if test="year != null">AND T.YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND T.ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="useYmd != null">AND T.USE_YMD = CONVERT(DATETIME, #{useYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="cmplYn != null and cmplYn != ''">AND T.CMPL_YN = #{cmplYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWdAnbUseL" parameterType="WdAnbUseLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbUseLDao.insertWdAnbUseL */
+		INSERT INTO WD_ANB_USE_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			YEAR,
+			ANB_TYP_CD,
+			ODUR_UID,
+			USE_YMD,
+			CMPL_YN,
+			USE_CNT,
+			REG_DT,
+			APV_NO,
+			RSON,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{year, jdbcType=INTEGER},
+			#{anbTypCd, jdbcType=VARCHAR},
+			#{odurUid, jdbcType=VARCHAR},
+			<if test="useYmd == 'sysdate'">CONVERT(DATETIME, CONVERT(VARCHAR(10), GETDATE(), 120), 120),</if><if test="useYmd == null or useYmd == ''">NULL,</if>
+			<if test="useYmd != null and useYmd != '' and useYmd != 'sysdate'">CONVERT(DATETIME, #{useYmd, jdbcType=VARCHAR}, 120),</if>
+			#{cmplYn, jdbcType=VARCHAR},
+			<if test="useCnt == ''">NULL</if><if test="useCnt != ''">#{useCnt, jdbcType=NUMERIC}</if>,
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,
+			#{rson, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateWdAnbUseL" parameterType="WdAnbUseLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbUseLDao.updateWdAnbUseL */
+		UPDATE WD_ANB_USE_L
+		<set>
+			<if test="year != null">YEAR = #{year, jdbcType=INTEGER},</if>
+			<if test="anbTypCd != null">ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR},</if>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="useYmd != null">
+				<if test="useYmd == 'sysdate'">USE_YMD = CONVERT(DATETIME, CONVERT(VARCHAR(10), GETDATE(), 120), 120),</if>
+				<if test="useYmd == ''">USE_YMD = NULL,</if>
+				<if test="useYmd != '' and useYmd != 'sysdate'">USE_YMD = CONVERT(DATETIME, #{useYmd, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="cmplYn != null">CMPL_YN = #{cmplYn, jdbcType=VARCHAR},</if>
+			<if test="useCnt != null">USE_CNT = <if test="useCnt == ''">NULL</if><if test="useCnt != ''">#{useCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = GETDATE(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="apvNo != null">APV_NO = <if test="apvNo == ''">NULL</if><if test="apvNo != ''">#{apvNo, jdbcType=BIGINT}</if>,</if>
+			<if test="rson != null">RSON = #{rson, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="useYmd != null">AND USE_YMD = CONVERT(DATETIME, #{useYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWdAnbUseL" parameterType="WdAnbUseLVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbUseLDao.deleteWdAnbUseL */
+		DELETE FROM WD_ANB_USE_L
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="useYmd != null">AND USE_YMD = CONVERT(DATETIME, #{useYmd, jdbcType=VARCHAR}, 120)</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

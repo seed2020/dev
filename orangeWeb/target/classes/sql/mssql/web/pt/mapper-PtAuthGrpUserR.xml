@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_AUTH_GRP_USER_R[권한그룹사용자관계] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtAuthGrpUserRDao">
+
+	<resultMap id="ptAuthGrpUserRMap" type="PtAuthGrpUserRVo">
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="authGrpId" column="AUTH_GRP_ID" /><!-- 권한그룹ID -->
+		<id property="excliYn" column="EXCLI_YN" /><!-- 제외대상여부 -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="authGrpTypCd" column="AUTH_GRP_TYP_CD" /><!-- 권한그룹구분코드 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtAuthGrpUserR" resultMap="ptAuthGrpUserRMap" parameterType="PtAuthGrpUserRVo" >
+		/* com.innobiz.orange.web.pt.dao.PtAuthGrpUserRDao.selectPtAuthGrpUserR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.USER_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.COMP_ID DESC, N.AUTH_GRP_ID DESC, N.EXCLI_YN DESC, N.USER_UID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.COMP_ID,
+			T.AUTH_GRP_ID,
+			T.EXCLI_YN,
+			T.USER_UID,
+			T.AUTH_GRP_TYP_CD,
+			T.SORT_ORDR,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			</if>
+		</trim>
+		FROM PT_AUTH_GRP_USER_R T
+		<where>
+			<if test="compId != null">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="authGrpId != null">AND T.AUTH_GRP_ID = #{authGrpId, jdbcType=VARCHAR}</if>
+			<if test="excliYn != null">AND T.EXCLI_YN = #{excliYn, jdbcType=VARCHAR}</if>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="authGrpTypCd != null and authGrpTypCd != ''">AND T.AUTH_GRP_TYP_CD = #{authGrpTypCd, jdbcType=VARCHAR}</if>
+			<if test="compIdList != null">AND T.COMP_ID IN ( <foreach collection="compIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.COMP_ID, T.AUTH_GRP_ID, T.EXCLI_YN, T.USER_UID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countPtAuthGrpUserR" resultType="Integer" parameterType="PtAuthGrpUserRVo" >
+		/* com.innobiz.orange.web.pt.dao.PtAuthGrpUserRDao.countPtAuthGrpUserR */
+		SELECT COUNT(*) CNT
+		FROM PT_AUTH_GRP_USER_R T
+		<where>
+			<if test="compId != null">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="authGrpId != null">AND T.AUTH_GRP_ID = #{authGrpId, jdbcType=VARCHAR}</if>
+			<if test="excliYn != null">AND T.EXCLI_YN = #{excliYn, jdbcType=VARCHAR}</if>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="authGrpTypCd != null and authGrpTypCd != ''">AND T.AUTH_GRP_TYP_CD = #{authGrpTypCd, jdbcType=VARCHAR}</if>
+			<if test="compIdList != null">AND T.COMP_ID IN ( <foreach collection="compIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtAuthGrpUserR" parameterType="PtAuthGrpUserRVo" >
+		/* com.innobiz.orange.web.pt.dao.PtAuthGrpUserRDao.insertPtAuthGrpUserR */
+		INSERT INTO PT_AUTH_GRP_USER_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			COMP_ID,
+			AUTH_GRP_ID,
+			EXCLI_YN,
+			USER_UID,
+			AUTH_GRP_TYP_CD,
+			SORT_ORDR,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=VARCHAR},
+			#{authGrpId, jdbcType=VARCHAR},
+			#{excliYn, jdbcType=VARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+			#{authGrpTypCd, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT ISNULL(MAX(SORT_ORDR),0)+1 FROM PT_AUTH_GRP_USER_R WHERE COMP_ID = #{compId, jdbcType=VARCHAR} AND AUTH_GRP_ID = #{authGrpId, jdbcType=VARCHAR} AND EXCLI_YN = #{excliYn, jdbcType=VARCHAR}),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtAuthGrpUserR" parameterType="PtAuthGrpUserRVo" >
+		/* com.innobiz.orange.web.pt.dao.PtAuthGrpUserRDao.updatePtAuthGrpUserR */
+		UPDATE PT_AUTH_GRP_USER_R
+		<set>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="authGrpId != null">AUTH_GRP_ID = #{authGrpId, jdbcType=VARCHAR},</if>
+			<if test="excliYn != null">EXCLI_YN = #{excliYn, jdbcType=VARCHAR},</if>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="authGrpTypCd != null">AUTH_GRP_TYP_CD = #{authGrpTypCd, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="compId != null">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="authGrpId != null">AND AUTH_GRP_ID = #{authGrpId, jdbcType=VARCHAR}</if>
+			<if test="excliYn != null">AND EXCLI_YN = #{excliYn, jdbcType=VARCHAR}</if>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtAuthGrpUserR" parameterType="PtAuthGrpUserRVo" >
+		/* com.innobiz.orange.web.pt.dao.PtAuthGrpUserRDao.deletePtAuthGrpUserR */
+		DELETE FROM PT_AUTH_GRP_USER_R
+		<where>
+			<if test="compId != null">AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="authGrpId != null">AND AUTH_GRP_ID = #{authGrpId, jdbcType=VARCHAR}</if>
+			<if test="excliYn != null">AND EXCLI_YN = #{excliYn, jdbcType=VARCHAR}</if>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

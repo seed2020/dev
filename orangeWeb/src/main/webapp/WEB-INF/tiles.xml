@@ -1,0 +1,82 @@
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+	<!--
+	
+	
+	타일즈 적용하여 상단, 왼쪽메뉴, 컨텐츠로 구성되는 페이지는
+	layout 을 붙여서 리턴함
+	-->
+	<definition name="layout" template="/WEB-INF/tiles/layout.jsp">
+		<put-attribute name="title" expression="${title}" />
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="headerIcon" value="/WEB-INF/tiles/headerIcon.jsp" />
+		<put-attribute name="headerBasc" value="/WEB-INF/tiles/headerBasc.jsp" />
+		<put-attribute name="left" value="/WEB-INF/tiles/left.jsp" />
+		<put-attribute name="leftCt" value="/WEB-INF/tiles/leftCt.jsp" />
+		<put-attribute name="leftSh" value="/WEB-INF/tiles/leftSh.jsp" />
+		<put-attribute name="leftMail" value="/WEB-INF/tiles/leftMail.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/footer.jsp" />
+	</definition>
+	<definition name="layout/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	<definition name="layout/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	<definition name="layout/*/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	<definition name="layout/*/*/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	<definition name="layout/*/*/*/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	<!--
+	
+	
+	
+	타일즈 적용하지 않지만 표준 스타일 및 스크립트를 include 해야 할 페이지는
+	nolayout 을 붙여서 리턴함
+	-->
+	<definition name="nolayout" template="/WEB-INF/tiles/nolayout.jsp">
+		<put-attribute name="title" expression="${title}" />
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+	<definition name="nolayout/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	<definition name="nolayout/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	<definition name="nolayout/*/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	<definition name="nolayout/*/*/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	<definition name="nolayout/*/*/*/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	<!--
+	
+	결재 html 다운로드용
+	-->
+	<definition name="download" template="/WEB-INF/tiles/download.jsp">
+		<put-attribute name="title" expression="${title}" />
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+	<definition name="download/*/*/*" extends="download">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	<!--
+	
+	
+	DIV 팝업등의 삽입형 html 등은 layout, nolayout 등을 붙이지 않고 리턴함
+	
+	-->
+</tiles-definitions>

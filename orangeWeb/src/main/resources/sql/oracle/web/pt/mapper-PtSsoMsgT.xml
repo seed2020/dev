@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_SSO_MSG_T[SSO메세지임시] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtSsoMsgTDao">
+
+	<resultMap id="ptSsoMsgTMap" type="PtSsoMsgTVo">
+		<id property="msgId" column="MSG_ID" /><!-- 메세지ID -->
+		<result property="msgVa" column="MSG_VA" /><!-- 메세지값 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtSsoMsgT" resultMap="ptSsoMsgTMap" parameterType="PtSsoMsgTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtSsoMsgTDao.selectPtSsoMsgT */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.MSG_ID,
+			T.MSG_VA,
+			TO_CHAR(T.REG_DT, 'YYYY-MM-DD HH24:MI:SS') REG_DT,
+		</trim>
+		FROM PT_SSO_MSG_T T
+		<where>
+			<if test="msgId != null">AND T.MSG_ID = #{msgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.MSG_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countPtSsoMsgT" resultType="Integer" parameterType="PtSsoMsgTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtSsoMsgTDao.countPtSsoMsgT */
+		SELECT COUNT(*) CNT
+		FROM PT_SSO_MSG_T T
+		<where>
+			<if test="msgId != null">AND T.MSG_ID = #{msgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtSsoMsgT" parameterType="PtSsoMsgTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtSsoMsgTDao.insertPtSsoMsgT */
+		INSERT INTO PT_SSO_MSG_T
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			MSG_ID,
+			MSG_VA,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{msgId, jdbcType=VARCHAR},
+			#{msgVa, jdbcType=NVARCHAR},
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtSsoMsgT" parameterType="PtSsoMsgTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtSsoMsgTDao.updatePtSsoMsgT */
+		UPDATE PT_SSO_MSG_T
+		<set>
+			<if test="msgId != null">MSG_ID = #{msgId, jdbcType=VARCHAR},</if>
+			<if test="msgVa != null">MSG_VA = #{msgVa, jdbcType=NVARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = SYSDATE,</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="msgId != null">AND MSG_ID = #{msgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtSsoMsgT" parameterType="PtSsoMsgTVo" >
+		/* com.innobiz.orange.web.pt.dao.PtSsoMsgTDao.deletePtSsoMsgT */
+		DELETE FROM PT_SSO_MSG_T
+		<where>
+			<if test="msgId != null">AND MSG_ID = #{msgId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

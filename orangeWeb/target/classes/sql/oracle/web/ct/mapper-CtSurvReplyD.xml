@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_SURV_REPLY_D[커뮤니티 설문 답변 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtSurvReplyDDao">
+
+	<resultMap id="ctSurvReplyDMap" type="CtSurvReplyDVo">
+		<id property="quesId" column="QUES_ID" /><!--질문ID-->
+		<id property="compId" column="COMP_ID" /><!--회사ID-->
+		<id property="survId" column="SURV_ID" /><!--설문ID-->
+		<id property="replyNo" column="REPLY_NO" /><!--답변 번호-->
+		
+		<result property="replyrUid" column="REPLYR_UID" /><!--답변자UID-->
+		<result property="replyrDeptId" column="REPLYR_DEPT_ID" /><!--답변자 부서ID-->
+		<result property="replyrDeptNm" column="REPLYR_DEPT_NM" /><!--답변자 명-->
+		<result property="replyDt" column="REPLY_DT" /><!--답변일시-->
+		<result property="mulcInputReplyCont" column="MULC_INPUT_REPLY_CONT" /><!--객관식입력항목답변내용-->
+		<result property="oendReplyCont" column="OEND_REPLY_CONT" /><!--주관식답변내용-->
+		<result property="mulcInputReplyContYn" column="MULC_INPUT_REPLY_CONT_YN" /><!-- 객관식답변 여부-->
+		
+	</resultMap>
+	<!-- 조회조건 -->
+	<sql id="selectCtSurvReplyDWhere">
+		<where>
+		    <if test="quesId != null and quesId != ''"> AND CSRD_T.QUES_ID = #{quesId, jdbcType=VARCHAR}</if>
+		    <if test="compId != null and compId != ''"> AND CSRD_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="survId != null and survId != ''"> AND CSRD_T.SURV_ID = #{survId, jdbcType=VARCHAR}</if>
+			<if test="replyNo != null and replyNo != ''"> 
+			    AND CSRD_T.REPLY_NO = #{replyNo, jdbcType=NUMERIC}
+			<if test='mulcInputReplyContYn == "Y"'>
+			    AND MULC_INPUT_REPLY_CONT IS NOT NULL
+			</if>
+			</if>
+			<if test="replyrUid != null and replyrUid != ''"> AND CSRD_T.REPLYR_UID = #{replyrUid, jdbcType=VARCHAR}</if>
+			<if test="replyrDeptId != null and replyrDeptId != ''"> AND CSRD_T.REPLYR_DEPT_ID = #{replyrDeptId, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtSurvReplyD" resultMap="ctSurvReplyDMap" parameterType="CtSurvReplyDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSurvReplyDDao.selectCtSurvReplyD */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			CSRD_T.QUES_ID, CSRD_T.COMP_ID, CSRD_T.SURV_ID, CSRD_T.REPLY_NO,
+			CSRD_T.REPLYR_UID, CSRD_T.REPLYR_DEPT_ID, CSRD_T.REPLY_DT, 
+			CSRD_T.MULC_INPUT_REPLY_CONT, CSRD_T.OEND_REPLY_CONT, 
+			
+			
+		</trim>
+		FROM CT_SURV_REPLY_D CSRD_T
+		<include refid="selectCtSurvReplyDWhere"/>
+		
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CSRD_T.REPLY_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+		<!-- 목록조회 -->
+	<select id="selectCtSurvReplyDssss" resultMap="ctSurvReplyDMap" parameterType="CtSurvReplyDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSurvReplyDDao.selectCtSurvReplyDssss */
+		
+		SELECT 
+		 DISTINCT  REPLYR_DEPT_ID, (SELECT ORG_NM FROM OR_ORG_B WHERE ORG_ID = CSRD_T.REPLYR_DEPT_ID) REPLYR_DEPT_NM
+		FROM CT_SURV_REPLY_D CSRD_T 
+		<include refid="selectCtSurvReplyDWhere"/>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtSurvReplyD" resultType="Integer" parameterType="CtSurvReplyDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSurvReplyDDao.countCtSurvReplyD */
+		SELECT COUNT(*) CNT
+		FROM CT_SURV_REPLY_D CSRD_T
+		<include refid="selectCtSurvReplyDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtSurvReplyD" parameterType="CtSurvReplyDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSurvReplyDDao.insertCtSurvReplyD */
+		INSERT INTO CT_SURV_REPLY_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    QUES_ID, COMP_ID, SURV_ID, REPLY_NO, REPLYR_UID,
+		    REPLYR_DEPT_ID, REPLY_DT, MULC_INPUT_REPLY_CONT, OEND_REPLY_CONT,
+		    
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{quesId, jdbcType=VARCHAR},#{compId, jdbcType=CHAR},#{survId, jdbcType=VARCHAR},
+			#{replyNo, jdbcType=NUMERIC},#{replyrUid, jdbcType=VARCHAR},#{replyrDeptId, jdbcType=VARCHAR},
+			TO_DATE(#{replyDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),#{mulcInputReplyCont, jdbcType=NVARCHAR},#{oendReplyCont, jdbcType=NVARCHAR},
+			
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtSurvReplyD" parameterType="CtSurvReplyDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSurvReplyDDao.updateCtSurvReplyD */
+		UPDATE CT_SURV_REPLY_D
+		<set>
+			<if test="replyrUid != null"> REPLYR_UID = #{replyrUid, jdbcType=VARCHAR},</if>
+			<if test="replyrDeptId != null"> REPLYR_DEPT_ID = #{replyrDeptId, jdbcType=VARCHAR},</if>
+			<if test="replyDt != null"> REPLY_DT = TO_DATE(#{replyDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="mulcInputReplyCont != null"> MULC_INPUT_REPLY_CONT = #{mulcInputReplyCont, jdbcType=NVARCHAR},</if>
+			<if test="oendReplyCont != null"> OEND_REPLY_CONT = #{oendReplyCont, jdbcType=NVARCHAR},</if>
+		</set>
+		<where>
+		    <if test="quesId != null and quesId != ''"> AND QUES_ID = #{quesId, jdbcType=VARCHAR}</if>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="survId != null and survId != ''"> AND SURV_ID = #{survId, jdbcType=VARCHAR}</if>
+			<if test="replyNo != null and replyNo != ''"> AND REPLY_NO = #{replyNo, jdbcType=NUMERIC}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtSurvReplyD" parameterType="CtSurvReplyDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtSurvReplyDDao.deleteCtSurvReplyD */
+		DELETE FROM CT_SURV_REPLY_D
+		<where>
+		    <if test="quesId != null and quesId != ''"> AND QUES_ID = #{quesId, jdbcType=VARCHAR}</if>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="survId != null and survId != ''"> AND SURV_ID = #{survId, jdbcType=VARCHAR}</if>
+			<if test="replyrUid != null and replyrUid != ''"> AND REPLYR_UID = #{replyrUid, jdbcType=VARCHAR}</if>
+			<if test="replyNo != null and replyNo != ''"> AND REPLY_NO = #{replyNo, jdbcType=NUMERIC}</if>
+		</where>
+	</delete>
+
+</mapper>

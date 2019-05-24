@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WF_FORM_GEN_TGT_T[양식생성대상임시] -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfxTranDao">
+		
+	<!-- 이관 대상 건수 조회-->
+	<select id="selectWfxTranCnt" resultType="Integer" parameterType="WfxTranVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.selectWfxTranCnt */
+		SELECT COUNT(T.WORK_NO) CNT
+		FROM WFG_${formId}_WORKS_L T
+		<where>
+		<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+	
+	<!-- 2. 복사 대상 저장 -->
+	<insert id="extractTransferingData" parameterType="WfxTranVo">
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.extractTransferingData */
+		INSERT INTO WF_FORM_GEN_TGT_T (GEN_ID, FORM_NO, SEQ, WORK_NO)
+		SELECT #{genId, jdbcType=VARCHAR} GEN_ID, T.FORM_NO, ${rnumSql} RNUM, T.WORK_NO
+		FROM WFG_${formId}_WORKS_D T
+		<where>
+		<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		ORDER BY T.WORK_NO
+	</insert>
+	
+	<resultMap id="wfxTranVoMap" type="WfWorksLVo">
+		<id property="workNo" column="WORK_NO" /><!-- 양식번호 -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="formNo" column="FORM_NO" /><!-- 그룹ID -->
+		<result property="genId" column="GEN_ID" /><!-- 생성ID -->
+		<result property="jsonVa" column="JSON_VA" /><!-- JSON값 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<!-- 3-1. 복사 대상 추출 -->
+	<select id="extractCopyData" resultMap="wfxTranVoMap" parameterType="WfxTranVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.extractCopyData */
+		SELECT T.WORK_NO,
+					T.COMP_ID,
+			        T.FORM_NO,
+			        T.GEN_ID,
+					T.JSON_VA,
+			        T.REGR_UID,
+			        T.MODR_UID,
+					T.REG_DT,
+			        T.MOD_DT
+		FROM WFG_${formId}_WORKS_L T
+		WHERE T.WORK_NO IN (
+			SELECT WORK_NO
+			FROM WF_FORM_GEN_TGT_T
+			WHERE GEN_ID = #{genId, jdbcType=VARCHAR}
+			AND FORM_NO = #{formNo, jdbcType=INTEGER}
+			<![CDATA[
+				AND SEQ > #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}
+				AND SEQ <= (#{pageNo, jdbcType=NUMERIC} + 1) * #{pageRowCnt, jdbcType=NUMERIC}
+			]]>
+		)
+		ORDER BY T.WORK_NO
+	</select>
+	
+	<!-- 3-1. 복사 대상 추출 -->
+	<select id="extractCopyDataTmp" resultType="java.util.HashMap" parameterType="WfxTranVo" >
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.extractCopyData */
+		SELECT TO_CHAR(T.WORK_NO) AS workNo,
+					T.COMP_ID AS compId,
+			        T.FORM_NO AS formNo,
+			        T.GEN_ID AS genId,
+					T.JSON_VA AS jsonVa,
+			        T.REGR_UID AS regrUid,
+			        T.MODR_UID  AS modrUid,
+					TO_CHAR(T.REG_DT,'YYYY-MM-DD HH24:MI:SS') AS regDt,
+			        TO_CHAR(T.MOD_DT,'YYYY-MM-DD HH24:MI:SS') AS modDt
+		FROM WFG_${formId}_WORKS_L T
+		WHERE T.WORK_NO IN (
+			SELECT WORK_NO
+			FROM WF_FORM_GEN_TGT_T
+			WHERE GEN_ID = #{genId, jdbcType=VARCHAR}
+			AND FORM_NO = #{formNo, jdbcType=INTEGER}
+			<![CDATA[
+				AND SEQ > #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}
+				AND SEQ <= (#{pageNo, jdbcType=NUMERIC} + 1) * #{pageRowCnt, jdbcType=NUMERIC}
+			]]>
+		)
+		ORDER BY T.WORK_NO
+	</select>
+	
+	<!-- 4-1. 데이터 이관 - 전체 -->
+	<insert id="copyTransferingData" parameterType="WfxTranVo">
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.copyTransferingData */
+		INSERT INTO [WFG_${formId}_WORKS_D]([WORK_NO]
+		      ,[COMP_ID]
+		      ,[FORM_NO]
+		      ,[GEN_ID]
+		      <foreach item="colmVo" index="index" collection="colmVoList">
+			    ,[${colmVo.colmDbNm}]
+			   </foreach>
+			  ,[READ_CNT] 
+		      ,[REGR_UID]
+		      ,[REG_DT]
+		      ,[MODR_UID]
+		      ,[MOD_DT])
+		SELECT [WORK_NO]
+		      ,[COMP_ID]
+		      ,[FORM_NO]
+		      ,[GEN_ID]
+		      <foreach item="colmVo" index="index" collection="mergeColmVoList">
+			    ,${colmVo.colmDbNm}
+			   </foreach>
+			  ,[READ_CNT]
+		      ,[REGR_UID]
+		      ,[REG_DT]
+		      ,[MODR_UID]
+		      ,[MOD_DT]
+		FROM [WFG_${formId}_WORKS_D_BAK]
+		WHERE WORK_NO IN (
+			SELECT WORK_NO
+			FROM WF_FORM_GEN_TGT_T
+			WHERE GEN_ID = #{genId, jdbcType=VARCHAR}
+			AND FORM_NO = #{formNo, jdbcType=INTEGER}
+			<![CDATA[
+				AND SEQ > #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}
+				AND SEQ <= (#{pageNo, jdbcType=NUMERIC} + 1) * #{pageRowCnt, jdbcType=NUMERIC}
+			]]>
+		)
+		ORDER BY WORK_NO
+	</insert>
+	
+	<!-- 8. 데이터 조각 모음 / MSSQL -->
+	<update id="processDefragmentationForMSSQL" parameterType="WfxTranVo">
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.processDefragmentationForMSSQL */
+		ALTER INDEX ALL ON ${srcTbl} REBUILD WITH (PAD_INDEX = ON, FILLFACTOR = 90)
+	</update>
+	
+	<!-- 8. 데이터 조각 모음 / ORACLE -->
+	<update id="processDefragmentationForORACLE" parameterType="WfxTranVo">
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.processDefragmentationForORACLE */<if
+	test="sqlSeq == 1">
+		ALTER TABLE ${srcTbl} NOLOGGING</if><if
+	test="sqlSeq == 2">
+		ALTER INDEX ${idxNm} NOLOGGING</if><if
+	test="sqlSeq == 3">
+		ALTER TABLE ${srcTbl} ENABLE ROW MOVEMENT</if><if
+	test="sqlSeq == 4">
+		ALTER TABLE ${srcTbl} SHRINK SPACE CASCADE</if><if
+	test="sqlSeq == 5">
+		ALTER TABLE ${srcTbl} DISABLE ROW MOVEMENT</if><if
+	test="sqlSeq == 6">
+		ALTER INDEX ${idxNm} LOGGING</if><if
+	test="sqlSeq == 7">
+		ALTER TABLE ${srcTbl} LOGGING</if>
+	</update>
+	
+	<!-- 테이블의 인덱스 조회 -->
+	<select id="queryIndexForORACLE" parameterType="WfxTranVo" resultType="String">
+		/* com.innobiz.orange.web.wf.dao.WfxTranDao.queryIndexForORACLE */
+		SELECT INDEX_NAME FROM USER_INDEXES WHERE TABLE_NAME = #{srcTbl, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryMaxGenProcSeq" parameterType="WfxTranVo" resultType="Integer">
+		/* com.innobiz.orange.web.wf.dao.WfxGenDao.queryMaxGenProcSeq */
+		SELECT MAX(SEQ) SEQ FROM WF_FORM_GEN_PROC_L WHERE GEN_ID = #{genId, jdbcType=VARCHAR} AND FORM_NO = #{formNo, jdbcType=INTEGER}
+	</select>
+
+</mapper>

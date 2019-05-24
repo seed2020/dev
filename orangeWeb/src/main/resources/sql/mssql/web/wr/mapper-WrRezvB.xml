@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WR_REZV_B[자원관리기본] -->
+<mapper namespace="com.innobiz.orange.web.wr.dao.WrRezvBDao">
+
+	<resultMap id="wrRezvBMap" type="WrRezvBVo">
+		<id property="rezvId" column="REZV_ID" /><!-- 예약ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="rescKndId" column="RESC_KND_ID" /><!-- 자원종류ID -->
+		<result property="rescMngId" column="RESC_MNG_ID" /><!-- 자원관리ID -->		
+		<result property="rezvStrtDt" column="REZV_STRT_DT" /><!-- 예약시작일시 -->
+		<result property="rezvEndDt" column="REZV_END_DT" /><!-- 예약종료일시 -->
+		<result property="subj" column="SUBJ" /><!-- 제목 -->
+		<result property="cont" column="CONT" /><!-- 내용 -->
+		<result property="discStatCd" column="DISC_STAT_CD" /><!-- 심의상태코드 -->
+		<result property="discrUid" column="DISCR_UID" /><!-- 심의자UID -->
+		<result property="discDt" column="DISC_DT" /><!-- 심의일시 -->
+		<result property="discCont" column="DISC_CONT" /><!-- 심의내용 -->
+		<result property="kndNm" column="KND_NM" /><!-- 종류명 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 자원명 -->
+		<result property="discrNm" column="DISCR_NM" /><!-- 심의자명 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<result property="rezvStrtYmd" column="REZV_STRT_YMD" /><!-- 예약시작일자(yyyy-MM-dd) -->
+		<result property="rezvStrtTime" column="REZV_STRT_TIME" /><!-- 예약시작시간(HH24:MI) -->
+		<result property="rezvEndYmd" column="REZV_END_YMD" /><!-- 예약종료일자(yyyy-MM-dd) -->
+		<result property="rezvEndTime" column="REZV_END_TIME" /><!-- 예약종료시간(HH24:MI) -->
+		<result property="schdlId" column="SCHDL_ID" /><!-- 일정ID -->
+		<result property="schdlKndCd" column="SCHDL_KND_CD" /><!-- 일정대상코드 -->
+		<result property="bgcolCd" column="BGCOL_CD" /><!-- 배경색코드 -->
+		<result property="resqEmailYn" column="RESQ_EMAIL_YN" /><!-- 신청메일여부 -->
+		<result property="resEmailYn" column="RES_EMAIL_YN" /><!-- 결과메일여부 -->
+		<result property="rowIndex" column="ROW_INDEX" /><!-- 정렬순서 -->
+		<result property="rowCnt" column="ROW_CNT" /><!-- 중복수 -->
+		<result property="timeCnt" column="TIME_CNT" /><!-- 시간차이 -->
+		<result property="rezvDt" column="REZV_DT" /><!-- 예약일 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWrRezvBWhere">
+		<where>
+			<if test="rezvId != null and rezvId !=''"> AND WR_T.REZV_ID = #{rezvId, jdbcType=VARCHAR}</if>
+			<if test="rescMngId != null and rescMngId !=''"> AND WR_T.RESC_MNG_ID = #{rescMngId, jdbcType=VARCHAR}</if>
+			<if test="rescKndId != null and rescKndId !=''"> AND WR_T.RESC_KND_ID = #{rescKndId, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid !=''"> AND WR_T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND WR_T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="discStatCd != null and discStatCd !=''"> AND WR_T.DISC_STAT_CD = #{discStatCd, jdbcType=VARCHAR}</if>
+			<if test="discrUid != null and discrUid !=''"> AND WR_T.DISCR_UID = #{discrUid, jdbcType=VARCHAR}</if>
+			<if test="regrNm != null and regrNm !=''"> AND WR_T.REGR_UID IN( SELECT USER_UID FROM OR_USER_B T WHERE T.RESC_ID IN (SELECT RESC_ID FROM OR_RESC_B WHERE LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND RESC_VA LIKE '%'+#{regrNm, jdbcType=VARCHAR}+'%') )</if>
+			<!-- 날짜 기간 검색(yyyy-MM-dd) -->
+			<if test="'fromYmd'.equals(durCat) and durStrtDt != null and durStrtDt != '' and durEndDt != null and durEndDt != ''">
+				<![CDATA[
+				AND CONVERT(VARCHAR(10), REZV_STRT_DT, 120) <= #{durEndDt, jdbcType=VARCHAR}
+				AND CONVERT(VARCHAR(10), REZV_END_DT, 120) >= #{durStrtDt, jdbcType=VARCHAR}
+				]]>
+			</if>
+			<!-- 날짜 시간 검색(yyyy-MM-dd HH24:MI) -->
+			<if test="'fromTime'.equals(durCat) and durStrtDt != null and durStrtDt != '' and durEndDt != null and durEndDt != ''">
+				<![CDATA[
+				AND CONVERT(VARCHAR(16), REZV_STRT_DT, 120) < #{durEndDt, jdbcType=VARCHAR}
+				AND CONVERT(VARCHAR(16), REZV_END_DT, 120) > #{durStrtDt, jdbcType=VARCHAR}
+				]]>
+			</if>
+			<!-- 예약자ID -->
+			<if test="(regrUid == null or ''.equals(regrUid) ) and schRegrUid != null and schRegrUid !=''"> AND WR_T.REGR_UID = #{schRegrUid, jdbcType=VARCHAR}</if>
+			<!-- 다중 조회조건(String) -->
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<sql id="selectWrRezvBJoin_oracle">
+		<!-- [CDATA[
+			INNER JOIN (
+				SELECT CONVERT(VARCHAR(10), DATEADD(DAY, NO-1, CONVERT(DATETIME,#{durStrtDt, jdbcType=VARCHAR}, 120)), 120) AS REZV_DT
+				FROM CM_NOS
+				WHERE NO <= (DATEDIFF(DAY,CONVERT(DATETIME,#{durStrtDt, jdbcType=VARCHAR},120),CONVERT(DATETIME,#{durEndDt, jdbcType=VARCHAR},120))+1)
+			) SUB_T ON (
+				CONVERT(VARCHAR(10), REZV_STRT_DT, 120) <= SUB_T.REZV_DT
+				AND CONVERT(VARCHAR(10), REZV_END_DT, 120) >= SUB_T.REZV_DT
+			)
+		]] -->
+			<include refid="selectWrRezvBWhere"/>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWrRezvB" resultMap="wrRezvBMap" parameterType="WrRezvBVo" >
+		/* com.innobiz.orange.web.wr.dao.WrRezvBDao.selectWrRezvB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.REZV_STRT_YMD DESC, N.REZV_STRT_TIME ASC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			WR_T.REZV_ID, WR_T.COMP_ID, WR_T.RESC_KND_ID, WR_T.RESC_MNG_ID, 
+			CONVERT(VARCHAR(16),WR_T.REZV_STRT_DT,120) AS REZV_STRT_DT, CONVERT(VARCHAR(16),WR_T.REZV_END_DT,120) AS REZV_END_DT, 
+			WR_T.SUBJ,
+			<if test="withLob">WR_T.CONT, </if>
+			WR_T.DISC_STAT_CD,
+			WR_T.DISCR_UID,
+			WR_T.DISC_DT,
+			WR_T.DISC_CONT,
+			WR_T.REGR_UID, 
+			CONVERT(VARCHAR(19), WR_T.REG_DT, 120) REG_DT, 
+		    (SELECT RESC_VA FROM WR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM WR_RESC_KND_B WHERE RESC_KND_ID = WR_T.RESC_KND_ID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS KND_NM,
+		    (SELECT RESC_VA FROM WR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM WR_RESC_MNG_B WHERE RESC_MNG_ID = WR_T.RESC_MNG_ID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS RESC_NM,
+		    (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = WR_T.DISCR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) DISCR_NM,
+		    (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = WR_T.REGR_UID) AND LANG_TYP_CD = ISNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+		    CONVERT(VARCHAR(10),REZV_STRT_DT,23) AS REZV_STRT_YMD,
+		    CONVERT(VARCHAR(5),REZV_STRT_DT,108) AS REZV_STRT_TIME,
+		    CONVERT(VARCHAR(10),REZV_END_DT,23) AS REZV_END_YMD,
+		    CONVERT(VARCHAR(5),REZV_END_DT,108) AS REZV_END_TIME,
+		    WR_T.SCHDL_ID,
+		    WR_T.SCHDL_KND_CD,
+		    (SELECT BGCOL_CD FROM WR_RESC_KND_B WHERE RESC_KND_ID = WR_T.RESC_KND_ID ) AS BGCOL_CD,
+		    RESQ_EMAIL_YN, RES_EMAIL_YN,
+		    <if test="listType != null and listType != '' and !'week'.equals(listType) and 'fromYmd'.equals(durCat) and durStrtDt != null and durStrtDt != '' and durEndDt != null and durEndDt != ''">
+		    	<!--  SUB_T.REZV_DT, DATEDIFF(MI,REZV_STRT_DT,REZV_END_DT)/30 AS TIME_CNT -->
+		    </if>
+		</trim>
+		FROM WR_REZV_B WR_T
+		<if test="listType != null and listType != '' and !'week'.equals(listType)"><include refid="selectWrRezvBJoin_oracle"/></if>
+		<if test="listType == null or listType == '' or (listType != null and listType != '' and 'week'.equals(listType) )">
+			<include refid="selectWrRezvBWhere"/>
+		</if>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CONVERT(VARCHAR(10),WR_T.REZV_STRT_DT,23) DESC, CONVERT(VARCHAR(5),WR_T.REZV_STRT_DT,108) ASC </if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWrRezvB" resultType="Integer" parameterType="WrRezvBVo" >
+		/* com.innobiz.orange.web.wr.dao.WrRezvBDao.countWrRezvB */
+		SELECT COUNT(*) CNT
+		FROM WR_REZV_B WR_T <if test="listType != null and listType != '' and !'week'.equals(listType)"><include refid="selectWrRezvBJoin_oracle"/></if>
+		<if test="listType == null or listType == '' or (listType != null and listType != '' and 'week'.equals(listType) )">
+			<include refid="selectWrRezvBWhere"/>
+		</if>
+	</select>
+		
+	<!-- 등록 저장 -->
+	<insert id="insertWrRezvB" parameterType="WrRezvBVo" >
+		/* com.innobiz.orange.web.wr.dao.WrRezvBDao.insertWrRezvB */
+		INSERT INTO WR_REZV_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			REZV_ID,
+			COMP_ID,
+			RESC_KND_ID,
+			RESC_MNG_ID,
+			REZV_STRT_DT,
+			REZV_END_DT,
+			SUBJ,
+			CONT,
+			DISC_STAT_CD,
+			DISCR_UID,
+			SCHDL_ID,
+			SCHDL_KND_CD,
+			BGCOL_CD,
+			RESQ_EMAIL_YN,
+			RES_EMAIL_YN,
+			REGR_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{rezvId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{rescKndId, jdbcType=VARCHAR},
+			#{rescMngId, jdbcType=VARCHAR},
+			CONVERT(DATETIME, #{rezvStrtDt, jdbcType=VARCHAR}, 120),
+			CONVERT(DATETIME, #{rezvEndDt, jdbcType=VARCHAR}, 120),
+			#{subj, jdbcType=VARCHAR},
+			#{cont, jdbcType=VARCHAR},
+			#{discStatCd, jdbcType=VARCHAR},
+			#{discrUid, jdbcType=VARCHAR},
+			#{schdlId, jdbcType=VARCHAR},
+			#{schdlKndCd, jdbcType=VARCHAR},
+			#{bgcolCd, jdbcType=VARCHAR},
+			#{resqEmailYn, jdbcType=VARCHAR},
+			#{resEmailYn, jdbcType=VARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">GETDATE(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWrRezvB" parameterType="WrRezvBVo" >
+		/* com.innobiz.orange.web.wr.dao.WrRezvBDao.updateWrRezvB */
+		UPDATE WR_REZV_B
+		<set>
+			<if test="rescKndId != null"> RESC_KND_ID = #{rescKndId, jdbcType=VARCHAR},</if>
+			<if test="rescMngId != null"> RESC_MNG_ID = #{rescMngId, jdbcType=VARCHAR},</if>
+			<if test="rezvStrtDt != null"> REZV_STRT_DT = CONVERT(DATETIME, #{rezvStrtDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="rezvEndDt != null"> REZV_END_DT = CONVERT(DATETIME, #{rezvEndDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=VARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=VARCHAR},</if>
+			<if test="discStatCd != null"> DISC_STAT_CD = #{discStatCd, jdbcType=VARCHAR},</if>
+			<if test="discrUid != null"> DISCR_UID = #{discrUid, jdbcType=VARCHAR},</if>
+			<if test="discDt != null">
+				<if test="discDt == 'sysdate'"> DISC_DT = GETDATE(),</if>
+				<if test="discDt == ''"> DISC_DT = NULL,</if>
+				<if test="discDt != '' and discDt != 'sysdate'"> DISC_DT = CONVERT(DATETIME, #{discDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+			<if test="discCont != null"> DISC_CONT = #{discCont, jdbcType=VARCHAR},</if>
+			<if test="schdlId != null"> SCHDL_ID = #{schdlId, jdbcType=VARCHAR},</if>
+			<if test="schdlKndCd != null"> SCHDL_KND_CD = #{schdlKndCd, jdbcType=VARCHAR},</if>
+			<if test="bgcolCd != null"> BGCOL_CD = #{bgcolCd, jdbcType=VARCHAR},</if>
+			<if test="resqEmailYn != null"> RESQ_EMAIL_YN = #{resqEmailYn, jdbcType=VARCHAR},</if>
+			<if test="resEmailYn != null"> RES_EMAIL_YN = #{resEmailYn, jdbcType=VARCHAR},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = GETDATE(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+			</if>
+		</set>
+		<where>
+			<if test="rezvId != null and rezvId !=''"> AND REZV_ID = #{rezvId, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid !=''"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>	
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWrRezvB" parameterType="WrRezvBVo" >
+		/* com.innobiz.orange.web.wr.dao.WrRezvBDao.deleteWrRezvB */
+		DELETE FROM WR_REZV_B
+		<where>
+			<if test="rezvId != null and rezvId !=''"> AND REZV_ID = #{rezvId, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid !=''"> AND REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

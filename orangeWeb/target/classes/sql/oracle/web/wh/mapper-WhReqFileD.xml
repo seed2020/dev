@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WH_REQ_FILE_D[첨부파일] -->
+<mapper namespace="com.innobiz.orange.web.wh.dao.WhReqFileDDao">
+
+	<resultMap id="whReqFileDMap" type="WhReqFileDVo">
+		<id property="fileId" column="FILE_ID" /><!-- 파일ID -->
+		<result property="typCd" column="TYP_CD" /><!-- 구분코드 -->
+		<result property="refId" column="REF_ID" /><!-- 참조ID -->
+		<result property="dispNm" column="DISP_NM" /><!-- 표시이름 -->
+		<result property="dispOrdr" column="DISP_ORDR" /><!-- 표시순서 -->
+		<result property="fileExt" column="FILE_EXT" /><!-- 파일확장자 -->
+		<result property="fileSize" column="FILE_SIZE" /><!-- 파일크기 -->
+		<result property="savePath" column="SAVE_PATH" /><!-- 저장경로 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+	</resultMap>
+
+	<select id="selectWhReqFileD" resultMap="whReqFileDMap" parameterType="WhReqFileDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqFileDDao.selectWhReqFileD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.FILE_ID,
+			T.TYP_CD,
+			T.REF_ID,
+			T.DISP_NM,
+			T.DISP_ORDR,
+			T.FILE_EXT,
+			T.FILE_SIZE,
+			T.SAVE_PATH,
+			T.USE_YN,
+			T.REGR_UID,
+			T.REG_DT,
+		</trim>
+		FROM WH_REQ_FILE_D T
+		<where>
+			<if test="refId != null"> AND T.REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="typCd != null"> AND T.TYP_CD = #{typCd, jdbcType=VARCHAR}</if>
+			<if test="fileId != null"> AND T.FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.DISP_ORDR ASC</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWhReqFileD" resultType="Integer" parameterType="WhReqFileDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqFileDDao.countWhReqFileD */
+		SELECT COUNT(*) CNT
+		FROM WH_REQ_FILE_D T
+		<where>
+			<if test="refId != null"> AND T.REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="typCd != null"> AND T.TYP_CD = #{typCd, jdbcType=VARCHAR}</if>
+			<if test="fileId != null"> AND T.FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+	
+	<insert id="insertWhReqFileD" parameterType="WhReqFileDVo">
+		/* com.innobiz.orange.web.wh.dao.WhReqFileDDao.insertWhReqFileD */
+		INSERT INTO WH_REQ_FILE_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FILE_ID,
+			TYP_CD,
+			REF_ID,
+			DISP_NM,
+			DISP_ORDR,
+			FILE_EXT,
+			FILE_SIZE,
+			SAVE_PATH,
+			USE_YN,
+			REGR_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{fileId, jdbcType=VARCHAR},
+			#{typCd, jdbcType=VARCHAR},
+			#{refId, jdbcType=VARCHAR},
+			#{dispNm, jdbcType=VARCHAR},
+			#{dispOrdr, jdbcType=INTEGER},
+			#{fileExt, jdbcType=VARCHAR},
+			#{fileSize, jdbcType=INTEGER},
+			#{savePath, jdbcType=VARCHAR},
+			#{useYn, jdbcType=VARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateWhReqFileD" parameterType="WhReqFileDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqFileDDao.updateWhReqFileD */
+		UPDATE WH_REQ_FILE_D
+		<set>
+			<if test="newRefId != null"> REF_ID = #{newRefId, jdbcType=VARCHAR},</if>
+			<if test="dispOrdr != null"> DISP_ORDR = #{dispOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null"> USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="fileId != null"> AND FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="typCd != null"> AND TYP_CD = #{typCd, jdbcType=VARCHAR}</if>
+			<if test="refId != null"> AND REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="refId == null and refId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWhReqFileD" parameterType="WhReqFileDVo">
+		/* com.innobiz.orange.web.wh.dao.WhReqFileDDao.deleteWhReqFileD */
+		DELETE FROM WH_REQ_FILE_D
+		<where>
+			<if test="fileId != null"> AND FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="typCd != null"> AND TYP_CD = #{typCd, jdbcType=VARCHAR}</if>
+			<if test="refId != null"> AND REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="fileId == null and refId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

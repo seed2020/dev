@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_BUMK_L[즐겨찾기목록] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmBumkLDao">
+
+	<resultMap id="dmBumkLMap" type="DmBumkLVo">
+		<id property="storId" column="STOR_ID" /><!-- 저장소ID -->
+		<id property="bumkId" column="BUMK_ID" /><!-- 즐겨찾기ID -->
+		<id property="regCat" column="REG_CAT" /><!-- 등록유형 -->
+		<id property="catVa" column="CAT_VA" /><!-- 유형값 -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectDmBumkLWhere">
+		<where>
+			<if test="storId != null and storId != ''"> AND T.STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="bumkId != null and bumkId !=''"> AND T.BUMK_ID = #{bumkId, jdbcType=VARCHAR}</if>
+			<if test="regCat != null and regCat !=''"> AND T.REG_CAT = #{regCat, jdbcType=VARCHAR}</if>
+			<if test="catVa != null and catVa != ''"> AND T.CAT_VA = #{catVa, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmBumkL" resultMap="dmBumkLMap" parameterType="DmBumkLVo" >
+		/* com.innobiz.orange.web.dm.dao.DmBumkLDao.selectDmBumkL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.STOR_ID,
+			T.BUMK_ID,
+			T.REG_CAT,
+			T.CAT_VA,
+			T.SORT_ORDR,
+		</trim>
+		FROM DM_BUMK_L T
+		<include refid="selectDmBumkLWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.BUMK_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmBumkL" resultType="Integer" parameterType="DmBumkLVo" >
+		/* com.innobiz.orange.web.dm.dao.DmBumkLDao.countDmBumkL */
+		SELECT COUNT(*) CNT
+		FROM DM_BUMK_L T
+		<include refid="selectDmBumkLWhere"/>
+	</select>
+	
+	<!-- 즐겨찾기 등록 저장 -->
+	<insert id="insertDmBumkL" parameterType="DmBumkLVo" >
+		/* com.innobiz.orange.web.dm.dao.DmBumkLDao.insertDmBumkL */
+		INSERT INTO DM_BUMK_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			STOR_ID,
+			BUMK_ID,
+			REG_CAT,
+			CAT_VA,
+			SORT_ORDR,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{storId, jdbcType=VARCHAR},
+			#{bumkId, jdbcType=VARCHAR},
+			#{regCat, jdbcType=VARCHAR},
+			#{catVa, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 즐겨찾기 수정 -->
+	<update id="updateDmBumkL" parameterType="DmBumkLVo" >
+		/* com.innobiz.orange.web.dm.dao.DmBumkLDao.updateDmBumkL */
+		UPDATE DM_BUMK_L
+		<set>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="bumkId != null and bumkId !=''"> AND BUMK_ID = #{bumkId, jdbcType=VARCHAR}</if>
+			<if test="regCat != null and regCat != ''"> AND REG_CAT = #{regCat, jdbcType=VARCHAR}</if>
+			<if test="catVa != null and catVa != ''"> AND CAT_VA = #{catVa, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+	
+	<!-- 즐겨찾기 삭제 -->
+	<delete id="deleteDmBumkL" parameterType="DmBumkLVo" >
+		/* com.innobiz.orange.web.dm.dao.DmBumkLDao.deleteDmBumkL */
+		DELETE FROM DM_BUMK_L
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="bumkId != null and bumkId !=''"> AND BUMK_ID = #{bumkId, jdbcType=VARCHAR}</if>
+			<if test="regCat != null and regCat != ''"> AND REG_CAT = #{regCat, jdbcType=VARCHAR}</if>
+			<if test="catVa != null and catVa != ''"> AND CAT_VA = #{catVa, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

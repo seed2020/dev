@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_BULL_OPT_D[게시옵션] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaBullOptDDao">
+
+	<resultMap id="baBullOptDMap" type="BaBullOptDVo">
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<id property="secuYn" column="SECU_YN" /><!-- 보안여부 -->
+		<id property="ugntYn" column="UGNT_YN" /><!-- 긴급여부 -->
+		<id property="notcYn" column="NOTC_YN" /><!-- 공지여부 -->
+	</resultMap>
+
+	<insert id="insertBaBullOptD" parameterType="BaBullOptDVo">
+		/* com.innobiz.orange.web.bb.dao.BaBullOptDDao.insertBaBullOptD */
+		INSERT INTO BA_BULL_OPT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			BULL_ID,
+			SECU_YN,
+			UGNT_YN,
+			NOTC_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{bullId, jdbcType=VARCHAR},
+			#{secuYn, jdbcType=VARCHAR},
+			#{ugntYn, jdbcType=VARCHAR},
+			#{notcYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateBaBullOptD" parameterType="BaBullOptDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaBullOptDDao.updateBaBullOptD */
+		UPDATE BA_BULL_OPT_D
+		<set>
+			<if test="newBullId != null"> BULL_ID = #{newBullId, jdbcType=VARCHAR},</if>
+			<if test="secuYn != null"> SECU_YN = #{secuYn, jdbcType=VARCHAR},</if>
+			<if test="ugntYn != null"> UGNT_YN = #{ugntYn, jdbcType=VARCHAR},</if>
+			<if test="notcYn != null"> NOTC_YN = #{notcYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=INTEGER}
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteBaBullOptD" parameterType="BaBullOptDVo">
+		/* com.innobiz.orange.web.bb.dao.BaBullOptDDao.deleteBaBullOptD */
+		DELETE FROM BA_BULL_OPT_D
+		<where>
+			AND BULL_ID = #{bullId, jdbcType=INTEGER}
+		</where>
+	</delete>
+
+</mapper>

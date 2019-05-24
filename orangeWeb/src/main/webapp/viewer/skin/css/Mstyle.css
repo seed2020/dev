@@ -1,0 +1,58 @@
+@charset "utf-8";
+/* User define */
+body,h1,h2,h3,h4,input,button{font-family:Dotum,'돋움',Helvetica,AppleSDGothicNeo,sans-serif;font-size:24px;color:#222;}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,form,fieldset,p,button{margin:0;padding:0}
+input,select,button{vertical-align:middle}
+
+select{height:60px; padding:0px 50px 0 30px;border:1px solid #424f63;font-size:50px;color:#ebf1f5;background:#424f63 url(../image/mobile/select_btn.png) no-repeat 90% 50%;border:1px solid #29313f;border-radius:5px;-webkit-border-radius:5px;-webkit-appearance:none;}
+select, option{line-height:60px;}
+
+body{background-color:#ebf1f5;}
+iframe{border:0;}
+#wrap{position:absolute;top:0px;right:0px;left:0px;bottom:0px;min-width:320px;}
+/* Header */
+#headerWrap{position:fixed;width:100%;margin:0px auto;z-index:80;background:#fff;top:0px;left:0px;}
+#header{position:fixed;left:0px;right:0px;height:90px;background:#354052;clear:both;min-width:320px; overflow:hidden;}
+#header .title{position:relative;float:left;height:90px;clear:both;}
+#header .title .logo{float:left; margin:5 0 0 20px;}
+#header .title .paging{float:left;position:relative;color:#d4d9e3;font-size:46px;margin:0 0 0 20px;padding:12px 0px;}
+#header .navigation{float:right; margin-right:15px;}
+#header .navigation img{margin:10px 0px;}
+#headRight .btn_close {display:none;}
+
+/* 각 본문에서 표현해야함. margin만 참조 #container .document{background-color:#fff;border:1px solid #d8dfe5;margin:10px 20px 0px 20px;} */
+/* 현재 코드에서 없음 #container .document_cell{position:absolute;top:0px;bottom:0px;left:0px;right:0px;background-color:#fff;} */
+/* 각 본문에서 표현해야함. #container .document img{width:100%;}*/
+.btn_pre{ position:fixed;top:90px;left:0px; z-index:1000;}
+.btn_next{position:fixed;top:90px;right:0px; z-index:1000;}
+
+.select1{min-width:80px; max-width:220px;}
+.shadow{-webkit-box-shadow: 3px 3px 7px #29313f;-moz-box-shadow: 3px 3px 7px #29313f;box-shadow: 3px 3px 7px #29313f;}
+
+/* Contents */
+#container{position:absolute;width:100%;left:0px;right:0px;margin:0px auto;}
+.cell_bg {background-color:#fff;}
+#content_body {position:absolute;width:100%;padding-top:20px;padding-bottom:20px;}
+#fullScreenToolBar {position:absolute;right:0px;top:00px;}
+
+/* body */
+.innerWrap{position:relative;width:100%; height:100%;border:0; overflow:hidden;}
+.containBg{background-color:#ebf1f5;} /* word body */
+
+/* cell */
+#cellContent {position:relative;width:100%;height:100%;}
+#cellContent #innerWrap {width:100%;height:100%;background-color:#fff;}
+
+/* pdf */
+#container .contents_pdf{position:absolute;left:0px;right:0px;top:0;bottom:0;overflow-y: auto;overflow-x: auto; margin:auto;}
+.page-element {
+	margin: 10px 0px 10px 0px;
+	text-align:center;
+}
+
+/* slide */
+#container .contents_slide{position:absolute;left: 0; right:0;top:0;bottom:0;overflow: auto;margin:auto; -webkit-overflow-scrolling:touch;}
+/* select, option{ font-size: 50px;} */
+
+/* img */
+.helper { display: inline-block; height: 100%; vertical-align: middle; }

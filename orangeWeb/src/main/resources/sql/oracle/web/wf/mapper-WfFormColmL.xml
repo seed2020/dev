@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WF_FORM_COLM_L[양식컬럼목록] -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfFormColmLDao">
+
+	<resultMap id="wfFormColmLMap" type="WfFormColmLVo">
+		<id property="genId" column="GEN_ID" /><!-- 생성ID -->
+		<id property="colmId" column="COLM_ID" /><!-- 컬럼ID -->
+		<result property="formNo" column="FORM_NO" /><!-- 양식번호 -->
+		<result property="colmTypCd" column="COLM_TYP_CD" /><!-- 컬럼구분코드 -->
+		<result property="colmNm" column="COLM_NM" /><!-- 컬럼명 -->
+		<result property="itemNm" column="ITEM_NM" /><!-- 양식명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->		
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="lstYn" column="LST_YN" /><!-- 목록여부 -->
+		<result property="deployYn" column="DEPLOY_YN" /><!-- 배포여부 -->
+		<result property="jsonPath" column="JSON_PATH" /><!-- JSON_PATH -->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWfFormColmLWhere">
+		<where>
+			<if test="genId != null and genId !=''"> AND T.GEN_ID = #{genId, jdbcType=VARCHAR}</if>
+			<if test="colmId != null and colmId !=''"> AND T.COLM_ID = #{colmId, jdbcType=VARCHAR}</if>
+			<if test="formNo != null and formNo !=''"> AND T.FORM_NO = #{formNo, jdbcType=VARCHAR}</if>			
+			<if test="colmTypCd != null and colmTypCd !=''"> AND T.COLM_TYP_CD = #{colmTypCd, jdbcType=VARCHAR}</if>
+			<if test="colmNm != null and colmNm !=''"> AND T.COLM_NM = #{colmNm, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn !=''"> AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="lstYn != null and lstYn !=''"> AND T.LST_YN = #{lstYn, jdbcType=VARCHAR}</if>
+			<if test="deployYn != null and deployYn !=''"> AND T.DEPLOY_YN = #{deployYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWfFormColmL" resultMap="wfFormColmLMap" parameterType="WfFormColmLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormColmLDao.selectWfFormColmL */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			<if test="isHst">T.GEN_ID,</if>
+			T.COLM_ID,
+			T.FORM_NO,
+			T.COLM_TYP_CD,
+			T.COLM_NM,
+			T.ITEM_NM,
+	        (SELECT RESC_VA FROM WF_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) AS ITEM_RESC_NM,
+			T.RESC_ID,
+			T.SORT_ORDR,
+			T.USE_YN,
+			T.LST_YN,
+			T.DEPLOY_YN,
+			T.JSON_PATH,
+		</trim>
+		FROM <if test="!isHst">WF_FORM_COLM_L</if><if test="isHst">WF_FORM_COLM_H</if> T
+		<include refid="selectWfFormColmLWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.SORT_ORDR ASC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWfFormColmL" resultType="Integer" parameterType="WfFormColmLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormColmLDao.countWfFormColmL */
+		SELECT COUNT(*) CNT
+		FROM <if test="!isHst">WF_FORM_COLM_L</if><if test="isHst">WF_FORM_COLM_H</if> T
+		<include refid="selectWfFormColmLWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWfFormColmL" parameterType="WfFormColmLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormColmLDao.insertWfFormColmL */
+		INSERT INTO <if test="!isHst">WF_FORM_COLM_L</if><if test="isHst">WF_FORM_COLM_H</if>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="isHst">GEN_ID,</if>
+			COLM_ID,
+			FORM_NO,			
+			COLM_TYP_CD,
+			COLM_NM,
+			ITEM_NM,
+			RESC_ID,
+			SORT_ORDR,
+			USE_YN,
+			LST_YN,
+			DEPLOY_YN,
+			JSON_PATH,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			<if test="isHst">#{genId, jdbcType=VARCHAR},</if>
+			#{colmId, jdbcType=VARCHAR},
+			#{formNo, jdbcType=INTEGER},
+			#{colmTypCd, jdbcType=VARCHAR},
+			#{colmNm, jdbcType=VARCHAR},
+			#{itemNm, jdbcType=VARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{sortOrdr, jdbcType=INTEGER},
+			#{useYn, jdbcType=VARCHAR},
+			#{lstYn, jdbcType=VARCHAR},
+			#{deployYn, jdbcType=VARCHAR},
+			#{jsonPath, jdbcType=NVARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWfFormColmL" parameterType="WfFormColmLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormColmLDao.updateWfFormColmL */
+		UPDATE <if test="!isHst">WF_FORM_COLM_L</if><if test="isHst">WF_FORM_COLM_H</if>
+		<set>
+			<if test="colmNm != null"> COLM_NM = #{colmNm, jdbcType=VARCHAR},</if>
+			<if test="itemNm != null"> ITEM_NM = #{itemNm, jdbcType=VARCHAR},</if>
+			<if test="rescId != null"> RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null"> SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null"> USE_YN = #{useYn, jdbcType=VARCHAR},</if>			
+			<if test="lstYn != null"> LST_YN = #{lstYn, jdbcType=VARCHAR},</if>
+			<if test="deployYn != null"> DEPLOY_YN = #{deployYn, jdbcType=VARCHAR},</if>
+			<if test="jsonPath != null"> JSON_PATH = #{jsonPath, jdbcType=NVARCHAR},</if>
+		</set>
+		<where>
+			<if test="isHst and genId != null and genId !=''"> AND GEN_ID = #{formNo, jdbcType=VARCHAR}</if>
+			<if test="colmId != null and colmId !=''"> AND COLM_ID = #{colmId, jdbcType=VARCHAR}</if>
+			<if test="formNo != null and formNo !=''"> AND FORM_NO = #{formNo, jdbcType=VARCHAR}</if>			
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWfFormColmL" parameterType="WfFormColmLVo" >
+		/* com.innobiz.orange.web.wf.dao.WfFormColmLDao.deleteWfFormColmL */
+		DELETE FROM <if test="!isHst">WF_FORM_COLM_L</if><if test="isHst">WF_FORM_COLM_H</if>
+		<where>
+			<if test="isHst and genId != null and genId !=''"> AND GEN_ID = #{formNo, jdbcType=VARCHAR}</if>
+			<if test="colmId != null and colmId !=''"> AND COLM_ID = #{colmId, jdbcType=VARCHAR}</if>
+			<if test="formNo != null"> AND FORM_NO = #{formNo, jdbcType=VARCHAR}</if>			
+		</where>
+	</delete>
+
+</mapper>

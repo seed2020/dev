@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WB_BC_METNG_FILE_D첨부파일] -->
+<mapper namespace="com.innobiz.orange.web.wb.dao.WbBcMetngFileDDao">
+
+	<resultMap id="wbBcMetngFileDMap" type="WbBcMetngFileDVo">
+		<id property="fileId" column="FILE_ID" /><!-- 파일ID -->
+		<id property="refId" column="REF_ID" /><!-- 참조ID -->
+		<id property="dispNm" column="DISP_NM" /><!-- 표시이름 -->
+		<id property="dispOrdr" column="DISP_ORDR" /><!-- 표시순서 -->
+		<id property="fileExt" column="FILE_EXT" /><!-- 파일확장자 -->
+		<id property="fileSize" column="FILE_SIZE" /><!-- 파일크기 -->
+		<id property="savePath" column="SAVE_PATH" /><!-- 저장경로 -->
+		<id property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일시 -->
+	</resultMap>
+
+	<select id="selectWbBcMetngFileD" resultMap="wbBcMetngFileDMap" parameterType="WbBcMetngFileDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcMetngFileDDao.selectWbBcMetngFileD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.FILE_ID,
+			T.REF_ID,
+			T.DISP_NM,
+			T.DISP_ORDR,
+			T.FILE_EXT,
+			T.FILE_SIZE,
+			T.SAVE_PATH,
+			T.USE_YN,
+			T.REGR_UID,
+			T.REG_DT,
+		</trim>
+		FROM WB_BC_METNG_FILE_D T
+		<where>
+			<if test="refId != null"> AND T.REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="fileId != null"> AND T.FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.DISP_ORDR ASC</if>
+	</select>
+
+	<insert id="insertWbBcMetngFileD" parameterType="WbBcMetngFileDVo">
+		/* com.innobiz.orange.web.wb.dao.WbBcMetngFileDDao.insertWbBcMetngFileD */
+		INSERT INTO WB_BC_METNG_FILE_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			FILE_ID,
+			REF_ID,
+			DISP_NM,
+			DISP_ORDR,
+			FILE_EXT,
+			FILE_SIZE,
+			SAVE_PATH,
+			USE_YN,
+			REGR_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{fileId, jdbcType=VARCHAR},
+			#{refId, jdbcType=VARCHAR},
+			#{dispNm, jdbcType=VARCHAR},
+			#{dispOrdr, jdbcType=INTEGER},
+			#{fileExt, jdbcType=VARCHAR},
+			#{fileSize, jdbcType=INTEGER},
+			#{savePath, jdbcType=VARCHAR},
+			#{useYn, jdbcType=VARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateWbBcMetngFileD" parameterType="WbBcMetngFileDVo" >
+		/* com.innobiz.orange.web.wb.dao.WbBcMetngFileDDao.updateWbBcMetngFileD */
+		UPDATE WB_BC_METNG_FILE_D
+		<set>
+			<if test="newRefId != null"> REF_ID = #{newRefId, jdbcType=VARCHAR},</if>
+			<if test="dispOrdr != null"> DISP_ORDR = #{dispOrdr, jdbcType=INTEGER},</if>
+			<if test="useYn != null"> USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="fileId != null"> AND FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="refId != null"> AND REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="refId == null and refId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWbBcMetngFileD" parameterType="WbBcMetngFileDVo">
+		/* com.innobiz.orange.web.wb.dao.WbBcMetngFileDDao.deleteWbBcMetngFileD */
+		DELETE FROM WB_BC_METNG_FILE_D
+		<where>
+			<if test="fileId != null"> AND FILE_ID = #{fileId, jdbcType=INTEGER}</if>
+			<if test="refId != null"> AND REF_ID = #{refId, jdbcType=VARCHAR}</if>
+			<if test="fileId == null and refId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

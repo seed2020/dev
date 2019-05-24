@@ -1,0 +1,205 @@
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!--
+	사이트 index 페이지
+	-->
+	<definition name="index" template="/WEB-INF/tiles/index.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+	</definition>
+
+	<!--
+	타일즈 적용하여 상단메뉴가 붙는 페이지
+	-->
+	<definition name="layout" template="/WEB-INF/tiles/layout.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+
+	<!--
+	서브 페이지 - layout 에 종속되는 페이지로 상단에 뒤로 등의 기능만 있음
+	-->
+	<definition name="sublayout" template="/WEB-INF/tiles/sublayout.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+
+	<!--
+	상단 메뉴 없이 쓰는 페이지 - 저장(trans) 등 - 스크립트 처리를 위해 사용
+	-->
+	<definition name="nolayout" template="/WEB-INF/tiles/nolayout.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+
+	<!--
+	상단 메뉴 없이 쓰는 페이지 - 로그인 페이지, 라이센스오류 페이지 - 스크립트 처리를 위해 사용
+	-->
+	<definition name="empty" template="/WEB-INF/tiles/emptylayout.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+
+	<!--
+	커뮤니티 메뉴 구성용 페이지
+	-->
+	<definition name="ctlayout" template="/WEB-INF/tiles/ctlayout.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+
+	<definition name="layout/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="layout/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="layout/*/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="layout/*/*/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="layout/*/*/*/*/*" extends="layout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	
+	<definition name="sublayout/*" extends="sublayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="sublayout/*/*" extends="sublayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="sublayout/*/*/*" extends="sublayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="sublayout/*/*/*/*" extends="sublayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="sublayout/*/*/*/*/*" extends="sublayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	
+	<definition name="nolayout/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="nolayout/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="nolayout/*/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="nolayout/*/*/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+
+	<definition name="nolayout/*/*/*/*/*" extends="nolayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+
+	<definition name="empty/*" extends="empty">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="empty/*/*" extends="empty">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="empty/*/*/*" extends="empty">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="empty/*/*/*/*" extends="empty">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="empty/*/*/*/*/*" extends="empty">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+
+	<definition name="ctlayout/*" extends="ctlayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="ctlayout/*/*" extends="ctlayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="ctlayout/*/*/*" extends="ctlayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="ctlayout/*/*/*/*" extends="ctlayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="ctlayout/*/*/*/*/*" extends="ctlayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	
+	<definition name="winpop" template="/WEB-INF/tiles/winpop.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+	
+	<definition name="winpop/*" extends="winpop">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="winpop/*/*" extends="winpop">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="winpop/*/*/*" extends="winpop">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="winpop/*/*/*/*" extends="winpop">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="winpop/*/*/*/*/*" extends="winpop">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	
+	<!--
+	일정관리 구성용 페이지
+	-->
+	<definition name="wclayout" template="/WEB-INF/tiles/wclayout.jsp">
+		<put-attribute name="headinc" value="/WEB-INF/tiles/headinc.jsp" />
+		<put-attribute name="body" value="/WEB-INF/tiles/body.jsp" />
+	</definition>
+	
+	<definition name="wclayout/*" extends="wclayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+	
+	<definition name="wclayout/*/*" extends="wclayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+	
+	<definition name="wclayout/*/*/*" extends="wclayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="wclayout/*/*/*/*" extends="wclayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="wclayout/*/*/*/*/*" extends="wclayout">
+	  <put-attribute name="body" value="/WEB-INF/jsp/{1}/{2}/{3}/{4}/{5}.jsp" />
+	</definition>
+	
+</tiles-definitions>

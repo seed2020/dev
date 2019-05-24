@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_CMT_D[한줄답변] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaCmtDDao">
+
+	<resultMap id="baCmtDMap" type="BaCmtDVo">
+		<id property="cmtId" column="CMT_ID" /><!-- 한줄답변ID -->
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<id property="cmt" column="CMT" /><!-- 한줄답변 -->
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<id property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일시 -->
+	</resultMap>
+
+	<select id="selectBaCmtD" resultMap="baCmtDMap" parameterType="BaCmtDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaCmtDDao.selectBaCmtD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.CMT_ID,
+			T.BULL_ID,
+			T.CMT,
+			T.REGR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			T.REG_DT,
+		</trim>
+		FROM BA_CMT_D T<if test="schCat == 'CAT_GRP_NM' and schWord != null and schWord != ''">, BA_RESC_B R</if>
+		<where>
+			<if test="bullId != null"> AND T.BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="cmtId != null"> AND T.CMT_ID = #{cmtId, jdbcType=INTEGER}</if>
+			<if test="regrUid != null"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.CMT_ID DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countBaCmtD" resultType="Integer" parameterType="BaCmtDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaCmtDDao.countBaCmtD */
+		SELECT COUNT(*) CNT
+		FROM BA_CMT_D T<if test="schCat == 'CAT_GRP_NM' and schWord != null and schWord != ''">, BA_RESC_B R</if>
+		<where>
+			<if test="bullId != null"> AND T.BULL_ID = #{bullId, jdbcType=INTEGER}</if>
+			<if test="cmtId != null"> AND T.CMT_ID = #{cmtId, jdbcType=INTEGER}</if>
+			<if test="regrUid != null"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertBaCmtD" parameterType="BaCmtDVo">
+		/* com.innobiz.orange.web.bb.dao.BaCmtDDao.insertBaCmtD */
+		INSERT INTO BA_CMT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CMT_ID,
+			BULL_ID,
+			CMT,
+			REGR_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{cmtId, jdbcType=VARCHAR},
+			#{bullId, jdbcType=VARCHAR},
+			#{cmt, jdbcType=NVARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+
+	<delete id="deleteBaCmtD" parameterType="BaCmtDVo">
+		/* com.innobiz.orange.web.bb.dao.BaCmtDDao.deleteBaCmtD */
+		DELETE FROM BA_CMT_D
+		<where>
+			AND CMT_ID = #{cmtId, jdbcType=INTEGER}
+		</where>
+	</delete>
+
+	<resultMap id="baCmtDCountMap" type="BaCmtDVo">
+		<id property="bullId" column="BULL_ID" /><!-- 게시물ID -->
+		<result property="cmtCnt" column="CMT_CNT" /><!-- 한줄답변수 -->
+	</resultMap>
+	<select id="countBaCmtDByBullId" resultMap="baCmtDCountMap" parameterType="BaCmtDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaCmtDDao.countBaCmtDByBullId */
+		SELECT BULL_ID, COUNT(BULL_ID) CMT_CNT FROM BA_CMT_D
+		WHERE BULL_ID IN ( <foreach collection="bullIdList" item="item" index="index" separator=",">#{item, jdbcType=INTEGER}</foreach> )
+		GROUP BY BULL_ID
+	</select>
+
+</mapper>

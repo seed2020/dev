@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_PROM_GUEST_D[커뮤니티 약속 참석자 상세] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.CtPromGuestDDao">
+
+	<resultMap id="ctPromGuestDMap" type="CtPromGuestDVo">
+		<id property="schdlId" column="SCHDL_ID" /><!-- 일정ID -->
+		<id property="guestUid" column="GUEST_UID" /><!-- 참석자UID -->
+		
+		<result property="guestNm" column="GUEST_NM" /><!-- 참석자 성명 -->
+		<result property="guestPositNm" column="GUEST_POSIT_NM" /><!-- 참석자 직위명 -->
+		<result property="guestDeptNm" column="GUEST_DEPT_NM" /><!-- 참석자 부서명 -->
+		<result property="guestCompNm" column="GUEST_COMP_NM" /><!-- 참석자 회사명 -->
+		<result property="statCd" column="STAT_CD" /><!-- 상태 코드 -->
+		<result property="opinCont" column="OPIN_CONT" /><!-- 의견내용 -->
+		<result property="guestEmplYn" column="GUEST_EMPL_YN" /><!-- 참석자_임직원 여부 -->
+		<result property="email" column="EMAIL" /><!-- 이메일 -->
+		<result property="emailSendYn" column="EMAIL_SEND_YN" /><!-- 이메일발송여부 -->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtPromGuestDWhere">
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND CPGD_T.SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="guestUid != null and guestUid !=''"> AND CPGD_T.GUEST_UID = #{guestUid, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtPromGuestD" resultMap="ctPromGuestDMap" parameterType="CtPromGuestDVo" >
+		/* com.innobiz.orange.web.wc.dao.CtPromGuestDDao.selectCtPromGuestD */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			CPGD_T.SCHDL_ID,
+			CPGD_T.GUEST_UID,
+			CPGD_T.GUEST_NM,
+			CPGD_T.GUEST_POSIT_NM,
+			CPGD_T.GUEST_DEPT_NM,
+			CPGD_T.GUEST_COMP_NM,
+			CPGD_T.STAT_CD,
+			CPGD_T.OPIN_CONT,
+			CPGD_T.GUEST_EMPL_YN,	
+			CPGD_T.EMAIL,
+			CPGD_T.EMAIL_SEND_YN,	
+		</trim>
+		FROM CT_PROM_GUEST_D CPGD_T
+		<include refid="selectCtPromGuestDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CPGD_T.SCHDL_ID,CPGD_T.GUEST_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countCtPromGuestD" resultType="Integer" parameterType="CtPromGuestDVo" >
+		/* com.innobiz.orange.web.wc.dao.CtPromGuestDDao.countCtPromGuestD */
+		SELECT COUNT(*) CNT
+		FROM CT_PROM_GUEST_D CPGD_T
+		<include refid="selectCtPromGuestDWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertCtPromGuestD" parameterType="CtPromGuestDVo" >
+		/* com.innobiz.orange.web.wc.dao.CtPromGuestDDao.insertCtPromGuestD */
+		INSERT INTO CT_PROM_GUEST_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SCHDL_ID,
+			GUEST_UID,
+			GUEST_NM,
+			GUEST_POSIT_NM,
+			GUEST_DEPT_NM,
+			GUEST_COMP_NM,
+			STAT_CD,
+			OPIN_CONT,
+			GUEST_EMPL_YN,	
+			EMAIL,
+			EMAIL_SEND_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{schdlId, jdbcType=VARCHAR},
+			#{guestUid, jdbcType=VARCHAR},
+			#{guestNm, jdbcType=NVARCHAR},
+			#{guestPositNm, jdbcType=NVARCHAR},
+			#{guestDeptNm, jdbcType=NVARCHAR},
+			#{guestCompNm, jdbcType=NVARCHAR},
+			#{statCd, jdbcType=VARCHAR},
+			#{opinCont, jdbcType=NVARCHAR},
+			#{guestEmplYn, jdbcType=VARCHAR},
+			#{email, jdbcType=VARCHAR},
+			#{emailSendYn, jdbcType=CHAR},
+		
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateCtPromGuestD" parameterType="CtPromGuestDVo" >
+		/* com.innobiz.orange.web.wc.dao.CtPromGuestDDao.updateCtPromGuestD */
+		UPDATE CT_PROM_GUEST_D
+		<set>
+			<if test="guestNm != null"> AGNT_ID = #{guestNm, jdbcType=NVARCHAR},</if>
+			<if test="guestPositNm != null"> AGNT_ID = #{guestPositNm, jdbcType=NVARCHAR},</if>
+			<if test="guestDeptNm != null"> AGNT_ID = #{guestDeptNm, jdbcType=NVARCHAR},</if>
+			<if test="guestCompNm != null"> AGNT_ID = #{guestCompNm, jdbcType=NVARCHAR},</if>
+			<if test="statCd != null"> AGNT_ID = #{statCd, jdbcType=VARCHAR},</if>
+			<if test="opinCont != null"> AGNT_ID = #{opinCont, jdbcType=NVARCHAR},</if>
+			<if test="guestEmplYn != null"> AGNT_ID = #{guestEmplYn, jdbcType=VARCHAR},</if>
+			<if test="email != null"> AGNT_ID = #{email, jdbcType=VARCHAR},</if>
+			<if test="emailSendYn != null"> AGNT_ID = #{emailSendYn, jdbcType=CHAR},</if>
+		</set>
+		<where>
+			<if test="schdlId != null and schdlId != ''" > SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteCtPromGuestD" parameterType="CtPromGuestDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcPromGuestDDao.deleteWcPromGuestD */
+		DELETE FROM WC_PROM_GUEST_D
+		<where>
+			<if test="schdlId != null and schdlId != ''" > SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

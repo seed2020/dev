@@ -1,0 +1,24 @@
+@charset "utf-8";
+@page{  size:auto; margin: 10mm 13mm 10mm 13mm;}
+.homewrapper { width:100%; min-width:650px; }
+#header_blue { display: none; }
+#header_yellow { display: none; }
+#header_green { display: none; }
+#header_pink { display: none; }
+.container { width:100%; }
+.sidebar { display: none; }
+.content { width:100%; position:absolute; left:0; *margin: 10mm 10mm 10mm 16mm;}
+.notPrint { display: none; }
+.printMin { width:650px; min-width:650px; }
+.printAp6 { width:705px; min-width:705px; }
+.printAp7 { width:805px; min-width:805px; }
+.printAp8 { width:905px; min-width:905px; }
+.printAp9 { width:1005px; min-width:1005px; }
+.printAp10 { width:1105px; min-width:1105px; }
+.printAp11 { width:1205px; min-width:1205px; }
+.printAp100 { width:100%; min-width:905px; }
+.print100 { width:100% !important; }
+.printNoScroll{overflow:visible !important;}
+.printNoScroll table {max-width:100% !important;width:auto !important;}
+.printNoScroll font, .printNoScroll span, .printNoScroll div, .printNoScroll p{font-size: inherit !important;}
+.printNoScroll img {max-width:100%; }

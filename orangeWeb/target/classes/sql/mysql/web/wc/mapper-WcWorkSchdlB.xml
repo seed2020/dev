@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_WORK_SCHDL_B[근태일정] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcWorkSchdlBDao">
+
+	<resultMap id="wcWorkSchdlBMap" type="WcWorkSchdlBVo">
+		<id property="schdlId" column="SCHDL_ID" /><!-- 일정ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="schdlTypCd" column="SCHDL_TYP_CD" /><!-- 일정구분코드 -->		
+		<result property="subj" column="SUBJ" /><!-- 제목 -->
+		<result property="cont" column="CONT" /><!-- 내용 -->
+		<result property="strtDt" column="STRT_DT" /><!-- 시작일시 -->
+		<result property="endDt" column="END_DT" /><!-- 종료일시 -->
+		<result property="alldayYn" column="ALLDAY_YN" /><!-- 종일여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="schdlTypNm" column="SCHDL_TYP_NM" /><!-- 일정구분명 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+	</resultMap>
+			
+	<!-- 조회조건 -->
+	<sql id="selectWcWorkSchdlBWhere">
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND T.SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="schdlTypCd != null and schdlTypCd !=''"> AND T.SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR}</if>
+			<if test="strtDt != null and strtDt != ''"><![CDATA[AND DATE_FORMAT(T.END_DT, '%Y-%m-%d') >= #{strtDt, jdbcType=VARCHAR}]]></if>
+			<if test="endDt != null and endDt != ''"><![CDATA[AND DATE_FORMAT(T.STRT_DT, '%Y-%m-%d') <= #{endDt, jdbcType=VARCHAR}]]></if>
+			<if test="userUid != null and userUid !=''"> AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test='schCat != null and "subj".equals(schCat) and schWord != null and schWord != ""'> AND T.SUBJ LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test='schCat != null and "cont".equals(schCat) and schWord != null and schWord != ""'> AND T.CONT LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="compIdList != null"> AND T.COMP_ID IN <foreach item="item" collection="compIdList" open="(" separator="," close=")">#{item, jdbcType=VARCHAR}</foreach></if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcWorkSchdlB" resultMap="wcWorkSchdlBMap" parameterType="WcWorkSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcWorkSchdlBDao.selectWcWorkSchdlB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.SCHDL_ID,
+			T.COMP_ID,
+			T.USER_UID,
+			T.SCHDL_TYP_CD,			
+			T.SUBJ,
+			T.CONT,
+			T.STRT_DT,
+			T.END_DT,
+			T.ALLDAY_YN,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'WORK_SCHDL_CD' AND CD = T.SCHDL_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') ) AS SCHDL_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+		</trim>
+		FROM WC_WORK_SCHDL_B T
+		<include refid="selectWcWorkSchdlBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.SCHDL_ID DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcWorkSchdlB" resultType="Integer" parameterType="WcWorkSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcWorkSchdlBDao.countWcWorkSchdlB */
+		SELECT COUNT(*) CNT
+		FROM WC_WORK_SCHDL_B T
+		<include refid="selectWcWorkSchdlBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWcWorkSchdlB" parameterType="WcWorkSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcWorkSchdlBDao.insertWcWorkSchdlB */
+		INSERT INTO WC_WORK_SCHDL_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SCHDL_ID,
+			COMP_ID,
+			USER_UID,
+			SCHDL_TYP_CD,
+			SUBJ,
+			CONT,
+			STRT_DT,
+			END_DT,
+			ALLDAY_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{schdlId, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+			#{schdlTypCd, jdbcType=VARCHAR},
+			#{subj, jdbcType=NVARCHAR},			
+			#{cont, jdbcType=NVARCHAR},
+			<if test="strtDt == null or strtDt == ''">NULL,</if><if test="strtDt != null and strtDt != ''">STR_TO_DATE(#{strtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>			
+			<if test="endDt == null or endDt == ''">NULL,</if><if test="endDt != null and endDt != ''">STR_TO_DATE(#{endDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>			
+			#{alldayYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWcWorkSchdlB" parameterType="WcWorkSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcWorkSchdlBDao.updateWcWorkSchdlB */
+		UPDATE WC_WORK_SCHDL_B
+		<set>
+			<if test="schdlTypCd != null"> SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR},</if>
+			<if test="userUid != null"> USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=VARCHAR},</if>
+			<if test="cont != null"> CONT = #{cont, jdbcType=VARCHAR},</if>
+			<if test="strtDt != null"> STRT_DT = STR_TO_DATE(#{strtDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="endDt != null"> END_DT = STR_TO_DATE(#{endDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = NOW(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWcWorkSchdlB" parameterType="WcWorkSchdlBVo" >
+		/* com.innobiz.orange.web.wc.dao.WcWorkSchdlBDao.deleteWcWorkSchdlB */
+		DELETE FROM WC_WORK_SCHDL_B
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

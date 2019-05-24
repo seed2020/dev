@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WF_0000_WORKS_IMG_D[이미지상세] -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfWorksImgDDao">
+
+	<resultMap id="wfWorksImgDMap" type="WfWorksImgDVo">
+		<id property="imgNo" column="IMG_NO" /><!-- 이미지번호 -->
+		<result property="workNo" column="WORK_NO" /><!-- 업무번호 -->
+		<result property="colmNm" column="COLM_NM" /><!-- 컬럼명 -->
+		<result property="imgPath" column="IMG_PATH" /><!-- 이미지경로 -->
+		<result property="imgWdth" column="IMG_WDTH" /><!-- 이미지넓이 -->
+		<result property="imgHght" column="IMG_HGHT" /><!-- 이미지높이 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWfWorksImgD" resultMap="wfWorksImgDMap" parameterType="WfWorksImgDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksImgDDao.selectWfWorksImgD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM ( SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.IMG_NO,
+			T.WORK_NO,
+			T.COLM_NM,
+			T.IMG_PATH,
+			T.IMG_WDTH,
+			T.IMG_HGHT,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM WFG_${formId}_WORKS_IMG_D T
+		<where>
+			<if test="imgNo != null"> AND T.IMG_NO = #{imgNo, jdbcType=VARCHAR}</if>
+			<if test="workNo != null"> AND T.WORK_NO = #{workNo, jdbcType=VARCHAR}</if>
+			<if test="colmNm != null"> AND T.COLM_NM = #{colmNm, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.WORK_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M ) M
+		</if>
+	</select>
+
+	<select id="countWfWorksImgD" resultType="Integer" parameterType="WfWorksImgDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksImgDDao.countWfWorksImgD */
+		SELECT COUNT(*) CNT
+		FROM WFG_${formId}_WORKS_IMG_D T
+		<where>
+			<if test="imgNo != null"> AND T.IMG_NO = #{imgNo, jdbcType=VARCHAR}</if>
+			<if test="workNo != null"> AND T.WORK_NO = #{workNo, jdbcType=VARCHAR}</if>
+			<if test="colmNm != null"> AND T.COLM_NM = #{colmNm, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWfWorksImgD" parameterType="WfWorksImgDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksImgDDao.insertWfWorksImgD */
+		INSERT INTO WFG_${formId}_WORKS_IMG_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			IMG_NO,
+			WORK_NO,
+			COLM_NM,
+			IMG_PATH,
+			IMG_WDTH,
+			IMG_HGHT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{imgNo, jdbcType=VARCHAR},
+			#{workNo, jdbcType=VARCHAR},
+			#{colmNm, jdbcType=VARCHAR},
+			#{imgPath, jdbcType=VARCHAR},
+			#{imgWdth, jdbcType=INTEGER},
+			#{imgHght, jdbcType=INTEGER},
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateWfWorksImgD" parameterType="WfWorksImgDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksImgDDao.updateWfWorksImgD */
+		UPDATE WFG_${formId}_WORKS_IMG_D
+		<set>
+			<if test="colmNm != null"> COLM_NM = #{colmNm, jdbcType=VARCHAR}</if>
+			<if test="imgPath != null"> IMG_PATH = #{imgPath, jdbcType=VARCHAR},</if>
+			<if test="imgWdth != null"> IMG_WDTH = #{imgWdth, jdbcType=INTEGER},</if>
+			<if test="imgHght != null"> IMG_HGHT = #{imgHght, jdbcType=INTEGER},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="imgNo != null">AND IMG_NO = #{imgNo, jdbcType=VARCHAR}</if>
+			<if test="workNo != null">AND WORK_NO = #{workNo, jdbcType=VARCHAR}</if>			
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWfWorksImgD" parameterType="WfWorksImgDVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksImgDDao.deleteWfWorksImgD */
+		DELETE FROM WFG_${formId}_WORKS_IMG_D
+		<where>
+			<if test="imgNo != null">AND IMG_NO = #{imgNo, jdbcType=VARCHAR}</if>
+			<if test="workNo != null">AND WORK_NO = #{workNo, jdbcType=VARCHAR}</if>
+			<if test="colmNm != null">AND COLM_NM = #{colmNm, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

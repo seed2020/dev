@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_BLON_CAT_D [커뮤니티 소속 카테고리 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtBlonCatDDao">
+
+	<resultMap id="ctBlonCatDMap" type="CtBlonCatDVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+	    <id property="catId" column="CAT_ID" /><!--카테고리 ID-->
+		
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtBlonCatDWhere">
+		<where>
+		    <if test="compId != null and compId != ''"> AND CBCD_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CBCD_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="catId != null and catId != ''"> AND CBCD_T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		    		    
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtBlonCatD" resultMap="ctBlonCatDMap" parameterType="CtBlonCatDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBlonCatDDao.selectCtBlonCatD */
+		
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			CBCD_T.COMP_ID,
+			CBCD_T.CT_ID,
+			CBCD_T.CAT_ID,
+			
+		</trim>
+		FROM CT_BLON_CAT_D CBCD_T
+		<include refid="selectCtBlonCatDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CBCD_T.CAT_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtBlonCatD" resultType="Integer" parameterType="CtBlonCatDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBlonCatDDao.countCtBlonCatD */
+		SELECT COUNT(*) CNT
+		FROM CT_BLON_CAT_D CBCD_T
+		<include refid="selectCtBlonCatDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtBlonCatD" parameterType="CtBlonCatDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBlonCatDDao.insertCtBlonCatD */
+		INSERT INTO CT_BLON_CAT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID, CT_ID, CAT_ID, 
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR}, #{ctId, jdbcType=VARCHAR}, #{catId, jdbcType=VARCHAR},
+			
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtBlonCatD" parameterType="CtBlonCatDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBlonCatDDao.updateCtBlonCatD */
+		UPDATE CT_BLON_CAT_D
+		<set>
+		    <if test="catId != null"> CAT_ID = #{catId, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtBlonCatD" parameterType="CtBlonCatDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtBlonCatDDao.deleteCtBlonCatD */
+		DELETE FROM CT_BLON_CAT_D
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="catId != null and catId != ''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

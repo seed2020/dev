@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_ONGD_HOLD_OPIN_D[진행문서보류의견상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApOngdHoldOpinDDao">
+
+	<resultMap id="apOngdHoldOpinDMap" type="ApOngdHoldOpinDVo">
+		<id property="apvNo" column="APV_NO" /><!-- 결재번호 -->
+		<id property="apvrUid" column="APVR_UID" /><!-- 결재자UID -->
+		<result property="apvOpinCont" column="APV_OPIN_CONT" /><!-- 결재의견내용 -->
+		<result property="apvOpinDispYn" column="APV_OPIN_DISP_YN" /><!-- 결재의견표시여부 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApOngdHoldOpinD" resultMap="apOngdHoldOpinDMap" parameterType="ApOngdHoldOpinDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdHoldOpinDDao.selectApOngdHoldOpinD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.APV_NO DESC, N.APVR_UID DESC</if>) AS RNUM, N.* FROM (SELECT
+			</if>
+			T.APV_NO,
+			T.APVR_UID,
+			T.APV_OPIN_CONT,
+			T.APV_OPIN_DISP_YN,
+		</trim>
+		FROM AP_ONGD_HOLD_OPIN_D T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="apvrUid != null">AND T.APVR_UID = #{apvrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY T.APV_NO, T.APVR_UID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countApOngdHoldOpinD" resultType="Integer" parameterType="ApOngdHoldOpinDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdHoldOpinDDao.countApOngdHoldOpinD */
+		SELECT COUNT(*) CNT
+		FROM AP_ONGD_HOLD_OPIN_D T
+		<where>
+			<if test="apvNo != null">AND T.APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="apvrUid != null">AND T.APVR_UID = #{apvrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApOngdHoldOpinD" parameterType="ApOngdHoldOpinDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdHoldOpinDDao.insertApOngdHoldOpinD */
+		INSERT INTO AP_ONGD_HOLD_OPIN_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			APV_NO,
+			APVR_UID,
+			APV_OPIN_CONT,
+			APV_OPIN_DISP_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{apvNo, jdbcType=BIGINT},
+			#{apvrUid, jdbcType=VARCHAR},
+			#{apvOpinCont, jdbcType=NVARCHAR},
+			#{apvOpinDispYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApOngdHoldOpinD" parameterType="ApOngdHoldOpinDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdHoldOpinDDao.updateApOngdHoldOpinD */
+		UPDATE AP_ONGD_HOLD_OPIN_D
+		<set>
+			<if test="apvNo != null">APV_NO = #{apvNo, jdbcType=BIGINT},</if>
+			<if test="apvrUid != null">APVR_UID = #{apvrUid, jdbcType=VARCHAR},</if>
+			<if test="apvOpinCont != null">APV_OPIN_CONT = #{apvOpinCont, jdbcType=NVARCHAR},</if>
+			<if test="apvOpinDispYn != null">APV_OPIN_DISP_YN = #{apvOpinDispYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="apvrUid != null">AND APVR_UID = #{apvrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApOngdHoldOpinD" parameterType="ApOngdHoldOpinDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApOngdHoldOpinDDao.deleteApOngdHoldOpinD */
+		DELETE FROM AP_ONGD_HOLD_OPIN_D
+		<where>
+			<if test="apvNo != null">AND APV_NO = #{apvNo, jdbcType=BIGINT}</if>
+			<if test="apvrUid != null">AND APVR_UID = #{apvrUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

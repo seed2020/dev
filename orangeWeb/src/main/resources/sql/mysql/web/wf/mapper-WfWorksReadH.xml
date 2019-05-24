@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WFG_0000_WORKS_READ_H[조회이력] -->
+<mapper namespace="com.innobiz.orange.web.wf.dao.WfWorksReadHDao">
+
+	<resultMap id="wfWorksReadHMap" type="WfWorksReadHVo">
+		<id property="workNo" column="WORK_NO" /><!-- 업무번호 -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자명 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->		
+	</resultMap>
+
+	<select id="selectWfWorksReadH" resultMap="wfWorksReadHMap" parameterType="WfWorksReadHVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksReadHDao.selectWfWorksReadH */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.WORK_NO,
+			T.USER_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) USER_NM,
+			T.REG_DT,
+		</trim>
+		FROM WFG_${formId}_WORKS_READ_H T
+		<where>
+			<if test="workNo != null"> AND T.WORK_NO = #{workNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+
+	<select id="countWfWorksReadH" resultType="Integer" parameterType="WfWorksReadHVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksReadHDao.countWfWorksReadH */
+		SELECT COUNT(*) CNT
+		FROM WFG_${formId}_WORKS_READ_H T
+		<where>
+			<if test="workNo != null"> AND T.WORK_NO = #{workNo, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWfWorksReadH" parameterType="WfWorksReadHVo">
+		/* com.innobiz.orange.web.wf.dao.WfWorksReadHDao.insertWfWorksReadH */
+		INSERT INTO WFG_${formId}_WORKS_READ_H
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			WORK_NO,
+			USER_UID,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{workNo, jdbcType=INTEGER},
+			#{userUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateWfWorksReadH" parameterType="WfWorksReadHVo" >
+		/* com.innobiz.orange.web.wf.dao.WfWorksReadHDao.updateWfWorksReadH */
+		UPDATE WFG_${formId}_WORKS_READ_H
+		<set>
+			<if test="regDt != null"> 
+				<if test="regDt == 'sysdate'"> REG_DT = NOW(),</if>
+				<if test="regDt == ''"> REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'"> REG_DT = STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="workNo != null"> AND WORK_NO = #{workNo, jdbcType=INTEGER}</if>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWfWorksReadH" parameterType="WfWorksReadHVo">
+		/* com.innobiz.orange.web.wf.dao.WfWorksReadHDao.deleteWfWorksReadH */
+		DELETE FROM WFG_${formId}_WORKS_READ_H
+		<where>
+			<if test="workNo != null"> AND WORK_NO = #{workNo, jdbcType=INTEGER}</if>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

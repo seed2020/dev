@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_MAIL_SCHDL_R[메일일정] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcMailSchdlRDao">
+
+	<resultMap id="wcMailSchdlRMap" type="WcMailSchdlRVo">
+		<id property="schdlId" column="SCHDL_ID" /><!-- 일정ID -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="acptYn" column="ACPT_YN" /><!-- 수락여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명-->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="cmplDt" column="CMPL_DT" /><!-- 처리일시 -->
+		<result property="mailId" column="MAIL_ID" /><!-- 메일ID -->
+		<result property="copySchdlId" column="COPY_SCHDL_ID" /><!-- 복사일정ID -->
+	</resultMap>
+					
+	<!-- 조회조건 -->
+	<sql id="selectWcMailSchdlRWhere">
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND T.SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid !=''"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="acptYn != null and acptYn !=''"> AND T.ACPT_YN = #{acptYn, jdbcType=VARCHAR}</if>
+			<if test="mailId != null and mailId !=''"> AND T.MAIL_ID = #{mailId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+			
+	<!-- 목록조회 -->
+	<select id="selectWcMailSchdlR" resultMap="wcMailSchdlRMap" parameterType="WcMailSchdlRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcMailSchdlRDao.selectWcMailSchdlR */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.SCHDL_ID,
+			T.USER_UID,
+			T.ACPT_YN,
+			T.REGR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			T.REG_DT,
+			T.CMPL_DT,
+			T.MAIL_ID,
+			T.COPY_SCHDL_ID,
+		</trim>
+		FROM WC_MAIL_SCHDL_R T
+		<include refid="selectWcMailSchdlRWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.SCHDL_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcMailSchdlR" resultType="Integer" parameterType="WcMailSchdlRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcMailSchdlRDao.countWcMailSchdlR */
+		SELECT COUNT(*) CNT
+		FROM WC_MAIL_SCHDL_R T
+		<include refid="selectWcMailSchdlRWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWcMailSchdlR" parameterType="WcMailSchdlRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcMailSchdlRDao.insertWcMailSchdlR */
+		INSERT INTO WC_MAIL_SCHDL_R
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			SCHDL_ID,
+			USER_UID,
+			ACPT_YN,
+			REGR_UID,
+			REG_DT,
+			CMPL_DT,
+			MAIL_ID,
+			COPY_SCHDL_ID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{schdlId, jdbcType=VARCHAR},
+			#{userUid, jdbcType=VARCHAR},
+			#{acptYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="cmplDt == 'sysdate'">SYSDATE,</if><if test="cmplDt == null or cmplDt == ''">NULL,</if>
+			<if test="cmplDt != null and cmplDt != '' and cmplDt != 'sysdate'">TO_DATE(#{cmplDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{mailId, jdbcType=VARCHAR},
+			#{copySchdlId, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWcMailSchdlR" parameterType="WcMailSchdlRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcMailSchdlRDao.updateWcMailSchdlR */
+		UPDATE WC_MAIL_SCHDL_R
+		<set>
+			<if test="acptYn != null"> ACPT_YN = #{acptYn, jdbcType=VARCHAR},</if>
+			<if test="copySchdlId != null"> 
+				<if test="copySchdlId == ''"> COPY_SCHDL_ID = NULL,</if>
+				<if test="copySchdlId != ''"> COPY_SCHDL_ID = #{copySchdlId, jdbcType=VARCHAR},</if>
+			</if>
+			<if test="regDt != null"> 
+				<if test="regDt == 'sysdate'"> REG_DT = SYSDATE,</if>
+				<if test="regDt == ''"> REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'"> REG_DT = TO_DATE(#{regDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="cmplDt != null"> 
+				<if test="cmplDt == 'sysdate'"> CMPL_DT = SYSDATE,</if>
+				<if test="cmplDt == ''"> CMPL_DT = NULL,</if>
+				<if test="cmplDt != '' and cmplDt != 'sysdate'"> CMPL_DT = TO_DATE(#{cmplDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="mailId != null"> MAIL_ID = #{mailId, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWcMailSchdlR" parameterType="WcMailSchdlRVo" >
+		/* com.innobiz.orange.web.wc.dao.WcMailSchdlRDao.deleteWcMailSchdlR */
+		DELETE FROM WC_MAIL_SCHDL_R
+		<where>
+			<if test="schdlId != null and schdlId !=''"> AND SCHDL_ID = #{schdlId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

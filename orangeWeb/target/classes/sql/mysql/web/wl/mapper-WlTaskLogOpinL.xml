@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WL_TASK_LOG_OPIN_L[업무일지의견목록] -->
+<mapper namespace="com.innobiz.orange.web.wl.dao.WlTaskLogOpinLDao">
+
+	<resultMap id="wlTaskLogOpinLMap" type="WlTaskLogOpinLVo">
+		<id property="logNo" column="LOG_NO" /><!-- 일지번호 -->
+		<result property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->		
+		<result property="opinCont" column="OPIN_CONT" /><!-- 의견내용 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+	</resultMap>
+			
+	<sql id="selectWlTaskLogOpinLWhere">
+		<where>
+			<if test="logNo != null"> AND T.LOG_NO = #{logNo, jdbcType=INTEGER}</if>
+			<if test="userUid != null and userUid !=''"> AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>			
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<select id="selectWlTaskLogOpinL" resultMap="wlTaskLogOpinLMap" parameterType="WlTaskLogOpinLVo" >
+		/* com.innobiz.orange.web.wl.dao.WlTaskLogOpinLDao.selectWlTaskLogOpinL */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.LOG_NO,
+			T.USER_UID,
+			T.COMP_ID,			
+			T.OPIN_CONT,
+			T.REG_DT,
+		</trim>
+		FROM WL_TASK_LOG_OPIN_L T
+		<include refid="selectWlTaskLogOpinLWhere" />
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT DESC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+
+	<select id="countWlTaskLogOpinL" resultType="Integer" parameterType="WlTaskLogOpinLVo" >
+		/* com.innobiz.orange.web.wl.dao.WlTaskLogOpinLDao.countWlTaskLogOpinL */
+		SELECT COUNT(*) CNT
+		FROM WL_TASK_LOG_OPIN_L T
+		<include refid="selectWlTaskLogOpinLWhere" />
+	</select>
+
+	<insert id="insertWlTaskLogOpinL" parameterType="WlTaskLogOpinLVo">
+		/* com.innobiz.orange.web.wl.dao.WlTaskLogOpinLDao.insertWlTaskLogOpinL */
+		INSERT INTO WL_TASK_LOG_OPIN_L
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			LOG_NO,
+			USER_UID,
+			COMP_ID,			
+			OPIN_CONT,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{logNo, jdbcType=INTEGER},
+			#{userUid, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},			
+			#{opinCont, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">NOW(),</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+			
+	<update id="updateWlTaskLogOpinL" parameterType="WlTaskLogOpinLVo" >
+		/* com.innobiz.orange.web.pt.dao.WlTaskLogOpinLDao.updateWlTaskLogOpinL */
+		UPDATE WL_TASK_LOG_OPIN_L
+		<set>
+			<if test="opinCont != null"> OPIN_CONT = #{opinCont, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="logNo != null"> AND LOG_NO = #{logNo, jdbcType=INTEGER}</if>
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWlTaskLogOpinL" parameterType="WlTaskLogOpinLVo">
+		/* com.innobiz.orange.web.wl.dao.WlTaskLogOpinLDao.deleteWlTaskLogOpinL */
+		DELETE FROM WL_TASK_LOG_OPIN_L
+		<where>
+			AND LOG_NO = #{logNo, jdbcType=INTEGER}
+			<if test="userUid != null and userUid !=''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+	
+</mapper>

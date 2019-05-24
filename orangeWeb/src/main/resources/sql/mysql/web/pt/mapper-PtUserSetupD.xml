@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_USER_SETUP_D[사용자설정상세] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtUserSetupDDao">
+
+	<resultMap id="ptUserSetupDMap" type="PtUserSetupDVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="setupClsId" column="SETUP_CLS_ID" /><!-- 설정분류ID -->
+		<id property="setupId" column="SETUP_ID" /><!-- 설정ID -->
+		<result property="setupVa" column="SETUP_VA" /><!-- 설정값 -->
+		<result property="cacheYn" column="CACHE_YN" /><!-- 캐쉬여부 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtUserSetupD" resultMap="ptUserSetupDMap" parameterType="PtUserSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserSetupDDao.selectPtUserSetupD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.USER_UID,
+			T.SETUP_CLS_ID,
+			T.SETUP_ID,
+			T.SETUP_VA,
+			T.CACHE_YN,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			</if>
+		</trim>
+		FROM PT_USER_SETUP_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="setupClsId != null">AND T.SETUP_CLS_ID = #{setupClsId, jdbcType=VARCHAR}</if>
+			<if test="setupId != null">AND T.SETUP_ID = #{setupId, jdbcType=VARCHAR}</if>
+			<if test="cacheYn != null and cacheYn != ''">AND T.CACHE_YN = #{cacheYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID, T.SETUP_CLS_ID, T.SETUP_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countPtUserSetupD" resultType="Integer" parameterType="PtUserSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserSetupDDao.countPtUserSetupD */
+		SELECT COUNT(*) CNT
+		FROM PT_USER_SETUP_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="setupClsId != null">AND T.SETUP_CLS_ID = #{setupClsId, jdbcType=VARCHAR}</if>
+			<if test="setupId != null">AND T.SETUP_ID = #{setupId, jdbcType=VARCHAR}</if>
+			<if test="cacheYn != null and cacheYn != ''">AND T.CACHE_YN = #{cacheYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtUserSetupD" parameterType="PtUserSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserSetupDDao.insertPtUserSetupD */
+		INSERT INTO PT_USER_SETUP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			SETUP_CLS_ID,
+			SETUP_ID,
+			SETUP_VA,
+			CACHE_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR},
+			#{setupClsId, jdbcType=VARCHAR},
+			#{setupId, jdbcType=VARCHAR},
+			#{setupVa, jdbcType=NVARCHAR},
+			#{cacheYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updatePtUserSetupD" parameterType="PtUserSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserSetupDDao.updatePtUserSetupD */
+		UPDATE PT_USER_SETUP_D
+		<set>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="setupClsId != null">SETUP_CLS_ID = #{setupClsId, jdbcType=VARCHAR},</if>
+			<if test="setupId != null">SETUP_ID = #{setupId, jdbcType=VARCHAR},</if>
+			<if test="setupVa != null">SETUP_VA = #{setupVa, jdbcType=NVARCHAR},</if>
+			<if test="cacheYn != null">CACHE_YN = #{cacheYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="setupClsId != null">AND SETUP_CLS_ID = #{setupClsId, jdbcType=VARCHAR}</if>
+			<if test="setupId != null">AND SETUP_ID = #{setupId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtUserSetupD" parameterType="PtUserSetupDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtUserSetupDDao.deletePtUserSetupD */
+		DELETE FROM PT_USER_SETUP_D
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="setupClsId != null">AND SETUP_CLS_ID = #{setupClsId, jdbcType=VARCHAR}</if>
+			<if test="setupId != null">AND SETUP_ID = #{setupId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : AP_APV_LN_GRP_D[결재라인그룹상세] -->
+<mapper namespace="com.innobiz.orange.web.ap.dao.ApApvLnGrpDDao">
+
+	<resultMap id="apApvLnGrpDMap" type="ApApvLnGrpDVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="apvLnGrpId" column="APV_LN_GRP_ID" /><!-- 결재라인그룹ID -->
+		<id property="apvLnGrpSeq" column="APV_LN_GRP_SEQ" /><!-- 결재라인그룹일련번호 -->
+		<result property="apvrUid" column="APVR_UID" /><!-- 결재자UID -->
+		<result property="apvDeptId" column="APV_DEPT_ID" /><!-- 결재부서ID -->
+		<result property="apvrDeptYn" column="APVR_DEPT_YN" /><!-- 결재자부서여부 -->
+		<result property="apvrRoleCd" column="APVR_ROLE_CD" /><!-- 결재자역할코드 -->
+		<result property="dblApvTypCd" column="DBL_APV_TYP_CD" /><!-- 이중결재구분코드 -->
+		<result property="absRsonCd" column="ABS_RSON_CD" /><!-- 부재사유코드 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자U명 -->
+		<result property="apvrNm" column="APVR_NM" /><!-- 결재자U명 -->
+		<result property="apvrRoleNm" column="APVR_ROLE_NM" /><!-- 결재자역할명 -->
+		<result property="dblApvTypNm" column="DBL_APV_TYP_NM" /><!-- 이중결재구분명 -->
+		<result property="absRsonNm" column="ABS_RSON_NM" /><!-- 부재사유명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectApApvLnGrpD" resultMap="apApvLnGrpDMap" parameterType="ApApvLnGrpDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApApvLnGrpDDao.selectApApvLnGrpD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.USER_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.APVR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) APVR_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'APVR_ROLE_CD' AND CD = M.APVR_ROLE_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) APVR_ROLE_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'DBL_APV_TYP_CD' AND CD = M.DBL_APV_TYP_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) DBL_APV_TYP_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ABS_RSON_CD' AND CD = M.ABS_RSON_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) ABS_RSON_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.USER_UID,
+			T.APV_LN_GRP_ID,
+			T.APV_LN_GRP_SEQ,
+			T.APVR_UID,
+			T.APV_DEPT_ID,
+			T.APVR_DEPT_YN,
+			T.APVR_ROLE_CD,
+			T.DBL_APV_TYP_CD,
+			T.ABS_RSON_CD,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.APVR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) APVR_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'APVR_ROLE_CD' AND CD = T.APVR_ROLE_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) APVR_ROLE_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'DBL_APV_TYP_CD' AND CD = T.DBL_APV_TYP_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) DBL_APV_TYP_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'ABS_RSON_CD' AND CD = T.ABS_RSON_CD) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) ABS_RSON_NM,
+			</if>
+		</trim>
+		FROM AP_APV_LN_GRP_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpId != null">AND T.APV_LN_GRP_ID = #{apvLnGrpId, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpSeq != null">AND T.APV_LN_GRP_SEQ = #{apvLnGrpSeq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID, T.APV_LN_GRP_ID, T.APV_LN_GRP_SEQ</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countApApvLnGrpD" resultType="Integer" parameterType="ApApvLnGrpDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApApvLnGrpDDao.countApApvLnGrpD */
+		SELECT COUNT(*) CNT
+		FROM AP_APV_LN_GRP_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpId != null">AND T.APV_LN_GRP_ID = #{apvLnGrpId, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpSeq != null">AND T.APV_LN_GRP_SEQ = #{apvLnGrpSeq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertApApvLnGrpD" parameterType="ApApvLnGrpDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApApvLnGrpDDao.insertApApvLnGrpD */
+		INSERT INTO AP_APV_LN_GRP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			APV_LN_GRP_ID,
+			APV_LN_GRP_SEQ,
+			APVR_UID,
+			APV_DEPT_ID,
+			APVR_DEPT_YN,
+			APVR_ROLE_CD,
+			DBL_APV_TYP_CD,
+			ABS_RSON_CD,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR},
+			#{apvLnGrpId, jdbcType=VARCHAR},
+			#{apvLnGrpSeq, jdbcType=INTEGER},
+			#{apvrUid, jdbcType=VARCHAR},
+			#{apvDeptId, jdbcType=VARCHAR},
+			#{apvrDeptYn, jdbcType=VARCHAR},
+			#{apvrRoleCd, jdbcType=VARCHAR},
+			#{dblApvTypCd, jdbcType=VARCHAR},
+			#{absRsonCd, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="updateApApvLnGrpD" parameterType="ApApvLnGrpDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApApvLnGrpDDao.updateApApvLnGrpD */
+		UPDATE AP_APV_LN_GRP_D
+		<set>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="apvLnGrpId != null">APV_LN_GRP_ID = #{apvLnGrpId, jdbcType=VARCHAR},</if>
+			<if test="apvLnGrpSeq != null">APV_LN_GRP_SEQ = #{apvLnGrpSeq, jdbcType=INTEGER},</if>
+			<if test="apvrUid != null">APVR_UID = #{apvrUid, jdbcType=VARCHAR},</if>
+			<if test="apvDeptId != null">APV_DEPT_ID = #{apvDeptId, jdbcType=VARCHAR},</if>
+			<if test="apvrDeptYn != null">APVR_DEPT_YN = #{apvrDeptYn, jdbcType=VARCHAR},</if>
+			<if test="apvrRoleCd != null">APVR_ROLE_CD = #{apvrRoleCd, jdbcType=VARCHAR},</if>
+			<if test="dblApvTypCd != null">DBL_APV_TYP_CD = #{dblApvTypCd, jdbcType=VARCHAR},</if>
+			<if test="absRsonCd != null">ABS_RSON_CD = #{absRsonCd, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpId != null">AND APV_LN_GRP_ID = #{apvLnGrpId, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpSeq != null">AND APV_LN_GRP_SEQ = #{apvLnGrpSeq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteApApvLnGrpD" parameterType="ApApvLnGrpDVo" >
+		/* com.innobiz.orange.web.ap.dao.ApApvLnGrpDDao.deleteApApvLnGrpD */
+		DELETE FROM AP_APV_LN_GRP_D
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpId != null">AND APV_LN_GRP_ID = #{apvLnGrpId, jdbcType=VARCHAR}</if>
+			<if test="apvLnGrpSeq != null">AND APV_LN_GRP_SEQ = #{apvLnGrpSeq, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

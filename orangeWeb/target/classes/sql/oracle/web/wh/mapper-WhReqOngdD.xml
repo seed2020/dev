@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WH_REQ_ONGD_D[요청진행상세] -->
+<mapper namespace="com.innobiz.orange.web.wh.dao.WhReqOngdDDao">
+
+	<resultMap id="whReqOngdDMap" type="WhReqOngdDVo">
+		<id property="reqNo" column="REQ_NO" /><!-- 요청번호 -->
+		<result property="mdId" column="MD_ID" /><!-- 모듈ID -->
+		<result property="statCd" column="STAT_CD" /><!-- 상태코드 -->
+		<result property="prevStatCd" column="PREV_STAT_CD" /><!-- 이전상태코드 -->
+		<result property="pichUid" column="PICH_UID" /><!-- 담당자UID -->
+		<result property="recvUid" column="RECV_UID" /><!-- 접수자UID -->
+		<result property="pichNm" column="PICH_NM" /><!-- 담당자명 -->
+		<result property="recvNm" column="RECV_NM" /><!-- 접수자명 -->
+		<result property="recvDt" column="RECV_DT" /><!-- 접수일 -->
+		<result property="recvCont" column="RECV_CONT" /><!-- 접수내용 -->
+		<result property="hdlrUid" column="HDLR_UID" /><!-- 처리자UID -->
+		<result property="hdlrNm" column="HDLR_NM" /><!-- 처리자명 -->
+		<result property="catNo" column="CAT_NO" /><!-- 유형번호 -->
+		<result property="catNm" column="CAT_NM" /><!-- 유형명 -->
+		<result property="cmplDueDt" column="CMPL_DUE_DT" /><!-- 완료예정일 -->		
+		<result property="ongoCont" column="ONGO_CONT" /><!-- 진행내용 -->
+		<result property="cmplDt" column="CMPL_DT" /><!-- 완료일시 -->
+		<result property="evalYn" column="EVAL_YN" /><!-- 평가여부 -->
+	</resultMap>
+	
+	
+	<!-- 조회조건 -->
+	<sql id="selectWhReqOngdDWhere">
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND T.REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="mdId != null and mdId !=''"> AND T.MD_ID = #{mdId, jdbcType=VARCHAR}</if>
+			<if test="mdIdList != null"> AND T.MD_ID IN ( <foreach collection="mdIdList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="catNo != null and catNo !=''"> AND T.CAT_NO = #{catNo, jdbcType=VARCHAR}</if>
+			<if test="catNoList != null"> AND T.CAT_NO IN ( <foreach collection="catNoList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWhReqOngdD" resultMap="whReqOngdDMap" parameterType="WhReqOngdDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqOngdDDao.selectWhReqOngdD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.REQ_NO,
+	        T.MD_ID,
+	        T.STAT_CD,
+	        T.PREV_STAT_CD,
+	        T.PICH_UID,
+	        T.RECV_UID,
+	        (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.PICH_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) PICH_NM,
+	        (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.RECV_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) RECV_NM,
+	        T.RECV_DT,
+	        T.RECV_CONT,
+	        T.HDLR_UID,
+	        (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.HDLR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) HDLR_NM,
+	        T.CAT_NO,
+	        (SELECT RESC_VA FROM WH_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM WH_CAT_GRP_L WHERE CAT_NO = T.CAT_NO) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) AS CAT_NM,
+	        T.CMPL_DUE_DT,
+	        T.ONGO_CONT,
+	        T.CMPL_DT,
+	        T.EVAL_YN,
+		</trim>
+		FROM WH_REQ_ONGD_D T
+		<include refid="selectWhReqOngdDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REQ_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWhReqOngdD" resultType="Integer" parameterType="WhReqOngdDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqOngdDDao.countWhReqOngdD */
+		SELECT COUNT(*) CNT
+		FROM WH_REQ_ONGD_D T
+		<include refid="selectWhReqOngdDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWhReqOngdD" parameterType="WhReqOngdDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqOngdDDao.insertWhReqOngdD */
+		INSERT INTO WH_REQ_ONGD_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			REQ_NO,
+	        MD_ID,
+	        STAT_CD,
+	        PREV_STAT_CD,
+	        PICH_UID,
+	        RECV_UID,
+	        RECV_DT,
+	        RECV_CONT,
+	        HDLR_UID,
+	        CAT_NO,
+	        CMPL_DUE_DT,
+	        ONGO_CONT,
+	        CMPL_DT,
+	        EVAL_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{reqNo, jdbcType=INTEGER},
+			#{mdId, jdbcType=VARCHAR},
+			#{statCd, jdbcType=VARCHAR},
+			#{prevStatCd, jdbcType=VARCHAR},
+			#{pichUid, jdbcType=VARCHAR},
+			#{recvUid, jdbcType=VARCHAR},
+			<if test="recvDt == 'sysdate'">SYSDATE,</if><if test="recvDt == null or recvDt == ''">NULL,</if>
+			<if test="recvDt != null and recvDt != '' and recvDt != 'sysdate'">TO_DATE(#{recvDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{recvCont, jdbcType=NVARCHAR},
+			#{hdlrUid, jdbcType=VARCHAR},
+			#{catNo, jdbcType=INTEGER},
+			<if test="cmplDueDt == 'sysdate'">SYSDATE,</if><if test="cmplDueDt == null or cmplDueDt == ''">NULL,</if>
+			<if test="cmplDueDt != null and cmplDueDt != '' and cmplDueDt != 'sysdate'">TO_DATE(#{cmplDueDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{ongoCont, jdbcType=NVARCHAR},
+			<if test="cmplDt == 'sysdate'">SYSDATE,</if><if test="cmplDt == null or cmplDt == ''">NULL,</if>
+			<if test="cmplDt != null and cmplDt != '' and cmplDt != 'sysdate'">TO_DATE(#{cmplDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{evalYn, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWhReqOngdD" parameterType="WhReqOngdDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqOngdDDao.updateWhReqOngdD */
+		UPDATE WH_REQ_ONGD_D
+		<set>
+			<if test="mdId != null"> MD_ID = #{mdId, jdbcType=VARCHAR},</if>
+			<if test="statCd != null"> STAT_CD = #{statCd, jdbcType=VARCHAR},</if>
+			<if test="prevStatCd != null"> PREV_STAT_CD = #{prevStatCd, jdbcType=VARCHAR},</if>
+			<if test="pichUid != null"> PICH_UID = #{pichUid, jdbcType=VARCHAR},</if>
+			<if test="recvUid != null"> RECV_UID = #{recvUid, jdbcType=VARCHAR},</if>			
+			<if test="recvDt != null"> 
+				<if test="recvDt == 'sysdate'"> RECV_DT = SYSDATE,</if>
+				<if test="recvDt == ''"> RECV_DT = NULL,</if>
+				<if test="recvDt != '' and recvDt != 'sysdate'"> RECV_DT = TO_DATE(#{recvDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>	
+			<if test="recvCont != null"> RECV_CONT = #{recvCont, jdbcType=NVARCHAR},</if>
+			<if test="hdlrUid != null"> HDLR_UID = #{hdlrUid, jdbcType=VARCHAR},</if>
+			<if test="catNo != null"> CAT_NO = #{catNo, jdbcType=INTEGER},</if>
+			<if test="cmplDueDt != null"> 
+				<if test="cmplDueDt == 'sysdate'"> CMPL_DUE_DT = SYSDATE,</if>
+				<if test="cmplDueDt == ''"> CMPL_DUE_DT = NULL,</if>
+				<if test="cmplDueDt != '' and cmplDueDt != 'sysdate'"> CMPL_DUE_DT = TO_DATE(#{cmplDueDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>	
+			<if test="ongoCont != null"> ONGO_CONT = #{ongoCont, jdbcType=NVARCHAR},</if>
+			<if test="cmplDt != null"> 
+				<if test="cmplDt == 'sysdate'"> CMPL_DT = SYSDATE,</if>
+				<if test="cmplDt == ''"> CMPL_DT = NULL,</if>
+				<if test="cmplDt != '' and cmplDt != 'sysdate'"> CMPL_DT = TO_DATE(#{cmplDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+			<if test="evalYn != null"> EVAL_YN = #{evalYn, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWhReqOngdD" parameterType="WhReqOngdDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqOngdDDao.deleteWhReqOngdD */
+		DELETE FROM WH_REQ_ONGD_D
+		<where>
+			<if test="reqNo != null"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

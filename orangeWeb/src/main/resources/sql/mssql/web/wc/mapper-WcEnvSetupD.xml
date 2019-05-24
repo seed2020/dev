@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WC_ENV_SETUP_D[환경 설정 상세] -->
+<mapper namespace="com.innobiz.orange.web.wc.dao.WcEnvSetupDDao">
+
+	<resultMap id="wcEnvSetupDMap" type="WcEnvSetupDVo">
+		<id property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="pagePltTypCd" column="PAGE_PLT_TYP_CD" /><!-- 페이지/포틀릿 구분코드 -->
+		<result property="schdlTypCd" column="SCHDL_TYP_CD" /><!-- 일정구분코드 -->
+		<result property="schdlKndCd" column="SCHDL_KND_CD" /><!-- 일정종류코드 -->
+		<result property="solaLunaYn" column="SOLA_LUNA_YN" /><!-- 양력여부 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWcEnvSetupDWhere">
+		<where>
+			<if test="compId != null and compId !=''"> AND WES_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null and userUid !=''"> AND WES_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="pagePltTypCd != null and pagePltTypCd !=''"> AND WES_T.PAGE_PLT_TYP_CD = #{pagePltTypCd, jdbcType=VARCHAR}</if>
+			
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWcEnvSetupD" resultMap="wcEnvSetupDMap" parameterType="WcEnvSetupDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcEnvSetupDDao.selectWcEnvSetupD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.COMP_ID,N.USER_UID,N.PAGE_PLT_TYP_CD DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			WES_T.COMP_ID, WES_T.USER_UID, WES_T.PAGE_PLT_TYP_CD, WES_T.SCHDL_TYP_CD, WES_T.SCHDL_KND_CD, WES_T.SOLA_LUNA_YN,
+		</trim>
+		FROM WC_ENV_SETUP_D WES_T
+		<include refid="selectWcEnvSetupDWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY WES_T.COMP_ID,WES_T.USER_UID,WES_T.PAGE_PLT_TYP_CD</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWcEnvSetupD" resultType="Integer" parameterType="WcEnvSetupDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcEnvSetupDDao.countWcEnvSetupD */
+		SELECT COUNT(*) CNT
+		FROM WC_ENV_SETUP_D WES_T
+		<include refid="selectWcEnvSetupDWhere"/>
+	</select>
+	
+	<!-- 폴더 등록 저장 -->
+	<insert id="insertWcEnvSetupD" parameterType="WcEnvSetupDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcEnvSetupDDao.insertWcEnvSetupD */
+		INSERT INTO WC_ENV_SETUP_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			COMP_ID, USER_UID, PAGE_PLT_TYP_CD, SCHDL_TYP_CD, SCHDL_KND_CD, SOLA_LUNA_YN,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR},#{userUid, jdbcType=VARCHAR},#{pagePltTypCd, jdbcType=VARCHAR},
+			#{schdlTypCd, jdbcType=VARCHAR},#{schdlKndCd, jdbcType=VARCHAR},#{solaLunaYn, jdbcType=CHAR},
+		</trim>
+	</insert>
+	
+	<!-- 폴더 수정 -->
+	<update id="updateWcEnvSetupD" parameterType="WcEnvSetupDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcEnvSetupDDao.updateWcEnvSetupD */
+		UPDATE WC_ENV_SETUP_D
+		<set>
+		    
+		
+			<if test="schdlTypCd != null"> SCHDL_TYP_CD = #{schdlTypCd, jdbcType=VARCHAR},</if>
+			<if test="schdlKndCd != null"> SCHDL_KND_CD = #{schdlKndCd, jdbcType=VARCHAR},</if>
+			<if test="solaLunaYn != null"> SOLA_LUNA_YN = #{solaLunaYn, jdbcType=CHAR},</if>
+			
+		</set>
+		<where>
+		    <if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="pagePltTypCd != null"> AND PAGE_PLT_TYP_CD = #{pagePltTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 폴더 삭제 -->
+	<delete id="deleteWcEnvSetupD" parameterType="WcEnvSetupDVo" >
+		/* com.innobiz.orange.web.wc.dao.WcEnvSetupDDao.deleteWcEnvSetupD */
+		DELETE FROM WC_ENV_SETUP_D
+		<where>
+			<if test="compId != null and compId !=''">AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="pagePltTypCd != null">AND PAGE_PLT_TYP_CD = #{pagePltTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

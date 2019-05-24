@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : DM_CAT_B[유형기본] -->
+<mapper namespace="com.innobiz.orange.web.dm.dao.DmCatBDao">
+
+	<resultMap id="dmCatBMap" type="DmCatBVo">
+		<id property="storId" column="STOR_ID" /><!-- 저장소ID -->
+		<id property="catId" column="CAT_ID" /><!-- 유형ID -->
+		<result property="catNm" column="CAT_NM" /><!-- 유형명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="catDesc" column="CAT_DESC" /><!-- 설명 -->
+		<result property="discYn" column="DISC_YN" /><!-- 심의여부 -->
+		<result property="discrUid" column="DISCR_UID" /><!-- 심의자UID -->
+		<result property="discrNm" column="DISCR_NM" /><!-- 심의자명 -->
+		<result property="regrDispYn" column="REGR_DISP_YN" /><!-- 작성자표시여부 -->
+		<result property="ownrDispYn" column="OWNR_DISP_YN" /><!-- 소유자표시여부 -->
+		<result property="itemUseYn" column="ITEM_USE_YN" /><!-- 항목사용여부 -->	
+		<result property="dftYn" column="DFT_YN" /><!-- 기본여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectDmCatBWhere">
+		<where>
+			<if test="storId != null and storId != ''"> AND T.STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="catId != null and catId !=''"> AND T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="regrUid != null and regrUid !=''"> AND T.REGR_UID = #{regrUid, jdbcType=VARCHAR}</if>
+			<if test="'catNm'.equals(schCat) and schWord != null and schWord != ''"> AND R.LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko') AND R.RESC_ID = T.RESC_ID AND R.RESC_VA LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="'catDesc'.equals(schCat) and schWord != null and schWord != ''"> AND T.CAT_DESC LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="discYn != null and discYn !=''"> AND T.DISC_YN = #{discYn, jdbcType=VARCHAR}</if>
+			<if test="dftYn != null and dftYn !=''"> AND T.DFT_YN = #{dftYn, jdbcType=VARCHAR}</if>
+			<!-- 다중 조회조건(String) -->
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectDmCatB" resultMap="dmCatBMap" parameterType="DmCatBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmCatBDao.selectDmCatB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.STOR_ID,
+			T.CAT_ID,
+			T.RESC_ID,
+			T.CAT_DESC,
+			T.DISC_YN,
+			T.DISCR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.DISCR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) DISCR_NM, 
+			T.REGR_DISP_YN,
+			T.OWNR_DISP_YN,
+			T.ITEM_USE_YN,
+			T.DFT_YN,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+		    (SELECT RESC_VA FROM DM_RESC_B WHERE STOR_ID = T.STOR_ID AND RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) AS CAT_NM ,
+		</trim>
+		FROM DM_CAT_B T
+		<if test="'catNm'.equals(schCat) and schWord != null and schWord != ''">, DM_RESC_B R </if>
+		<include refid="selectDmCatBWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT DESC </if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countDmCatB" resultType="Integer" parameterType="DmCatBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmCatBDao.countDmCatB */
+		SELECT COUNT(*) CNT
+		FROM DM_CAT_B T
+		<if test="'catNm'.equals(schCat) and schWord != null and schWord != ''">, DM_RESC_B R </if>
+		<include refid="selectDmCatBWhere"/>
+	</select>
+		
+	<!-- 등록 저장 -->
+	<insert id="insertDmCatB" parameterType="DmCatBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmCatBDao.insertDmCatB */
+		INSERT INTO DM_CAT_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			STOR_ID,
+			CAT_ID,
+			CAT_NM,
+			RESC_ID,
+			CAT_DESC,
+			DISC_YN,
+			DISCR_UID,
+			REGR_DISP_YN,
+			OWNR_DISP_YN,
+			ITEM_USE_YN,
+			DFT_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{storId, jdbcType=VARCHAR},
+			#{catId, jdbcType=VARCHAR},
+			#{catNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{catDesc, jdbcType=NVARCHAR},
+			#{discYn, jdbcType=VARCHAR},
+			#{discrUid, jdbcType=VARCHAR},
+			#{regrDispYn, jdbcType=VARCHAR},
+			#{ownrDispYn, jdbcType=VARCHAR},
+			#{itemUseYn, jdbcType=VARCHAR},
+			#{dftYn, jdbcType=VARCHAR},
+			#{regrUid, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="modrUid != null">#{modrUid, jdbcType=VARCHAR},</if><if test="modrUid == null">NULL,</if>
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateDmCatB" parameterType="DmCatBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmCatBDao.updateDmCatB */
+		UPDATE DM_CAT_B
+		<set>
+			<if test="catNm != null"> CAT_NM = #{catNm, jdbcType=VARCHAR},</if>
+			<if test="rescId != null"> RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="catDesc != null"> CAT_DESC = #{catDesc, jdbcType=VARCHAR},</if>
+			<if test="discYn != null"> DISC_YN = #{discYn, jdbcType=VARCHAR},</if>
+			<if test="discrUid != null"> DISCR_UID = #{discrUid, jdbcType=VARCHAR},</if>
+			<if test="regrDispYn != null"> REGR_DISP_YN = #{regrDispYn, jdbcType=VARCHAR},</if>
+			<if test="ownrDispYn != null"> OWNR_DISP_YN = #{ownrDispYn, jdbcType=VARCHAR},</if>
+			<if test="itemUseYn != null"> ITEM_USE_YN = #{itemUseYn, jdbcType=VARCHAR},</if>
+			<if test="dftYn != null"> DFT_YN = #{dftYn, jdbcType=VARCHAR},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> 
+				<if test="modDt == 'sysdate'"> MOD_DT = NOW(),</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="storId != null and storId != ''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="catId != null and catId !=''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteDmCatB" parameterType="DmCatBVo" >
+		/* com.innobiz.orange.web.dm.dao.DmCatBDao.deleteDmCatB */
+		DELETE FROM DM_CAT_B
+		<where>
+			<if test="storId != null and storId !=''"> AND STOR_ID = #{storId, jdbcType=VARCHAR}</if>
+			<if test="catId != null and catId !=''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

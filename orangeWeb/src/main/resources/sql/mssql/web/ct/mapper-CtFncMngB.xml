@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_FNC_MNG_B [커뮤니티 기능관리 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtFncMngBDao">
+
+	<resultMap id="ctFncMngBMap" type="CtFncMngBVo">
+	    
+	    <id property="ctFncId" column="CT_FNC_ID" /><!--커뮤니티 기능 ID-->
+	    
+	    <result property="ctFncSubjRescId" column="CT_FNC_SUBJ_RESC_ID" /><!--커뮤니티 기능 제목 리소스 ID-->
+	    <result property="ctFncTyp" column="CT_FNC_TYP" /><!--커뮤니티 기능 구분-->
+	    <result property="url" column="URL" /><!--URL-->
+	    <result property="relTblSubj" column="REL_TBL_SUBJ" /><!--관계 테이블 제목-->
+	    <result property="dftYn" column="DFT_YN" /><!--기본여부-->
+	    <result property="mulChoiYn" column="MUL_CHOI_YN" /><!--멀티 선택 여부-->
+	    <result property="useYn" column="USE_YN" /><!--사용여부-->
+	    <result property="ctMngYn" column="CT_MNG_YN" /><!--커뮤니티 메뉴 여부-->
+	    <result property="ctFncNm" column="CT_FNC_NM" /><!--커뮤니티 기능 명-->
+	    <result property="langTyp" column="LANG_TYP" /><!--커뮤니티 기능 언어타입-->
+	    <result property="ptUrl" column="PT_URL" /><!--포틀릿 URL-->
+	    <result property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtFncMngBWhere">
+		<where>
+		    <if test="ctMngYn != null and ctMngYn != ''"> AND CFMB_T.CT_MNG_YN = #{ctMngYn, jdbcType=VARCHAR}</if>
+		    <if test="useYn != null and useYn != ''"> AND CFMB_T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+   		    <if test="ctFncId != null and ctFncId != ''"> AND CFMB_T.CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR}</if>
+   		      <if test="fncIdHideList != null">
+	   			<![CDATA[ AND ( CT_FNC_ID NOT IN ]]>
+	   				 <foreach collection="fncIdHideList" item="item" index="index" separator="," open="(" close=")">
+			            	#{item, jdbcType=VARCHAR}
+			        </foreach>	  
+			        OR MUL_CHOI_YN='Y' ) 			
+	   		</if>
+	   		<if test="ctId != null and ctId != ''"> AND CFD_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+	   		<if test="compId != null and compId !=''"> AND CFMB_T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtFncMngB" resultMap="ctFncMngBMap" parameterType="CtFncMngBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtFncMngBDao.selectCtFncMngB */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CT_FNC_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				
+				SELECT
+			</if>
+			<if test="ctId != null and ctId != null">
+			    DISTINCT
+			</if>
+			CFMB_T.CT_FNC_ID, CFMB_T.CT_FNC_SUBJ_RESC_ID,
+			CFMB_T.CT_FNC_TYP, CFMB_T.URL, CFMB_T.REL_TBL_SUBJ,
+			CFMB_T.DFT_YN, CFMB_T.MUL_CHOI_YN, CFMB_T.USE_YN,
+			CFMB_T.CT_MNG_YN, CFMB_T.PT_URL,
+			
+			(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = CFMB_T.CT_FNC_SUBJ_RESC_ID
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CT_FNC_NM,
+			CFMB_T.COMP_ID,
+		</trim>
+		FROM CT_FNC_MNG_B CFMB_T  
+		<if test="ctId != null and ctId != null">
+			INNER JOIN CT_FNC_D CFD_T on CFMB_T.CT_FNC_ID = CFD_T.CT_FNC_ID
+		</if>
+		<include refid="selectCtFncMngBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CFMB_T.CT_FNC_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtFncMngB" resultType="Integer" parameterType="CtFncMngBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtFncMngBDao.countCtFncMngB */
+		SELECT COUNT(*) CNT
+		FROM CT_FNC_MNG_B CFMB_T
+		<include refid="selectCtFncMngBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtFncMngB" parameterType="CtFncMngBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtFncMngBDao.insertCtFncMngB */
+		INSERT INTO CT_FNC_MNG_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    CT_FNC_ID, CT_FNC_SUBJ_RESC_ID,
+		    CT_FNC_TYP, URL, REL_TBL_SUBJ,
+		    DFT_YN, MUL_CHOI_YN, USE_YN, 
+		    CT_MNG_YN, PT_URL,
+			COMP_ID,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{ctFncId, jdbcType=VARCHAR}, #{ctFncSubjRescId, jdbcType=VARCHAR},
+			#{ctFncTyp, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{relTblSubj, jdbcType=VARCHAR},
+			#{dftYn, jdbcType=CHAR}, #{mulChoiYn, jdbcType=CHAR}, #{useYn, jdbcType=CHAR},
+			#{ctMngYn, jdbcType=CHAR}, #{ptUrl, jdbcType=VARCHAR}, 
+			#{compId, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtFncMngB" parameterType="CtFncMngBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtFncMngBDao.updateCtFncMngB */
+		UPDATE CT_FNC_MNG_B
+		<set>
+			<if test="ctFncSubjRescId != null"> CT_FNC_SUBJ_RESC_ID = #{ctFncSubjRescId, jdbcType=VARCHAR},</if>
+			<if test="ctFncTyp != null"> CT_FNC_TYP = #{ctFncTyp, jdbcType=VARCHAR},</if>
+			<if test="url != null"> URL = #{url, jdbcType=VARCHAR},</if>
+			<if test="relTblSubj != null"> REL_TBL_SUBJ = #{relTblSubj, jdbcType=VARCHAR},</if>
+			<if test="dftYn != null"> DFT_YN = #{dftYn, jdbcType=CHAR},</if>
+			<if test="mulChoiYn != null"> MUL_CHOI_YN = #{mulChoiYn, jdbcType=CHAR},</if>
+			<if test="useYn != null"> USE_YN = #{useYn, jdbcType=CHAR},</if>
+			<if test="ctMngYn != null"> CT_MNG_YN = #{ctMngYn, jdbcType=CHAR},</if>
+			<if test="ptUrl != null"> PT_URL = #{ptUrl, jdbcType=VARCHAR},</if>
+			
+			
+		</set>
+		<where>
+   		    <if test="ctFncId != null and ctFncId != ''"> AND CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR}</if>
+   		    <if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtFncMngB" parameterType="CtFncMngBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtFncMngBDao.deleteCtFncMngB */
+		DELETE FROM CT_FNC_MNG_B
+		<where>
+   		   <if test="ctFncId != null and ctFncId != ''"> AND CT_FNC_ID = #{ctFncId, jdbcType=VARCHAR}</if>
+   		   <if test="compId != null and compId !=''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

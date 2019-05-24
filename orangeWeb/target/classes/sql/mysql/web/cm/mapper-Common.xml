@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- 공통 -->
+<mapper namespace="com.innobiz.orange.web.cm.dao.CommonDao">
+
+	<!-- DB 시간 조회 -->
+	<select id="queryDate" resultType="string" parameterType="CommonVoImpl" >
+		/* com.innobiz.orange.web.cm.dao.CommonDao.queryDate */
+		<if test="instanceQueryId == 'YYYY-MM-DD HH24:MI:SS'">SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s')</if>
+		<if test="instanceQueryId != 'YYYY-MM-DD HH24:MI:SS'">SELECT DATE_FORMAT(NOW(), '%Y-%m-%d')</if>
+	</select>
+
+	<!-- 시퀀스 조회 : 오류로 현재 사용 안함 (CommonSeqDao 에서 직접 처리) -->
+	<select id="nextVal" resultType="long" parameterType="commonVoImpl" statementType="CALLABLE" >
+		/* com.innobiz.orange.web.cm.dao.CommonDao.nextVal */
+		{ CALL GW_POTL.dbo.SP_SEQ(#{instanceQueryId, jdbcType=VARCHAR, mode=IN}, #{value, jdbcType=NUMERIC, mode=OUT}) }
+	</select>
+
+</mapper>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_MY_MNU_D[나의메뉴상세] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtMyMnuDDao">
+
+	<resultMap id="ptMyMnuDMap" type="PtMyMnuDVo">
+		<id property="userUid" column="USER_UID" /><!-- 사용자UID -->
+		<id property="mnuLoutCombId" column="MNU_LOUT_COMB_ID" /><!-- 메뉴레이아웃조합ID -->
+		<result property="mnuLoutCombPid" column="MNU_LOUT_COMB_PID" /><!-- 메뉴레이아웃조합부모ID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="fldYn" column="FLD_YN" /><!-- 폴더여부 -->
+		<result property="mnuNm" column="MNU_NM" /><!-- 메뉴명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="mnuId" column="MNU_ID" /><!-- 메뉴ID -->
+		<result property="mnuRescId" column="MNU_RESC_ID" /><!-- 메뉴리소스ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="userNm" column="USER_NM" /><!-- 사용자U명 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="mnuRescNm" column="MNU_RESC_NM" /><!-- 메뉴리소스명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtMyMnuD" resultMap="ptMyMnuDMap" parameterType="PtMyMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMyMnuDDao.selectPtMyMnuD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.USER_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM PT_RESC_D WHERE COMP_ID = M.COMP_ID AND RESC_ID = M.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = M.MNU_RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) MNU_RESC_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.USER_UID,
+			T.MNU_LOUT_COMB_ID,
+			T.MNU_LOUT_COMB_PID,
+			T.COMP_ID,
+			T.FLD_YN,
+			T.MNU_NM,
+			T.RESC_ID,
+			T.MNU_ID,
+			T.MNU_RESC_ID,
+			T.SORT_ORDR,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.USER_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) USER_NM,
+			(SELECT RESC_VA FROM PT_RESC_D WHERE COMP_ID = T.COMP_ID AND RESC_ID = T.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = T.MNU_RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) MNU_RESC_NM,
+			</if>
+		</trim>
+		FROM PT_MY_MNU_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="mnuLoutCombId != null">AND T.MNU_LOUT_COMB_ID = #{mnuLoutCombId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.USER_UID, T.MNU_LOUT_COMB_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countPtMyMnuD" resultType="Integer" parameterType="PtMyMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMyMnuDDao.countPtMyMnuD */
+		SELECT COUNT(*) CNT
+		FROM PT_MY_MNU_D T
+		<where>
+			<if test="userUid != null">AND T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="mnuLoutCombId != null">AND T.MNU_LOUT_COMB_ID = #{mnuLoutCombId, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtMyMnuD" parameterType="PtMyMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMyMnuDDao.insertPtMyMnuD */
+		INSERT INTO PT_MY_MNU_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			USER_UID,
+			MNU_LOUT_COMB_ID,
+			MNU_LOUT_COMB_PID,
+			COMP_ID,
+			FLD_YN,
+			MNU_NM,
+			RESC_ID,
+			MNU_ID,
+			MNU_RESC_ID,
+			SORT_ORDR,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{userUid, jdbcType=VARCHAR},
+			#{mnuLoutCombId, jdbcType=VARCHAR},
+			#{mnuLoutCombPid, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			#{fldYn, jdbcType=VARCHAR},
+			#{mnuNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{mnuId, jdbcType=VARCHAR},
+			#{mnuRescId, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT NVL(MAX(SORT_ORDR),0)+1 FROM PT_MY_MNU_D),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtMyMnuD" parameterType="PtMyMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMyMnuDDao.updatePtMyMnuD */
+		UPDATE PT_MY_MNU_D
+		<set>
+			<if test="userUid != null">USER_UID = #{userUid, jdbcType=VARCHAR},</if>
+			<if test="mnuLoutCombId != null">MNU_LOUT_COMB_ID = #{mnuLoutCombId, jdbcType=VARCHAR},</if>
+			<if test="mnuLoutCombPid != null">MNU_LOUT_COMB_PID = #{mnuLoutCombPid, jdbcType=VARCHAR},</if>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="fldYn != null">FLD_YN = #{fldYn, jdbcType=VARCHAR},</if>
+			<if test="mnuNm != null">MNU_NM = #{mnuNm, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="mnuId != null">MNU_ID = #{mnuId, jdbcType=VARCHAR},</if>
+			<if test="mnuRescId != null">MNU_RESC_ID = #{mnuRescId, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="mnuLoutCombId != null">AND MNU_LOUT_COMB_ID = #{mnuLoutCombId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtMyMnuD" parameterType="PtMyMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMyMnuDDao.deletePtMyMnuD */
+		DELETE FROM PT_MY_MNU_D
+		<where>
+			<if test="userUid != null">AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+			<if test="mnuLoutCombId != null">AND MNU_LOUT_COMB_ID = #{mnuLoutCombId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_VISTR_HST_D [커뮤니티 방문자 이력 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtVistrHstDDao">
+
+	<resultMap id="ctVistrHstDMap" type="CtVistrHstDVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+	    <id property="userUid" column="USER_UID" /><!--사용자 UID-->
+	    <id property="accsDt" column="ACCS_DT" /><!--접속 일시-->
+	    
+		<result property="accsTypCd" column="ACCS_TYP_CD" /><!--접속 구분 코드-->
+		<result property="userNm" column="USER_NM" /><!--사용자명-->
+		<result property="deptNm" column="DEPT_NM" /><!--부서명-->
+		<result property="userSeculCd" column="USER_SECUL_CD" /><!--사용자 보안등급 코드-->
+		<result property="joinDt" column="JOIN_DT" /><!--가입일시-->
+		<result property="langTyp" column="LANG_TYP" /><!--사용자 언어타입-->
+		
+		<result property="ctTodayCount" column="CT_TODAY_COUNT" /><!--오늘방문 수-->
+		<result property="ctAllCount" column="CT_ALL_COUNT" /><!-- 전체방문 수-->
+		<result property="strtDt" column="START_DT" /><!--시작 일시-->
+		<result property="endDt" column="END_DT" /><!--종료 일시-->
+		
+		<result property="joinStat" column="JOIN_STAT" /><!--가입상태-->
+		 
+		 
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtVistrHstDWhere">
+		<where>
+		    <if test="compId != null and compId != ''"> AND CVHD_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CVHD_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''"> AND CVHD_T.USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		    <if test="accsDt != null and accsDt != ''"> AND CVHD_T.ACCS_DT = CONVERT(DATETIME, #{accsDt, jdbcType=VARCHAR}, 120)</if>
+		    <if test="joinStat != null and joinStat != ''"> AND CMD.JOIN_STAT = #{joinStat, jdbcType=VARCHAR}</if>
+		    
+		</where>
+	</sql>
+	
+	<!-- 방문자 현황 목록조회 -->
+	<select id="selectCtVistrHstCountSumD" resultMap="ctVistrHstDMap" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.selectCtVistrHstCountSumD */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.USER_UID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			   CMD.COMP_ID
+			  ,CMD.CT_ID
+			  ,CMD.USER_UID
+		      ,CMD.USER_SECUL_CD
+		      ,CMD.JOIN_DT
+		      ,CVHD_T.ACCS_TYP_CD
+			  ,(
+				SELECT RESC_VA
+				FROM OR_RESC_B
+				WHERE RESC_ID = (
+									SELECT RESC_ID
+									FROM OR_USER_B OU_USER_T
+									WHERE OU_USER_T.USER_UID = CMD.USER_UID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			   )USER_NM
+			  ,(
+				SELECT RESC_VA
+				FROM OR_RESC_B
+				WHERE RESC_ID = (
+									SELECT DEPT_RESC_ID 
+									FROM OR_USER_B OU_DEPT_T
+									WHERE OU_DEPT_T.USER_UID = CMD.USER_UID
+								)
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+			  )DEPT_NM
+			,(
+					COUNT(CASE WHEN  CONVERT(VARCHAR(10), CVHD_T.ACCS_DT, 120)
+				 BETWEEN  #{strtDt, jdbcType=VARCHAR} AND  #{endDt, jdbcType=VARCHAR}
+				   THEN 'Y' END
+				)) CT_TODAY_COUNT
+			  ,(
+			  		COUNT(CMD.USER_UID)
+			  	) CT_ALL_COUNT 
+			
+		</trim>
+		FROM CT_VISTR_HST_D CVHD_T
+		INNER JOIN CT_MBSH_D CMD ON CVHD_T.CT_ID=CMD.CT_ID AND CMD.USER_UID = CVHD_T.USER_UID
+		<include refid="selectCtVistrHstDWhere"/>
+		GROUP BY CMD.USER_UID, CMD.USER_SECUL_CD, CMD.JOIN_DT, CMD.USER_SECUL_CD, CMD.COMP_ID ,CMD.CT_ID, CVHD_T.ACCS_TYP_CD, CVHD_T.USER_UID
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CVHD_T.USER_UID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+	
+	<!-- 목록조회 -->
+	<select id="selectCtVistrHstD" resultMap="ctVistrHstDMap" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.selectCtVistrHstD */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.USER_UID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			CVHD_T.COMP_ID,
+			CVHD_T.CT_ID,
+			CVHD_T.USER_UID,
+			CVHD_T.ACCS_DT,
+			
+			CVHD_T.ACCS_TYP_CD,
+			
+		</trim>
+		FROM CT_VISTR_HST_D CVHD_T
+		<include refid="selectCtVistrHstDWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CVHD_T.USER_UID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtVistrHstCountSumD" resultType="Integer" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.countCtVistrHstCountSumD */
+		SELECT COUNT(DISTINCT CMD.USER_UID) CNT
+		FROM CT_VISTR_HST_D CVHD_T
+		INNER JOIN CT_MBSH_D CMD ON CVHD_T.CT_ID=CMD.CT_ID AND CMD.USER_UID = CVHD_T.USER_UID 
+		<include refid="selectCtVistrHstDWhere"/>
+	</select>
+	
+		<!-- 목록조회 건수-->
+	<select id="countCtVistrHstD" resultType="Integer" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.countCtVistrHstD */
+		SELECT COUNT(*) CNT
+		FROM CT_VISTR_HST_D CVHD_T
+		<include refid="selectCtVistrHstDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtVistrHstD" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.insertCtVistrHstD */
+		INSERT INTO CT_VISTR_HST_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID, CT_ID, USER_UID, 
+		    ACCS_DT, ACCS_TYP_CD,
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR}, #{ctId, jdbcType=VARCHAR}, #{userUid, jdbcType=VARCHAR},
+			GETDATE(), #{accsTypCd, jdbcType=VARCHAR},
+			
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtVistrHstD" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.updateCtVistrHstD */
+		UPDATE CT_VISTR_HST_D
+		<set>
+			ACCS_DT = GETDATE(),	    
+<!-- 			<if test="accsTypCd != null"> ACCS_TYP_CD = #{accsTypCd, jdbcType=VARCHAR},</if> -->
+		</set>
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtVistrHstD" parameterType="CtVistrHstDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtVistrHstDDao.deleteCtVistrHstD */
+		DELETE FROM CT_VISTR_HST_D
+		<where>
+		    <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+			<if test="userUid != null and userUid != ''"> AND USER_UID = #{userUid, jdbcType=VARCHAR}</if>
+		    <if test="accsDt != null and accsDt != ''"> AND ACCS_DT = CONVERT(DATETIME, #{accsDt, jdbcType=VARCHAR}, 120)</if>
+		</where>
+	</delete>
+
+</mapper>

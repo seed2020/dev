@@ -1,0 +1,33 @@
+10.0
+31
+1       SQLCHAR             0       10      "|"      1     LOW_TOWN_CD                              Korean_Wansung_CI_AS
+2       SQLCHAR             0       40      "|"      2     SIDO                                     Korean_Wansung_CI_AS
+3       SQLCHAR             0       40      "|"      3     GUGUN                                    Korean_Wansung_CI_AS
+4       SQLCHAR             0       40      "|"      4     DONG                                     Korean_Wansung_CI_AS
+5       SQLCHAR             0       40      "|"      5     RI                                       Korean_Wansung_CI_AS
+6       SQLCHAR             0       1       "|"      6     MT_YN                                    Korean_Wansung_CI_AS
+7       SQLCHAR             0       12      "|"      7     MAIN_LOT_NO                              ""
+8       SQLCHAR             0       12      "|"      8     SUB_LOT_NO                               ""
+9       SQLCHAR             0       12      "|"      9     ROAD_NM_CD                               Korean_Wansung_CI_AS
+10      SQLCHAR             0       80      "|"      10    ROAD_NM                                  Korean_Wansung_CI_AS
+11      SQLCHAR             0       1       "|"      11    BASEMENT_YN                              Korean_Wansung_CI_AS
+12      SQLCHAR             0       12      "|"      12    MAIN_BLD_NO                              ""
+13      SQLCHAR             0       12      "|"      13    SUB_BLD_NO                               ""
+14      SQLCHAR             0       40      "|"      14    BLD_NM                                   Korean_Wansung_CI_AS
+15      SQLCHAR             0       100     "|"      15    BLD_DETL_NM                              Korean_Wansung_CI_AS
+16      SQLCHAR             0       25      "|"      16    BLD_MNG_NO                               Korean_Wansung_CI_AS
+17      SQLCHAR             0       2       "|"      17    DONG_SEQ                                 Korean_Wansung_CI_AS
+18      SQLCHAR             0       10      "|"      18    GOV_TOWN_CD                              Korean_Wansung_CI_AS
+19      SQLCHAR             0       20      "|"      19    GOV_TOWN_NM                              Korean_Wansung_CI_AS
+20      SQLCHAR             0       10       "|"      20    ZIP_NO                                   Korean_Wansung_CI_AS
+21      SQLCHAR             0       3       "|"      21    ZIP_SEQ                                  Korean_Wansung_CI_AS
+22      SQLCHAR             0       40      "|"      22    BULK_DELIVERY_NM                         Korean_Wansung_CI_AS
+23      SQLCHAR             0       2       "|"      23    MOVE_REASON_CD                           Korean_Wansung_CI_AS
+24      SQLCHAR             0       8       "|"      24    NOTICE_YMD                                  Korean_Wansung_CI_AS
+25      SQLCHAR             0       25      "|"      25    BEFORE_ROAD_ADR                          Korean_Wansung_CI_AS
+26      SQLCHAR             0       200     "|"      26    CITY_PUBLIC_BLD_NM                       Korean_Wansung_CI_AS
+27      SQLCHAR             0       1       "|"	27    APT_HOURSE_YN                            Korean_Wansung_CI_AS
+28      SQLCHAR             0       5       "|"	28    DFT_ZONE_NO                            Korean_Wansung_CI_AS
+29      SQLCHAR             0       1       "|"	29    DETL_ADR_YN                            Korean_Wansung_CI_AS
+30      SQLCHAR             0       15       "|"	30    NOTE1                            Korean_Wansung_CI_AS
+31      SQLCHAR             0       15      "\r\n"   31    NOTE2                            Korean_Wansung_CI_AS

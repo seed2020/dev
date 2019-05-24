@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_CAT_B [커뮤니티 카테고리 기본] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtCatBDao">
+
+	<resultMap id="ctCatBMap" type="CtCatBVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="catId" column="CAT_ID" /><!--카테고리 ID-->
+	    
+	    <result property="catSubjRescId" column="CAT_SUBJ_RESC_ID" /><!--카테고리 제목 리소스 ID-->
+	    <result property="catPid" column="CAT_PID" /><!--카테고리 부모 ID-->
+	    <result property="catLocStep" column="CAT_LOC_STEP" /><!--카테고리 위치 단계-->
+	    <result property="chldYn" column="CHLD_YN" /><!--자식여부-->
+	    <result property="extnOpenYn" column="EXTN_OPEN_YN" /><!--외부공개여부-->
+	    <result property="fldTypCd" column="FLD_TYP_CD" /><!--폴더분류구분코드-->
+	    <result property="regDt" column="REG_DT" /><!--등록일시-->
+	    <result property="modDt" column="MOD_DT" /><!--수정일시-->
+	    <result property="regrUid" column="REGR_UID" /><!--등록자UID-->
+	    <result property="modrUid" column="MODR_UID" /><!--수정자UID-->
+	    <result property="catOrdr" column="CAT_ORDR" /><!--카테고리순서-->
+	    <result property="catNm" column="CAT_NM" /><!--카테고리 명-->
+	    <!-- <result property="catPidResId" column="CAT_PID_RES_ID" /> --><!--카테고리 부모리소스 ID-->
+	    <result property="catPidNm" column="CAT_PID_NM" /><!--카테고리 부모명-->
+	    <result property="langTyp" column="LANG_TYP" /><!--카테고리 언어타입-->
+	    
+	    
+	    <result property="catCmntCnt" column="CAT_CMNT_CNT" /><!-- 카테고리에 포함된 커뮤니티 개수 -->
+	    
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtCatBWhere">
+		<where>
+		    <if test="compId != null and compId != ''"> AND CCB_T.COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="catId != null and catId != ''"> AND CCB_T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+   		    <if test="catPid != null and catPid != ''"> AND CCB_T.CAT_PID = #{catPid, jdbcType=VARCHAR}</if>
+   		    <if test="fldTypCd != null and fldTypCd != ''"> AND CCB_T.FLD_TYP_CD = #{fldTypCd, jdbcType=VARCHAR}</if>
+   		    <if test="extnOpenYn != null and extnOpenYn != ''"> AND CCB_T.EXTN_OPEN_YN = #{extnOpenYn, jdbcType=VARCHAR}</if>
+
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtCatB" resultMap="ctCatBMap" parameterType="CtCatBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtCatBDao.selectCtCatB */
+		
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			TOP (#{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) ROW_NUMBER() OVER (ORDER BY <if test="orderBy != null">${orderBy}</if><if test="orderBy == null">N.CAT_ID DESC</if>) AS RNUM, N.* 
+			FROM (
+				SELECT
+			</if>
+			CCB_T.COMP_ID, CCB_T.CAT_ID, CCB_T.CAT_SUBJ_RESC_ID, CCB_T.CAT_PID,
+			CCB_T.CAT_LOC_STEP, CCB_T.CHLD_YN, CCB_T.EXTN_OPEN_YN, CCB_T.FLD_TYP_CD,
+			CCB_T.REG_DT, CCB_T.MOD_DT, CCB_T.REGR_UID, CCB_T.MODR_UID,
+			CCB_T.CAT_ORDR,
+	      	 
+	      	(
+				SELECT COUNT(*) FROM CT_BLON_CAT_D CBCD_T
+					INNER JOIN CT_ESTB_B CEB_T ON CBCD_T.CT_ID = CEB_T.CT_ID
+						WHERE CBCD_T.CAT_ID = (
+													SELECT CAT_ID FROM CT_CAT_B 
+														WHERE CAT_ID = #{catId, jdbcType=VARCHAR}
+															AND FLD_TYP_CD = #{fldTypCd, jdbcType=VARCHAR}
+											  ) AND CEB_T.CT_ACT_STAT = 'A'
+			) AS CAT_CMNT_CNT,
+			
+			(
+				SELECT RESC_VA 
+				FROM CT_RESC_B
+				WHERE RESC_ID = CCB_T.CAT_SUBJ_RESC_ID
+				AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+      		) CAT_NM,
+      		
+      		(
+				SELECT CAT_SUBJ_RESC_ID 
+				FROM CT_CAT_B
+				WHERE CAT_ID=CCB_T.CAT_PID
+	      	) CAT_PID_RES_ID,
+      		
+      		(
+      			SELECT RESC_VA 
+      			FROM CT_RESC_B
+				WHERE RESC_ID  = (
+									SELECT CAT_SUBJ_RESC_ID 
+									FROM CT_CAT_B
+									WHERE CAT_ID=CCB_T.CAT_PID
+								 )
+			   AND LANG_TYP_CD = #{langTyp, jdbcType=VARCHAR}
+	      )CAT_PID_NM,
+      		
+
+		</trim>
+		FROM CT_CAT_B CCB_T
+		<include refid="selectCtCatBWhere"/>
+		<if test="pageNo == null or pageRowCnt == null">
+			<if test="orderBy != null">ORDER BY ${orderBy}</if>
+			<if test="orderBy == null">ORDER BY CCB_T.CAT_ID</if>
+		</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N ) M WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC} AND RNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}]]>
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtCatB" resultType="Integer" parameterType="CtCatBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtCatBDao.countCtCatB */
+		SELECT COUNT(*) CNT
+		FROM CT_CAT_B CCB_T
+		<include refid="selectCtCatBWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtCatB" parameterType="CtCatBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtCatBDao.insertCtCatB */
+		INSERT INTO CT_CAT_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		    COMP_ID, CAT_ID, CAT_SUBJ_RESC_ID, CAT_PID,
+		    CAT_LOC_STEP, CHLD_YN, EXTN_OPEN_YN, FLD_TYP_CD,
+		    REG_DT, MOD_DT, REGR_UID, MODR_UID,
+		    CAT_ORDR,
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{compId, jdbcType=CHAR}, #{catId, jdbcType=VARCHAR}, #{catSubjRescId, jdbcType=VARCHAR}, #{catPid, jdbcType=VARCHAR},
+			#{catLocStep, jdbcType=NUMERIC}, #{chldYn, jdbcType=CHAR}, #{extnOpenYn, jdbcType=CHAR}, #{fldTypCd, jdbcType=VARCHAR},
+			CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120), CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120), #{regrUid, jdbcType=VARCHAR}, #{modrUid, jdbcType=VARCHAR},
+			#{catOrdr, jdbcType=NUMERIC},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtCatB" parameterType="CtCatBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtCatBDao.updateCtCatB */
+		UPDATE CT_CAT_B
+		<set>
+			<if test="catSubjRescId != null"> CAT_SUBJ_RESC_ID = #{catSubjRescId, jdbcType=VARCHAR},</if>
+			<if test="catPid != null"> CAT_PID = #{catPid, jdbcType=VARCHAR},</if>
+			<if test="catLocStep != null"> CAT_LOC_STEP = #{catLocStep, jdbcType=NUMERIC},</if>
+			<if test="chldYn != null"> CHLD_YN = #{chldYn, jdbcType=CHAR},</if>
+			<if test="extnOpenYn != null"> EXTN_OPEN_YN = #{extnOpenYn, jdbcType=CHAR},</if>
+			<if test="fldTypCd != null"> FLD_TYP_CD = #{fldTypCd, jdbcType=VARCHAR},</if>
+			<if test="modDt != null"> MOD_DT = CONVERT(DATETIME, #{modDt, jdbcType=VARCHAR}, 120),</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="catOrdr != null"> CAT_ORDR = #{catOrdr, jdbcType=NUMERIC},</if>
+			
+		</set>
+		<where>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		    <if test="catId != null and catId != ''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtCatB" parameterType="CtCatBVo" >
+		/* com.innobiz.orange.web.ct.dao.CtCatBDao.deleteCtCatB */
+		DELETE FROM CT_CAT_B
+		<where>
+		   <if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=CHAR}</if>
+   		   <if test="catId != null and catId != ''"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+   		   <if test="fldTypCd != null and fldTypCd != ''"> AND FLD_TYP_CD = #{fldTypCd, jdbcType=VARCHAR}</if>
+		</where>
+	</delete>
+
+</mapper>

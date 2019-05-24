@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WD_ANB_B[연차기본] -->
+<mapper namespace="com.innobiz.orange.web.wd.dao.WdAnbBDao">
+
+	<resultMap id="wdAnbBMap" type="WdAnbBVo">
+		<id property="year" column="YEAR" /><!-- 기준년도 -->
+		<id property="anbTypCd" column="ANB_TYP_CD" /><!-- 연차구분코드 -->
+		<id property="odurUid" column="ODUR_UID" /><!-- 원직자UID -->
+		<result property="compId" column="COMP_ID" /><!-- 회사ID -->
+		<result property="forwCnt" column="FORW_CNT" /><!-- 이월수 -->
+		<result property="forwModCnt" column="FORW_MOD_CNT" /><!-- 이월차감수 -->
+		<result property="creCnt" column="CRE_CNT" /><!-- 발생수 -->
+		<result property="creModCnt" column="CRE_MOD_CNT" /><!-- 발생차감수 -->
+		<result property="useCnt" column="USE_CNT" /><!-- 사용수 -->
+		<result property="useModCnt" column="USE_MOD_CNT" /><!-- 사용차감수 -->
+		<result property="ongoCnt" column="ONGO_CNT" /><!-- 진행수 -->
+		<result property="ongoModCnt" column="ONGO_MOD_CNT" /><!-- 진행차감수 -->
+		<result property="creYear" column="CRE_YEAR" /><!-- 발생년도 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectWdAnbB" resultMap="wdAnbBMap" parameterType="WdAnbBVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbBDao.selectWdAnbB */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.YEAR,
+			T.ANB_TYP_CD,
+			T.ODUR_UID,
+			T.COMP_ID,
+			T.FORW_CNT,
+			T.FORW_MOD_CNT,
+			T.CRE_CNT,
+			T.CRE_MOD_CNT,
+			T.USE_CNT,
+			T.USE_MOD_CNT,
+			T.ONGO_CNT,
+			T.ONGO_MOD_CNT,
+			T.CRE_YEAR,
+		</trim>
+		FROM WD_ANB_B T
+		<where>
+			<if test="year != null">AND T.YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND T.ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="odurUidList != null">AND T.ODUR_UID IN ( <foreach collection="odurUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.YEAR, T.ANB_TYP_CD, T.ODUR_UID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countWdAnbB" resultType="Integer" parameterType="WdAnbBVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbBDao.countWdAnbB */
+		SELECT COUNT(*) CNT
+		FROM WD_ANB_B T
+		<where>
+			<if test="year != null">AND T.YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND T.ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND T.ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="compId != null and compId != ''">AND T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+			<if test="odurUidList != null">AND T.ODUR_UID IN ( <foreach collection="odurUidList" item="item" index="index" separator=",">#{item, jdbcType=VARCHAR}</foreach> )</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertWdAnbB" parameterType="WdAnbBVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbBDao.insertWdAnbB */
+		INSERT INTO WD_ANB_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			YEAR,
+			ANB_TYP_CD,
+			ODUR_UID,
+			COMP_ID,
+			FORW_CNT,
+			FORW_MOD_CNT,
+			CRE_CNT,
+			CRE_MOD_CNT,
+			USE_CNT,
+			USE_MOD_CNT,
+			ONGO_CNT,
+			ONGO_MOD_CNT,
+			CRE_YEAR,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{year, jdbcType=INTEGER},
+			#{anbTypCd, jdbcType=VARCHAR},
+			#{odurUid, jdbcType=VARCHAR},
+			#{compId, jdbcType=VARCHAR},
+			<if test="forwCnt == ''">NULL</if><if test="forwCnt != ''">#{forwCnt, jdbcType=NUMERIC}</if>,
+			<if test="forwModCnt == ''">NULL</if><if test="forwModCnt != ''">#{forwModCnt, jdbcType=NUMERIC}</if>,
+			<if test="creCnt == ''">NULL</if><if test="creCnt != ''">#{creCnt, jdbcType=NUMERIC}</if>,
+			<if test="creModCnt == ''">NULL</if><if test="creModCnt != ''">#{creModCnt, jdbcType=NUMERIC}</if>,
+			<if test="useCnt == ''">NULL</if><if test="useCnt != ''">#{useCnt, jdbcType=NUMERIC}</if>,
+			<if test="useModCnt == ''">NULL</if><if test="useModCnt != ''">#{useModCnt, jdbcType=NUMERIC}</if>,
+			<if test="ongoCnt == ''">NULL</if><if test="ongoCnt != ''">#{ongoCnt, jdbcType=NUMERIC}</if>,
+			<if test="ongoModCnt == ''">NULL</if><if test="ongoModCnt != ''">#{ongoModCnt, jdbcType=NUMERIC}</if>,
+			<if test="creYear == ''">NULL</if><if test="creYear != ''">#{creYear, jdbcType=INTEGER}</if>,
+		</trim>
+	</insert>
+
+	<update id="updateWdAnbB" parameterType="WdAnbBVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbBDao.updateWdAnbB */
+		UPDATE WD_ANB_B
+		<set>
+			<if test="year != null">YEAR = #{year, jdbcType=INTEGER},</if>
+			<if test="anbTypCd != null">ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR},</if>
+			<if test="odurUid != null">ODUR_UID = #{odurUid, jdbcType=VARCHAR},</if>
+			<if test="compId != null">COMP_ID = #{compId, jdbcType=VARCHAR},</if>
+			<if test="forwCnt != null">FORW_CNT = <if test="forwCnt == ''">NULL</if><if test="forwCnt != ''">#{forwCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="forwModCnt != null">FORW_MOD_CNT = <if test="forwModCnt == ''">NULL</if><if test="forwModCnt != ''">#{forwModCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="creCnt != null">CRE_CNT = <if test="creCnt == ''">NULL</if><if test="creCnt != ''">#{creCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="creModCnt != null">CRE_MOD_CNT = <if test="creModCnt == ''">NULL</if><if test="creModCnt != ''">#{creModCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="useCnt != null">USE_CNT = <if test="useCnt == ''">NULL</if><if test="useCnt != ''">#{useCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="useModCnt != null">USE_MOD_CNT = <if test="useModCnt == ''">NULL</if><if test="useModCnt != ''">#{useModCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="ongoCnt != null">ONGO_CNT = <if test="ongoCnt == ''">NULL</if><if test="ongoCnt != ''">#{ongoCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="ongoModCnt != null">ONGO_MOD_CNT = <if test="ongoModCnt == ''">NULL</if><if test="ongoModCnt != ''">#{ongoModCnt, jdbcType=NUMERIC}</if>,</if>
+			<if test="creYear != null">CRE_YEAR = <if test="creYear == ''">NULL</if><if test="creYear != ''">#{creYear, jdbcType=INTEGER}</if>,</if>
+		</set>
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteWdAnbB" parameterType="WdAnbBVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbBDao.deleteWdAnbB */
+		DELETE FROM WD_ANB_B
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+	<update id="addWdAnbB" parameterType="WdAnbBVo" >
+		/* com.innobiz.orange.web.wd.dao.WdAnbBDao.addWdAnbB */
+		UPDATE WD_ANB_B
+		<set>
+			<if test="forwCnt != null and forwCnt != ''">FORW_CNT = FORW_CNT + #{forwCnt, jdbcType=NUMERIC},</if>
+			<if test="forwModCnt != null and forwModCnt != ''">FORW_MOD_CNT = FORW_MOD_CNT + #{forwModCnt, jdbcType=NUMERIC},</if>
+			<if test="creCnt != null and creCnt != ''">CRE_CNT = CRE_CNT + #{creCnt, jdbcType=NUMERIC},</if>
+			<if test="creModCnt != null and creModCnt != ''">CRE_MOD_CNT = CRE_MOD_CNT + #{creModCnt, jdbcType=NUMERIC},</if>
+			<if test="useCnt != null and useCnt != ''">USE_CNT = USE_CNT + #{useCnt, jdbcType=NUMERIC},</if>
+			<if test="useModCnt != null and useModCnt != ''">USE_MOD_CNT = USE_MOD_CNT + #{useModCnt, jdbcType=NUMERIC},</if>
+			<if test="ongoCnt != null and ongoCnt != ''">ONGO_CNT = ONGO_CNT + #{ongoCnt, jdbcType=NUMERIC},</if>
+			<if test="ongoModCnt != null and ongoModCnt != ''">ONGO_MOD_CNT = ONGO_MOD_CNT + #{ongoModCnt, jdbcType=NUMERIC},</if>
+			<if test="creYear != null and creYear == ''">CRE_YEAR = #{creYear, jdbcType=INTEGER},</if>
+		</set>
+		<where>
+			<if test="year != null">AND YEAR = #{year, jdbcType=INTEGER}</if>
+			<if test="anbTypCd != null">AND ANB_TYP_CD = #{anbTypCd, jdbcType=VARCHAR}</if>
+			<if test="odurUid != null">AND ODUR_UID = #{odurUid, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+</mapper>

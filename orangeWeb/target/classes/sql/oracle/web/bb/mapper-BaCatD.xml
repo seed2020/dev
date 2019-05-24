@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : BA_CAT_D[카테고리] -->
+<mapper namespace="com.innobiz.orange.web.bb.dao.BaCatDDao">
+
+	<resultMap id="baCatDMap" type="BaCatDVo">
+		<id property="catId" column="CAT_ID" /><!-- 카테고리ID -->
+		<id property="catGrpId" column="CAT_GRP_ID" /><!-- 카테고리그룹ID -->
+		<id property="catNm" column="CAT_NM" /><!-- 카테고리명 -->
+		<id property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<id property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<id property="dispOrdr" column="DISP_ORDR" /><!-- 표시순서 -->
+		<id property="regrUid" column="REGR_UID" /><!-- 등록자 -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<id property="modrUid" column="MODR_UID" /><!-- 수정자 -->
+		<id property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+	</resultMap>
+
+	<select id="selectBaCatD" resultMap="baCatDMap" parameterType="BaCatDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaCatDDao.selectBaCatD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			T.CAT_ID,
+			T.CAT_GRP_ID,
+			T.CAT_NM,
+			T.RESC_ID,
+			(SELECT RESC_VA FROM BA_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			T.DISP_ORDR,
+			T.REGR_UID,
+			T.REG_DT,
+			T.MODR_UID,
+			T.MOD_DT,
+		</trim>
+		FROM BA_CAT_D T
+		<where>
+			<if test="catGrpId != null"> AND T.CAT_GRP_ID = #{catGrpId, jdbcType=VARCHAR}</if>
+			<if test="catId != null"> AND T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.DISP_ORDR ASC</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+
+	<select id="countBaCatD" resultType="Integer" parameterType="BaCatDVo" >
+		/* com.innobiz.orange.web.bb.dao.BaCatDDao.countBaCatD */
+		SELECT COUNT(*) CNT
+		FROM BA_CAT_D T<if test="schCat == 'BRD_NM' and schWord != null and schWord != ''">, BA_RESC_B R</if>
+		<where>
+			<if test="catGrpId != null"> AND T.CAT_GRP_ID = #{catGrpId, jdbcType=VARCHAR}</if>
+			<if test="catId != null"> AND T.CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertBaCatD" parameterType="BaCatDVo">
+		/* com.innobiz.orange.web.bb.dao.BaCatDDao.insertBaCatD */
+		INSERT INTO BA_CAT_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			CAT_ID,
+			CAT_GRP_ID,
+			CAT_NM,
+			RESC_ID,
+			DISP_ORDR,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{catId, jdbcType=VARCHAR},
+			#{catGrpId, jdbcType=VARCHAR},
+			#{catNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{dispOrdr, jdbcType=INTEGER},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">SYSDATE,</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+		</trim>
+	</insert>
+
+	<update id="updateBaCatD" parameterType="BaCatDVo" >
+		/* com.innobiz.orange.web.pt.dao.BaCatDDao.updateBaCatD */
+		UPDATE BA_CAT_D
+		<set>
+			<if test="catNm != null"> CAT_NM = #{catNm, jdbcType=NVARCHAR},</if>
+			<if test="dispOrdr != null"> DISP_ORDR = #{dispOrdr, jdbcType=INTEGER},</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'"> MOD_DT = SYSDATE,</if>
+				<if test="modDt == ''"> MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'"> MOD_DT = TO_DATE(#{modDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="catId != null"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deleteBaCatD" parameterType="BaCatDVo">
+		/* com.innobiz.orange.web.bb.dao.BaCatDDao.deleteBaCatD */
+		DELETE FROM BA_CAT_D
+		<where>
+			<if test="catId != null"> AND CAT_ID = #{catId, jdbcType=VARCHAR}</if>
+			<if test="catGrpId != null"> AND CAT_GRP_ID = #{catGrpId, jdbcType=VARCHAR}</if>
+			<if test="catId == null and catGrpId == null"> AND 1=0</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

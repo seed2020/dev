@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CT_DEBR_OPIN_D [커뮤니티 토론실 의견 상세] -->
+<mapper namespace="com.innobiz.orange.web.ct.dao.CtDebrOpinDDao">
+
+	<resultMap id="ctDebrOpinDMap" type="CtDebrOpinDVo">
+	    
+	    <id property="compId" column="COMP_ID" /><!--회사 ID-->
+	    <id property="ctId" column="CT_ID" /><!--커뮤니티 ID-->
+	    <id property="debrId" column="DEBR_ID" /><!--토론실 ID-->
+	    <id property="opinOrdr" column="OPIN_ORDR" /><!--의견순서-->
+	    
+	    <result property="subj" column="SUBJ" /><!--제목-->
+	    <result property="opin" column="OPIN" /><!--의견-->
+	    <result property="readCnt" column="READ_CNT" /><!--조회수-->
+	    <result property="prosConsCd" column="PROS_CONS_CD" /><!--찬성/반대-->
+	    <result property="regDt" column="REG_DT" /><!--등록일자-->
+	    <result property="modDt" column="MOD_DT" /><!--수정일자-->
+	    <result property="regrUid" column="REGR_UID" /><!--등록자 UID-->
+	    <result property="modrUid" column="MODR_UID" /><!--수정자 UID-->
+	    
+	    <result property="langTyp" column="LANG_TYP" /><!--사용자 언어 타입-->
+	    <result property="regrNm" column="REGR_NM" /><!--등록자명-->
+	    <result property="modrNm" column="MODR_NM" /><!--수정자명-->
+	    
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectCtDebrOpinDWhere">
+		<where>
+		    <if test="compId != null and compId != ''"> AND CDOD_T.COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CDOD_T.CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="debrId != null and debrId != ''"> AND CDOD_T.DEBR_ID = #{debrId, jdbcType=VARCHAR}</if>
+   		    <if test="opinOrdr != null and opinOrdr != ''"> AND CDOD_T.OPIN_ORDR = #{opinOrdr, jdbcType=NUMERIC}</if>
+   		    <if test="schCat == 'SUBJ' and schWord != null and schWord != ''"> AND CDOD_T.SUBJ LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="schCat == 'CONT' and schWord != null and schWord != ''"> AND CDOD_T.OPIN LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+			<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''"> AND R.RESC_VA LIKE CONCAT('%', #{schWord, jdbcType=VARCHAR}, '%')</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectCtDebrOpinD" resultMap="ctDebrOpinDMap" parameterType="CtDebrOpinDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtDebrOpinDDao.selectCtDebrOpinD */
+		
+		SELECT
+		
+		<trim prefix="" suffix="" suffixOverrides=",">
+			CDOD_T.COMP_ID, CDOD_T.CT_ID, CDOD_T.DEBR_ID,
+			CDOD_T.OPIN_ORDR, CDOD_T.SUBJ, CDOD_T.OPIN,
+			CDOD_T.READ_CNT, CDOD_T.PROS_CONS_CD, CDOD_T.REG_DT,
+			CDOD_T.MOD_DT, CDOD_T.REGR_UID, CDOD_T.MODR_UID,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CDOD_T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = CDOD_T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')) MODR_NM,
+			
+		</trim>
+		FROM CT_DEBR_OPIN_D CDOD_T
+		<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''">
+			LEFT JOIN OR_USER_B U ON CDOD_T.REGR_UID = U.USER_UID
+			LEFT JOIN OR_RESC_B R ON U.RESC_ID = R.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectCtDebrOpinDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY CDOD_T.OPIN_ORDR</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC}
+		</if>
+	</select>
+	
+
+	<!-- 목록조회 건수-->
+	<select id="countCtDebrOpinD" resultType="Integer" parameterType="CtDebrOpinDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtDebrOpinDDao.countCtDebrOpinD */
+		SELECT COUNT(*) CNT
+		FROM CT_DEBR_OPIN_D CDOD_T
+		<if test="schCat == 'REGR_NM' and schWord != null and schWord != ''">
+			LEFT JOIN OR_USER_B U ON CDOD_T.REGR_UID = U.USER_UID
+			LEFT JOIN OR_RESC_B R ON U.RESC_ID = R.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR}, 'ko')
+		</if>
+		<include refid="selectCtDebrOpinDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertCtDebrOpinD" parameterType="CtDebrOpinDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtDebrOpinDDao.insertCtDebrOpinD */
+		INSERT INTO CT_DEBR_OPIN_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			COMP_ID, CT_ID, DEBR_ID,
+			OPIN_ORDR, SUBJ, OPIN,
+			READ_CNT, PROS_CONS_CD, REG_DT,
+			MOD_DT, REGR_UID, MODR_UID, 
+
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+		    
+		    
+			#{compId, jdbcType=VARCHAR}, #{ctId, jdbcType=VARCHAR}, #{debrId, jdbcType=VARCHAR},
+			#{opinOrdr, jdbcType=NUMERIC}, #{subj, jdbcType=NVARCHAR}, #{opin, jdbcType=CLOB},
+			#{readCnt, jdbcType=NUMERIC}, #{prosConsCd, jdbcType=CHAR}, STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),
+			STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'), #{regrUid, jdbcType=VARCHAR}, #{modrUid, jdbcType=VARCHAR},
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateCtDebrOpinD" parameterType="CtDebrOpinDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtDebrOpinDDao.updateCtDebrOpinD */
+		UPDATE CT_DEBR_OPIN_D
+		<set>
+			<if test="subj != null"> SUBJ = #{subj, jdbcType=NVARCHAR},</if>
+			<if test="opin != null"> OPIN = #{opin, jdbcType=CLOB},</if>
+			<if test="readCnt != null"> READ_CNT = #{readCnt, jdbcType=NUMERIC},</if>
+			<if test="prosConsCd != null"> PROS_CONS_CD = #{prosConsCd, jdbcType=CHAR},</if>
+			<if test="modDt != null"> MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			<if test="modrUid != null"> MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			
+		</set>
+		<where>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="debrId != null and debrId != ''"> AND DEBR_ID = #{debrId, jdbcType=VARCHAR}</if>
+   		    <if test="opinOrdr != null and opinOrdr != ''"> AND OPIN_ORDR = #{opinOrdr, jdbcType=NUMERIC}</if>
+		</where>
+	</update>
+	
+	<!-- 조회수 증가 -->
+	<update id="updateReadCnt" parameterType="CtDebrOpinDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtDebrOpinDDao.updateReadCnt */
+		UPDATE CT_DEBR_OPIN_D
+		<set>
+			READ_CNT = READ_CNT + 1,
+		</set>
+		<where>
+			AND OPIN_ORDR = #{opinOrdr, jdbcType=NUMERIC}
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteCtDebrOpinD" parameterType="CtDebrOpinDVo" >
+		/* com.innobiz.orange.web.ct.dao.CtDebrOpinDDao.deleteCtDebrOpinD */
+		DELETE FROM CT_DEBR_OPIN_D
+		<where>
+			<if test="compId != null and compId != ''"> AND COMP_ID = #{compId, jdbcType=VARCHAR}</if>
+   		    <if test="ctId != null and ctId != ''"> AND CT_ID = #{ctId, jdbcType=VARCHAR}</if>
+   		    <if test="debrId != null and debrId != ''"> AND DEBR_ID = #{debrId, jdbcType=VARCHAR}</if>
+   		    <if test="opinOrdr != null and opinOrdr != ''"> AND OPIN_ORDR = #{opinOrdr, jdbcType=NUMERIC}</if>
+		</where>
+	</delete>
+
+</mapper>

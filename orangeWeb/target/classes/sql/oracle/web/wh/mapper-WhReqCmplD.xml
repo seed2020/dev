@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : WH_REQ_CMPL_D[요청완료상세] -->
+<mapper namespace="com.innobiz.orange.web.wh.dao.WhReqCmplDDao">
+
+	<resultMap id="whReqCmplDMap" type="WhReqCmplDVo">
+		<id property="hstNo" column="HST_NO" /><!-- 이력번호 -->
+		<id property="reqNo" column="REQ_NO" /><!-- 요청번호 -->
+		<result property="cmplDt" column="CMPL_DT" /><!-- 완료일시 -->
+		<result property="hdlCont" column="HDL_CONT" /><!-- 처리내용 -->
+		<result property="devHourVa" column="DEV_HOUR_VA" /><!-- 공수값 -->
+		<result property="hdlCompNm" column="HDL_COMP_NM" /><!-- 처리업체명 -->
+		<result property="hdlCost" column="HDL_COST" /><!-- 처리비용 -->
+		<result property="strtDt" column="STRT_DT" /><!-- 시작일 -->
+		<result property="endDt" column="END_DT" /><!-- 종료일 -->
+		<result property="testPichUid" column="TEST_PICH_UID" /><!-- 테스트담당자UID -->
+		<result property="testPichNm" column="TEST_PICH_NM" /><!-- 테스트담당자명 -->
+		<result property="testOngoCont" column="TEST_ONGO_CONT" /><!-- 테스트진행내용 -->
+		<result property="testResCont" column="TEST_RES_CONT" /><!-- 테스트결과내용 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->		
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자명 -->
+	</resultMap>
+	
+	<!-- 조회조건 -->
+	<sql id="selectWhReqCmplDWhere">
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND T.REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="isHst"><if test="hstNo != null and hstNo !=''"> AND T.HST_NO = #{hstNo, jdbcType=VARCHAR}</if></if>			
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</sql>
+	
+	<!-- 목록조회 -->
+	<select id="selectWhReqCmplD" resultMap="whReqCmplDMap" parameterType="WhReqCmplDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqCmplDDao.selectWhReqCmplD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT * FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			<if test="pageNo != null and pageRowCnt != null">
+			* FROM (SELECT N.*, ROWNUM RNUM FROM (SELECT
+			</if>
+			<if test="isHst">T.HST_NO,</if>
+			T.REQ_NO,
+			<if test="isHst">T.CMPL_DT,</if>
+			<if test="withLob">T.HDL_CONT,</if>
+	        T.DEV_HOUR_VA,
+	        T.HDL_CONT,
+	        T.HDL_COMP_NM,
+	        T.HDL_COST,
+	        T.STRT_DT,
+	        T.END_DT,
+	        T.TEST_PICH_UID,
+	        (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.TEST_PICH_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) TEST_PICH_NM,
+	        T.TEST_ONGO_CONT,
+	        T.TEST_RES_CONT,
+	        <if test="isHst">
+	        T.REGR_UID,
+	        T.REG_DT,
+	        (SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = NVL(#{queryLang, jdbcType=VARCHAR}, 'ko')) REGR_NM,
+	        </if>	        
+		</trim>
+		FROM <if test="!isHst">WH_REQ_CMPL_D T</if><if test="isHst">WH_REQ_CMPL_H T</if>
+		<include refid="selectWhReqCmplDWhere"/>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REQ_NO</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		<![CDATA[) N WHERE ROWNUM <= #{pageNo, jdbcType=NUMERIC} * #{pageRowCnt, jdbcType=NUMERIC}) WHERE RNUM > (#{pageNo, jdbcType=NUMERIC} - 1) * #{pageRowCnt, jdbcType=NUMERIC}]]> ) M
+		</if>
+	</select>
+	
+	<!-- 목록조회 건수-->
+	<select id="countWhReqCmplD" resultType="Integer" parameterType="WhReqCmplDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqCmplDDao.countWhReqCmplD */
+		SELECT COUNT(*) CNT
+		FROM <if test="!isHst">WH_REQ_CMPL_D T</if><if test="isHst">WH_REQ_CMPL_H T</if>
+		<include refid="selectWhReqCmplDWhere"/>
+	</select>
+	
+	<!-- 등록 저장 -->
+	<insert id="insertWhReqCmplD" parameterType="WhReqCmplDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqCmplDDao.insertWhReqCmplD */
+		INSERT INTO <if test="!isHst">WH_REQ_CMPL_D</if><if test="isHst">WH_REQ_CMPL_H</if>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="isHst">HST_NO,</if>
+			REQ_NO,
+			<if test="isHst">CMPL_DT,</if>
+	        HDL_CONT,
+	        DEV_HOUR_VA,
+	        HDL_COMP_NM,
+	        HDL_COST,
+	        STRT_DT,
+	        END_DT,
+	        TEST_PICH_UID,
+	        TEST_ONGO_CONT,
+	        TEST_RES_CONT,
+	        <if test="isHst">
+	        REGR_UID,
+	        REG_DT,
+	        </if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			<if test="isHst">#{hstNo, jdbcType=INTEGER},</if>
+			#{reqNo, jdbcType=INTEGER},
+			<if test="isHst"><if test="cmplDt == 'sysdate'">SYSDATE,</if><if test="cmplDt == null or cmplDt == ''">NULL,</if>
+			<if test="cmplDt != null and cmplDt != '' and cmplDt != 'sysdate'">TO_DATE(#{cmplDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if></if>
+			#{hdlCont, jdbcType=NVARCHAR},
+			#{devHourVa, jdbcType=VARCHAR},
+			#{hdlCompNm, jdbcType=NVARCHAR},
+			#{hdlCost, jdbcType=INTEGER},
+			<if test="strtDt == 'sysdate'">SYSDATE,</if><if test="strtDt == null or strtDt == ''">NULL,</if>
+			<if test="strtDt != null and strtDt != '' and strtDt != 'sysdate'">TO_DATE(#{strtDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			<if test="endDt == 'sysdate'">SYSDATE,</if><if test="endDt == null or endDt == ''">NULL,</if>
+			<if test="endDt != null and endDt != '' and endDt != 'sysdate'">TO_DATE(#{endDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			#{testPichUid, jdbcType=VARCHAR},
+			#{testOngoCont, jdbcType=NVARCHAR},
+			#{testResCont, jdbcType=NVARCHAR},
+			<if test="isHst">
+	        <if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">NULL,</if>
+			<if test="regDt == 'sysdate'">SYSDATE,</if><if test="regDt == null or regDt == ''">NULL,</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">TO_DATE(#{regDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+	        </if>
+		</trim>
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="updateWhReqCmplD" parameterType="WhReqCmplDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqCmplDDao.updateWhReqCmplD */
+		UPDATE <if test="!isHst">WH_REQ_CMPL_D</if><if test="isHst">WH_REQ_CMPL_H</if>
+		<set>
+			<if test="isHst"><if test="cmplDt != null"> 
+				<if test="cmplDt == 'sysdate'"> CMPL_DT = SYSDATE,</if>
+				<if test="cmplDt == ''"> CMPL_DT = NULL,</if>
+				<if test="cmplDt != '' and cmplDt != 'sysdate'"> CMPL_DT = TO_DATE(#{cmplDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>			
+			</if>
+			<if test="hdlCont != null"> HDL_CONT = #{hdlCont, jdbcType=NVARCHAR},</if>
+			<if test="devHourVa != null"> DEV_HOUR_VA = #{devHourVa, jdbcType=VARCHAR},</if>
+			<if test="hdlCompNm != null"> HDL_COMP_NM = #{hdlCompNm, jdbcType=NVARCHAR},</if>
+			<if test="hdlCost != null"> HDL_COST = #{hdlCost, jdbcType=INTEGER},</if>
+			<if test="strtDt != null"> 
+				<if test="strtDt == 'sysdate'"> STRT_DT = SYSDATE,</if>
+				<if test="strtDt == ''"> STRT_DT = NULL,</if>
+				<if test="strtDt != '' and strtDt != 'sysdate'"> STRT_DT = TO_DATE(#{strtDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>	
+			<if test="endDt != null"> 
+				<if test="endDt == 'sysdate'"> END_DT = SYSDATE,</if>
+				<if test="endDt == ''"> END_DT = NULL,</if>
+				<if test="endDt != '' and endDt != 'sysdate'"> END_DT = TO_DATE(#{endDt, jdbcType=VARCHAR},'YYYY-MM-DD HH24:MI:SS'),</if>
+			</if>	
+			<if test="testPichUid != null"> TEST_PICH_UID = #{testPichUid, jdbcType=VARCHAR},</if>
+			<if test="testOngoCont != null"> TEST_ONGO_CONT = #{testOngoCont, jdbcType=VARCHAR},</if>
+			<if test="testResCont != null"> TEST_RES_CONT = #{testResCont, jdbcType=VARCHAR},</if>
+		</set>
+		<where>
+			<if test="reqNo != null and reqNo !=''"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="isHst"><if test="hstNo != null and hstNo !=''"> AND HST_NO = #{hstNo, jdbcType=INTEGER}</if></if>
+		</where>
+	</update>
+
+	<!-- 삭제 -->
+	<delete id="deleteWhReqCmplD" parameterType="WhReqCmplDVo" >
+		/* com.innobiz.orange.web.wh.dao.WhReqCmplDDao.deleteWhReqCmplD */
+		DELETE FROM <if test="!isHst">WH_REQ_CMPL_D</if><if test="isHst">WH_REQ_CMPL_H</if>
+		<where>
+			<if test="reqNo != null"> AND REQ_NO = #{reqNo, jdbcType=VARCHAR}</if>
+			<if test="isHst"><if test="hstNo != null"> AND HST_NO = #{hstNo, jdbcType=INTEGER}</if></if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : CM_EMAIL_B첨부파일] -->
+<mapper namespace="com.innobiz.orange.web.em.dao.CmEmailBDao">
+
+	<resultMap id="cmEmailBMap" type="CmEmailBVo">
+		<id property="emailId" column="EMAIL_ID" /><!-- 이메일ID -->
+		<id property="subj" column="SUBJ" /><!-- 제목 -->
+		<id property="sendNm" column="SEND_NM" /><!-- 발송명 -->
+		<id property="recvNm" column="RECV_NM" /><!-- 수신명 -->
+		<id property="cont" column="CONT" /><!-- 내용 -->
+		<id property="fileYn" column="FILE_YN" /><!-- 파일여부 -->
+		<id property="regDt" column="REG_DT" /><!-- 등록일시 -->
+	</resultMap>
+
+	<select id="selectCmEmailB" resultMap="cmEmailBMap" parameterType="CmEmailBVo" >
+		/* com.innobiz.orange.web.em.dao.CmEmailBDao.selectCmEmailB */
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.EMAIL_ID,
+			T.SUBJ,
+			T.SEND_NM,
+			T.RECV_NM,
+			T.CONT,
+			T.FILE_YN,
+			T.REG_DT,
+		</trim>
+		FROM CM_EMAIL_B T
+		<where>
+			<if test="emailId != null"> AND T.EMAIL_ID = #{emailId, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.REG_DT DESC</if>
+	</select>
+
+	<insert id="insertCmEmailB" parameterType="CmEmailBVo">
+		/* com.innobiz.orange.web.em.dao.CmEmailBDao.insertCmEmailB */
+		INSERT INTO CM_EMAIL_B
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			EMAIL_ID,
+			SUBJ,
+			SEND_NM,
+			RECV_NM,
+			CONT,
+			FILE_YN,
+			REG_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			#{emailId, jdbcType=INTEGER},
+			#{subj, jdbcType=VARCHAR},
+			#{sendNm, jdbcType=VARCHAR},
+			#{recvNm, jdbcType=VARCHAR},
+			#{cont, jdbcType=CLOB},
+			#{fileYn, jdbcType=VARCHAR},
+			<if test="regDt == 'sysdate'">GETDATE(),</if><if test="regDt == null or regDt == ''">GETDATE(),</if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">CONVERT(DATETIME, #{regDt, jdbcType=VARCHAR}, 120),</if>
+		</trim>
+	</insert>
+
+	<delete id="deleteCmEmailB" parameterType="CmEmailBVo">
+		/* com.innobiz.orange.web.em.dao.CmEmailBDao.deleteCmEmailB */
+		DELETE FROM CM_EMAIL_B
+		<where>
+			<if test="emailId != null"> AND EMAIL_ID = #{emailId, jdbcType=INTEGER}</if>
+			<if test="whereSqllet != null and whereSqllet != ''"> ${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>

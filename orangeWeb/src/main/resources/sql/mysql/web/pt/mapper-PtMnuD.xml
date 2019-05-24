@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- TABLE : PT_MNU_D[메뉴상세] -->
+<mapper namespace="com.innobiz.orange.web.pt.dao.PtMnuDDao">
+
+	<resultMap id="ptMnuDMap" type="PtMnuDVo">
+		<id property="mnuId" column="MNU_ID" /><!-- 메뉴ID -->
+		<result property="mnuGrpMdCd" column="MNU_GRP_MD_CD" /><!-- 메뉴그룹모듈코드 -->
+		<result property="mnuGrpId" column="MNU_GRP_ID" /><!-- 메뉴그룹ID -->
+		<result property="mnuNm" column="MNU_NM" /><!-- 메뉴명 -->
+		<result property="rescId" column="RESC_ID" /><!-- 리소스ID -->
+		<result property="mnuPid" column="MNU_PID" /><!-- 메뉴부모ID -->
+		<result property="sortOrdr" column="SORT_ORDR" /><!-- 정렬순서 -->
+		<result property="mnuUrl" column="MNU_URL" /><!-- 메뉴URL -->
+		<result property="mnuTypCd" column="MNU_TYP_CD" /><!-- 메뉴구분코드 -->
+		<result property="popSetupCont" column="POP_SETUP_CONT" /><!-- 팝업설정내용 -->
+		<result property="mnuDesc" column="MNU_DESC" /><!-- 메뉴설명 -->
+		<result property="fldYn" column="FLD_YN" /><!-- 폴더여부 -->
+		<result property="sysMnuYn" column="SYS_MNU_YN" /><!-- 시스템메뉴여부 -->
+		<result property="mdRid" column="MD_RID" /><!-- 모듈참조ID -->
+		<result property="mdId" column="MD_ID" /><!-- 모듈ID -->
+		<result property="useYn" column="USE_YN" /><!-- 사용여부 -->
+		<result property="regrUid" column="REGR_UID" /><!-- 등록자UID -->
+		<result property="regDt" column="REG_DT" /><!-- 등록일시 -->
+		<result property="modrUid" column="MODR_UID" /><!-- 수정자UID -->
+		<result property="modDt" column="MOD_DT" /><!-- 수정일시 -->
+		<result property="mnuGrpMdNm" column="MNU_GRP_MD_NM" /><!-- 메뉴그룹모듈명 -->
+		<result property="rescNm" column="RESC_NM" /><!-- 리소스명 -->
+		<result property="mnuTypNm" column="MNU_TYP_NM" /><!-- 메뉴구분명 -->
+		<result property="regrNm" column="REGR_NM" /><!-- 등록자U명 -->
+		<result property="modrNm" column="MODR_NM" /><!-- 수정자U명 -->
+		<result property="rnum" column="RNUM" /><!-- 레코드 번호 -->
+	</resultMap>
+
+	<select id="selectPtMnuD" resultMap="ptMnuDMap" parameterType="PtMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMnuDDao.selectPtMnuD */
+		<if test="pageNo != null and pageRowCnt != null">
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			M.*,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'MNU_GRP_MD_CD' AND CD = M.MNU_GRP_MD_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MNU_GRP_MD_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = M.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'MNU_TYP_CD' AND CD = M.MNU_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MNU_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = M.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+		</trim>
+		FROM (
+		</if>
+		SELECT
+		<trim prefix="" suffix="" suffixOverrides=",">
+			T.MNU_ID,
+			T.MNU_GRP_MD_CD,
+			T.MNU_GRP_ID,
+			T.MNU_NM,
+			T.RESC_ID,
+			T.MNU_PID,
+			T.SORT_ORDR,
+			T.MNU_URL,
+			T.MNU_TYP_CD,
+			T.POP_SETUP_CONT,
+			T.MNU_DESC,
+			T.FLD_YN,
+			T.SYS_MNU_YN,
+			T.MD_RID,
+			T.MD_ID,
+			T.USE_YN,
+			T.REGR_UID,
+			DATE_FORMAT(T.REG_DT, '%Y-%m-%d %H:%i:%s') REG_DT,
+			T.MODR_UID,
+			DATE_FORMAT(T.MOD_DT, '%Y-%m-%d %H:%i:%s') MOD_DT,
+			<if test="pageNo == null or pageRowCnt == null">
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'MNU_GRP_MD_CD' AND CD = T.MNU_GRP_MD_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MNU_GRP_MD_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = T.RESC_ID AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) RESC_NM,
+			(SELECT RESC_VA FROM PT_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM PT_CD_B WHERE CLS_CD = 'MNU_TYP_CD' AND CD = T.MNU_TYP_CD) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MNU_TYP_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.REGR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) REGR_NM,
+			(SELECT RESC_VA FROM OR_RESC_B WHERE RESC_ID = (SELECT RESC_ID FROM OR_USER_B WHERE USER_UID = T.MODR_UID) AND LANG_TYP_CD = IFNULL(#{queryLang, jdbcType=VARCHAR},'ko')) MODR_NM,
+			</if>
+		</trim>
+		FROM PT_MNU_D T
+		<where>
+			<if test="mnuId != null">AND T.MNU_ID = #{mnuId, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpMdCd != null and mnuGrpMdCd != ''">AND T.MNU_GRP_MD_CD = #{mnuGrpMdCd, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpId != null and mnuGrpId != ''">AND T.MNU_GRP_ID = #{mnuGrpId, jdbcType=VARCHAR}</if>
+			<if test="mnuPid != null and mnuPid != ''">AND T.MNU_PID = #{mnuPid, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+		<if test="orderBy != null">ORDER BY ${orderBy}</if>
+		<if test="orderBy == null">ORDER BY T.MNU_ID</if>
+		<if test="pageNo != null and pageRowCnt != null">
+		LIMIT #{pageStrt, jdbcType=NUMERIC}, #{pageRowCnt, jdbcType=NUMERIC} ) M
+		</if>
+	</select>
+
+	<select id="countPtMnuD" resultType="Integer" parameterType="PtMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMnuDDao.countPtMnuD */
+		SELECT COUNT(*) CNT
+		FROM PT_MNU_D T
+		<where>
+			<if test="mnuId != null">AND T.MNU_ID = #{mnuId, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpMdCd != null and mnuGrpMdCd != ''">AND T.MNU_GRP_MD_CD = #{mnuGrpMdCd, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpId != null and mnuGrpId != ''">AND T.MNU_GRP_ID = #{mnuGrpId, jdbcType=VARCHAR}</if>
+			<if test="mnuPid != null and mnuPid != ''">AND T.MNU_PID = #{mnuPid, jdbcType=VARCHAR}</if>
+			<if test="useYn != null and useYn != ''">AND T.USE_YN = #{useYn, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</select>
+
+	<insert id="insertPtMnuD" parameterType="PtMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMnuDDao.insertPtMnuD */
+		INSERT INTO PT_MNU_D
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			MNU_ID,
+			MNU_GRP_MD_CD,
+			MNU_GRP_ID,
+			MNU_NM,
+			RESC_ID,
+			MNU_PID,
+			SORT_ORDR,
+			MNU_URL,
+			MNU_TYP_CD,
+			POP_SETUP_CONT,
+			MNU_DESC,
+			FLD_YN,
+			SYS_MNU_YN,
+			MD_RID,
+			MD_ID,
+			USE_YN,
+			REGR_UID,
+			REG_DT,
+			MODR_UID,
+			MOD_DT,
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides="," >
+			#{mnuId, jdbcType=VARCHAR},
+			#{mnuGrpMdCd, jdbcType=VARCHAR},
+			#{mnuGrpId, jdbcType=VARCHAR},
+			#{mnuNm, jdbcType=NVARCHAR},
+			#{rescId, jdbcType=VARCHAR},
+			#{mnuPid, jdbcType=VARCHAR},
+			<if test="sortOrdr != null and sortOrdr != ''">#{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="sortOrdr == null or sortOrdr == ''">(SELECT IFNULL(MAX(P.SORT_ORDR),0)+1 FROM PT_MNU_D P WHERE P.MNU_PID = #{mnuPid, jdbcType=VARCHAR}),</if>
+			#{mnuUrl, jdbcType=NVARCHAR},
+			#{mnuTypCd, jdbcType=VARCHAR},
+			#{popSetupCont, jdbcType=VARCHAR},
+			#{mnuDesc, jdbcType=NVARCHAR},
+			#{fldYn, jdbcType=VARCHAR},
+			#{sysMnuYn, jdbcType=VARCHAR},
+			#{mdRid, jdbcType=VARCHAR},
+			#{mdId, jdbcType=VARCHAR},
+			#{useYn, jdbcType=VARCHAR},
+			<if test="regrUid != null">#{regrUid, jdbcType=VARCHAR},</if><if test="regrUid == null">#{modrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt == 'sysdate'">NOW(),</if><if test="regDt == null or regDt == ''"><if test="modDt == 'sysdate'">NOW(),</if><if test="modDt != 'sysdate'">NULL,</if></if>
+			<if test="regDt != null and regDt != '' and regDt != 'sysdate'">STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			#{modrUid, jdbcType=VARCHAR},
+			<if test="modDt == 'sysdate'">NOW(),</if><if test="modDt == null or modDt == ''">NULL,</if>
+			<if test="modDt != null and modDt != '' and modDt != 'sysdate'">STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+		</trim>
+	</insert>
+
+	<update id="updatePtMnuD" parameterType="PtMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMnuDDao.updatePtMnuD */
+		UPDATE PT_MNU_D
+		<set>
+			<if test="mnuId != null">MNU_ID = #{mnuId, jdbcType=VARCHAR},</if>
+			<if test="mnuGrpId != null">MNU_GRP_ID = #{mnuGrpId, jdbcType=VARCHAR},</if>
+			<if test="mnuNm != null">MNU_NM = #{mnuNm, jdbcType=NVARCHAR},</if>
+			<if test="rescId != null">RESC_ID = #{rescId, jdbcType=VARCHAR},</if>
+			<if test="mnuPid != null">MNU_PID = #{mnuPid, jdbcType=VARCHAR},</if>
+			<if test="sortOrdr != null">SORT_ORDR = #{sortOrdr, jdbcType=INTEGER},</if>
+			<if test="mnuUrl != null">MNU_URL = #{mnuUrl, jdbcType=NVARCHAR},</if>
+			<if test="mnuTypCd != null">MNU_TYP_CD = #{mnuTypCd, jdbcType=VARCHAR},</if>
+			<if test="popSetupCont != null">POP_SETUP_CONT = #{popSetupCont, jdbcType=VARCHAR},</if>
+			<if test="mnuDesc != null">MNU_DESC = #{mnuDesc, jdbcType=NVARCHAR},</if>
+			<if test="fldYn != null">FLD_YN = #{fldYn, jdbcType=VARCHAR},</if>
+			<if test="sysMnuYn != null">SYS_MNU_YN = #{sysMnuYn, jdbcType=VARCHAR},</if>
+			<if test="mdRid != null">MD_RID = #{mdRid, jdbcType=VARCHAR},</if>
+			<if test="mdId != null">MD_ID = #{mdId, jdbcType=VARCHAR},</if>
+			<if test="useYn != null">USE_YN = #{useYn, jdbcType=VARCHAR},</if>
+			<if test="regrUid != null">REGR_UID = #{regrUid, jdbcType=VARCHAR},</if>
+			<if test="regDt != null">
+				<if test="regDt == 'sysdate'">REG_DT = NOW(),</if>
+				<if test="regDt == ''">REG_DT = NULL,</if>
+				<if test="regDt != '' and regDt != 'sysdate'">REG_DT = STR_TO_DATE(#{regDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+			<if test="modrUid != null">MODR_UID = #{modrUid, jdbcType=VARCHAR},</if>
+			<if test="modDt != null">
+				<if test="modDt == 'sysdate'">MOD_DT = NOW(),</if>
+				<if test="modDt == ''">MOD_DT = NULL,</if>
+				<if test="modDt != '' and modDt != 'sysdate'">MOD_DT = STR_TO_DATE(#{modDt, jdbcType=VARCHAR}, '%Y-%m-%d %H:%i:%s'),</if>
+			</if>
+		</set>
+		<where>
+			<if test="mnuId != null">AND MNU_ID = #{mnuId, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpMdCd != null and mnuGrpMdCd != ''">AND MNU_GRP_MD_CD = #{mnuGrpMdCd, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</update>
+
+	<delete id="deletePtMnuD" parameterType="PtMnuDVo" >
+		/* com.innobiz.orange.web.pt.dao.PtMnuDDao.deletePtMnuD */
+		DELETE FROM PT_MNU_D
+		<where>
+			<if test="mnuId != null">AND MNU_ID = #{mnuId, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpMdCd != null and mnuGrpMdCd != ''">AND MNU_GRP_MD_CD = #{mnuGrpMdCd, jdbcType=VARCHAR}</if>
+			<if test="mnuGrpId != null and mnuGrpId != ''">AND MNU_GRP_ID = #{mnuGrpId, jdbcType=VARCHAR}</if>
+			<if test="whereSqllet != null and whereSqllet != ''">${whereSqllet}</if>
+		</where>
+	</delete>
+
+</mapper>
