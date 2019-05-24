@@ -1,1 +1,0 @@
-var contextPath='';var servletMappingName='CrosseditorServlet';var NamoSEUseFlag='namointernet';
